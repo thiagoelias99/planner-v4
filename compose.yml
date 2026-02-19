@@ -1,0 +1,25 @@
+services:
+  plannerv4-pg:
+    image: bitnami/postgresql:latest
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=docker
+      - POSTGRES_PASSWORD=docker
+      - POSTGRES_DB=plannerv4_dev
+    volumes:
+      - plannerv4_postgres_data:/bitnami/postgresql
+    networks:
+      - plannerv4-net
+
+volumes:
+  plannerv4_postgres_data:
+
+networks:
+  plannerv4-net:
+    driver: bridge
+
+# DATABASE_URL="postgresql://docker:docker@localhost:5432/plannerv4_dev"
+# docker compose -f compose.dev.yml up -d
+
+

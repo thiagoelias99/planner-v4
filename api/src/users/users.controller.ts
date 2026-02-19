@@ -1,0 +1,26 @@
+import { Body, Controller, Get, HttpCode, Post } from '@nestjs/common'
+import { UsersService } from './users.service'
+import { UserModel } from "../generated/prisma/models"
+import { CreateUserInput } from "./dto/create-user.input"
+import { ApiOkResponse, ApiTags } from "@nestjs/swagger"
+import { PaginatedUserView } from "./dto/paginated-users.view"
+
+@ApiTags('users')
+@Controller('users')
+export class UsersController {
+  constructor(private readonly usersService: UsersService) { }
+
+  @Post()
+  @HttpCode(201)
+  @ApiOkResponse()
+  async signupUser(
+    @Body() input: CreateUserInput,
+  ): Promise<UserModel> {
+    return this.usersService.createUser(input)
+  }
+
+  @Get()
+  async getUsers(): Promise<PaginatedUserView> {
+    return this.usersService.users({})
+  }
+}
