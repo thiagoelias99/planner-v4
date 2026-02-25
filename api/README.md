@@ -34,7 +34,7 @@ export class UserController {
 ### Todo
 
 - [x] Health Checker
-- [ ] Registro automático admin
+- [x] Registro automático admin
 - [ ] Autenticação BetterAuth
   - [x] Email e Senha
   - [ ] Google
