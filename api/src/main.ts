@@ -12,6 +12,14 @@ async function bootstrap() {
 
   app.setGlobalPrefix('v1')
 
+  const corsOrigins = process.env.ALLOWED_ORIGINS?.split(';') || ['http://localhost:3000']
+  app.enableCors({
+    origin: corsOrigins,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    credentials: true,
+  })
+
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
