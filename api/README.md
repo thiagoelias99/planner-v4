@@ -17,5 +17,5 @@
 - [ ] Autenticação BetterAuth
 - [ ] Autenticação API Key
 - [ ] CORS
-- [ ] Rate Limiting
+- [x] Rate Limiting
 
