@@ -2,8 +2,10 @@
 import { Controller, Get } from '@nestjs/common'
 import { HealthCheckService, HealthCheck, PrismaHealthIndicator, DiskHealthIndicator, MemoryHealthIndicator } from '@nestjs/terminus'
 import { PrismaService } from "../prisma/prisma.service"
+import { AllowAnonymous } from "@thallesp/nestjs-better-auth"
 
 @Controller('health')
+@AllowAnonymous()
 export class HealthController {
   constructor(
     private health: HealthCheckService,

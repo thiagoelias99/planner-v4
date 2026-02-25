@@ -16,6 +16,6 @@
 - [x] Health Checker
 - [ ] Autenticação BetterAuth
 - [ ] Autenticação API Key
-- [ ] CORS
+- [x] CORS
 - [x] Rate Limiting
 

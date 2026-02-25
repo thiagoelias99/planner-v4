@@ -8,6 +8,8 @@ import { ConfigModule } from "@nestjs/config"
 import { HealthModule } from './health/health.module'
 import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler"
 import { APP_GUARD } from "@nestjs/core"
+import { auth } from "./utils/auth"
+import { AuthModule } from "@thallesp/nestjs-better-auth"
 
 @Module({
   imports: [
@@ -36,6 +38,7 @@ import { APP_GUARD } from "@nestjs/core"
         }
       ]
     }),
+    AuthModule.forRoot({ auth }),
     PrismaModule,
     UsersModule,
     PostsModule,
