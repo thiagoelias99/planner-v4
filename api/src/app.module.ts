@@ -38,7 +38,7 @@ import { AuthModule } from "@thallesp/nestjs-better-auth"
         }
       ]
     }),
-    AuthModule.forRoot({ auth }),
+    AuthModule.forRoot({ auth, enableRawBodyParser: true, }),
     PrismaModule,
     UsersModule,
     PostsModule,

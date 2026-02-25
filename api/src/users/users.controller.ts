@@ -4,8 +4,9 @@ import { UserModel } from "../generated/prisma/models"
 import { CreateUserInput } from "./dto/create-user.input"
 import { ApiOkResponse, ApiTags } from "@nestjs/swagger"
 import { PaginatedUserView } from "./dto/paginated-users.view"
+import { OptionalAuth, Session, type UserSession } from "@thallesp/nestjs-better-auth"
 
-@ApiTags('users')
+@ApiTags('Users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
@@ -22,5 +23,14 @@ export class UsersController {
   @Get()
   async getUsers(): Promise<PaginatedUserView> {
     return this.usersService.users({})
+  }
+
+  @Get("me")
+  @OptionalAuth()
+  async getProfile(@Session() session: UserSession) {
+    if (!session) {
+      return { message: "No session found" }
+    }
+    return session
   }
 }
