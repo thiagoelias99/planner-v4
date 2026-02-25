@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Post } from '@nestjs/common'
+import { Body, Controller, Get, HttpCode, NotImplementedException, Post } from '@nestjs/common'
 import { UsersService } from './users.service'
 import { UserModel } from "../generated/prisma/models"
 import { CreateUserInput } from "./dto/create-user.input"
@@ -17,12 +17,12 @@ export class UsersController {
   async signupUser(
     @Body() input: CreateUserInput,
   ): Promise<UserModel> {
-    return this.usersService.createUser(input)
+    throw new NotImplementedException()
   }
 
   @Get()
   async getUsers(): Promise<PaginatedUserView> {
-    return this.usersService.users({})
+    throw new NotImplementedException()
   }
 
   @Get("me")

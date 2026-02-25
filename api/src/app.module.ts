@@ -10,6 +10,7 @@ import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler"
 import { APP_GUARD } from "@nestjs/core"
 import { auth } from "./utils/auth"
 import { AuthModule } from "@thallesp/nestjs-better-auth"
+import { AuthModule as AppAuthModule } from './auth/auth.module'
 
 @Module({
   imports: [
@@ -42,7 +43,8 @@ import { AuthModule } from "@thallesp/nestjs-better-auth"
     PrismaModule,
     UsersModule,
     PostsModule,
-    HealthModule
+    HealthModule,
+    AppAuthModule
   ],
   controllers: [AppController],
   providers: [

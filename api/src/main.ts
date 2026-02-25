@@ -2,16 +2,17 @@ import 'dotenv/config'
 import { NestFactory, Reflector } from '@nestjs/core'
 import { AppModule } from './app.module'
 import { NestExpressApplication } from '@nestjs/platform-express'
-import { ClassSerializerInterceptor, ValidationPipe } from "@nestjs/common"
+import { ValidationPipe } from "@nestjs/common"
 import { useContainer } from "class-validator"
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger"
 import helmet from 'helmet'
+import cookieParser from 'cookie-parser'
+
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>
-    (AppModule, {
-      bodyParser: false
-    })
+  const app = await NestFactory.create<NestExpressApplication>(AppModule)
+
+  app.use(cookieParser())
 
   app.setGlobalPrefix('v1')
 

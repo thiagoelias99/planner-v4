@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger"
 
 export interface IUserView {
-  id: number
+  id: string
   name: string
   email: string
 }
@@ -12,7 +12,7 @@ export class UsersView implements IUserView {
   }
 
   @ApiProperty()
-  id: number
+  id: string
 
   @ApiProperty()
   name: string
