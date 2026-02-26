@@ -7,10 +7,13 @@ import { useContainer } from "class-validator"
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger"
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
+import { CustomLogger } from './utils/logger'
 
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule)
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    logger: new CustomLogger('NestApplication'),
+  })
 
   app.use(cookieParser())
 

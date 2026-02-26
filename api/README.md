@@ -52,6 +52,25 @@ export class AdminController {
 }
 ```
 
+### Logger
+
+- Opcionalmente pode ser utilizado o New Relic para salvar os logs remotamente.
+
+```typescript
+@Controller("health")
+export class HealthController {
+  private readonly logger = new CustomLogger("HealthController");
+
+  @Get()
+  @HealthCheck()
+  check() {
+    this.logger.log("Health check performed");
+
+    // Rest...
+  }
+}
+```
+
 ### Todo
 
 - [x] Health Checker
@@ -63,5 +82,5 @@ export class AdminController {
 - [ ] Autenticação API Key
 - [x] CORS
 - [x] Rate Limiting
-- [ ] Log Remoto
+- [x] Log Remoto
 
