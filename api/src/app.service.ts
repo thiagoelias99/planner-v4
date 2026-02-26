@@ -3,6 +3,7 @@ import { ConfigService } from "@nestjs/config"
 import { PrismaService } from "./prisma/prisma.service"
 import { auth } from "./utils/auth"
 import argon2 from "argon2"
+import { EUserRole } from "./users/utils/user-role"
 
 @Injectable()
 export class AppService {
@@ -24,11 +25,19 @@ export class AppService {
               password: adminPassword,
               name: 'Admin User'
             }
-          }).then(() => {
-            this.logger.log(`Admin user created with email: ${adminEmail}`)
-          }).catch(err => {
-            this.logger.error('Error creating admin user:', err)
           })
+            .then((result) => {
+              return prisma.user.update({
+                where: { id: result.user.id },
+                data: { role: EUserRole.ADMIN }
+              })
+            })
+            .then((result) => {
+              this.logger.log(`Admin user created with email: ${adminEmail}`)
+            })
+            .catch(err => {
+              this.logger.error('Error creating admin user:', err)
+            })
         } else {
           // Update admin password if user already exists
           argon2.hash(adminPassword).then(hashedPassword => {
@@ -40,14 +49,17 @@ export class AppService {
               data: {
                 password: hashedPassword
               }
-            }).then(() => {
-              this.logger.log(`Admin user password updated for email: ${adminEmail}`)
-            }).catch(err => {
-              this.logger.error('Error updating admin user password:', err)
             })
-          }).catch(err => {
-            this.logger.error('Error hashing admin password:', err)
+              .then(() => {
+                this.logger.log(`Admin user password updated for email: ${adminEmail}`)
+              })
+              .catch(err => {
+                this.logger.error('Error updating admin user password:', err)
+              })
           })
+            .catch(err => {
+              this.logger.error('Error hashing admin password:', err)
+            })
         }
       })
   }

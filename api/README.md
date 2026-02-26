@@ -31,6 +31,27 @@ export class UserController {
 }
 ```
 
+#### Role
+
+- `user` - Uso comum
+- `admin` - Ações administrativas
+
+```typescript
+import { Controller, Get } from "@nestjs/common";
+import { Roles } from "@thallesp/nestjs-better-auth";
+
+@Controller("admin")
+export class AdminController {
+  @Roles(["admin"])
+  @Get("dashboard")
+  async adminDashboard() {
+    // Only users with user.role = 'admin' can access
+    // Organization admins CANNOT access this route
+    return { message: "System admin dashboard" };
+  }
+}
+```
+
 ### Todo
 
 - [x] Health Checker
@@ -38,7 +59,9 @@ export class UserController {
 - [ ] Autenticação BetterAuth
   - [x] Email e Senha
   - [ ] Google
+  - [x] Roles
 - [ ] Autenticação API Key
 - [x] CORS
 - [x] Rate Limiting
+- [ ] Log Remoto
 

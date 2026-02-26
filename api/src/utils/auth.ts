@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth"
 import { prismaAdapter } from "better-auth/adapters/prisma"
 import { PrismaService } from "../prisma/prisma.service"
 import argon2 from "argon2"
+import { admin } from "better-auth/plugins"
 
 export const auth = betterAuth({
   database: prismaAdapter(PrismaService.getInstance(), {
@@ -19,5 +20,8 @@ export const auth = betterAuth({
         return await argon2.verify(data.hash, data.password)
       }
     }
-  }
+  },
+  plugins: [
+    admin()
+  ]
 })

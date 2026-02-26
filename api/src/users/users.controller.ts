@@ -4,7 +4,8 @@ import { UserModel } from "../generated/prisma/models"
 import { CreateUserInput } from "./dto/create-user.input"
 import { ApiOkResponse, ApiTags } from "@nestjs/swagger"
 import { PaginatedUserView } from "./dto/paginated-users.view"
-import { OptionalAuth, Session, type UserSession } from "@thallesp/nestjs-better-auth"
+import { OptionalAuth, Roles, Session, type UserSession } from "@thallesp/nestjs-better-auth"
+import { EUserRole } from "./utils/user-role"
 
 @ApiTags('Users')
 @Controller('users')
@@ -21,6 +22,7 @@ export class UsersController {
   }
 
   @Get()
+  @Roles([EUserRole.ADMIN])
   async getUsers(): Promise<PaginatedUserView> {
     throw new NotImplementedException()
   }
