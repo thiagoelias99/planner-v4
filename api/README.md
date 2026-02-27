@@ -11,6 +11,8 @@
 - Health Checker
 - CORS
 - Rate Limiting
+- Cron jobs
+- Queue
 
 ### Autenticação com BetterAuth
 
@@ -71,6 +73,25 @@ export class HealthController {
 }
 ```
 
+### Data UTC
+
+#### Infraestrutura
+
+- Servidor: UTC
+- Banco: UTC
+- Logs: UTC
+
+#### Backend
+
+- Tudo salvo em UTC
+- Cron com America/Sao_Paulo
+- Comparações sempre em UTC
+
+#### Frontend
+
+- Recebe ISO UTC
+- Converte para local do usuário
+
 ### Todo
 
 - [x] Health Checker
@@ -83,4 +104,7 @@ export class HealthController {
 - [x] CORS
 - [x] Rate Limiting
 - [x] Log Remoto
+- [ ] Cronjob
+- [ ] Queue
+- [ ] Padronização de Datas
 

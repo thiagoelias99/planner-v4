@@ -11,6 +11,8 @@ import { APP_GUARD } from "@nestjs/core"
 import { auth } from "./utils/auth"
 import { AuthModule } from "@thallesp/nestjs-better-auth"
 import { AuthModule as AppAuthModule } from './auth/auth.module'
+import { ScheduleModule } from "@nestjs/schedule"
+import { CronService } from "./cron.service"
 
 @Module({
   imports: [
@@ -40,6 +42,7 @@ import { AuthModule as AppAuthModule } from './auth/auth.module'
       ]
     }),
     AuthModule.forRoot({ auth, enableRawBodyParser: true, }),
+    ScheduleModule.forRoot(),
     PrismaModule,
     UsersModule,
     PostsModule,
@@ -49,6 +52,7 @@ import { AuthModule as AppAuthModule } from './auth/auth.module'
   controllers: [AppController],
   providers: [
     AppService,
+    CronService,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard
