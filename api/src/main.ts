@@ -52,5 +52,7 @@ async function bootstrap() {
   await app.listen(process.env.PORT ?? 3333)
   console.log(`Application is running on: ${await app.getUrl()}`)
   console.log(`Swagger is available on: ${await app.getUrl()}/v1/docs`)
+  console.log('Server timezone:', Intl.DateTimeFormat().resolvedOptions().timeZone)
+  console.log('Server date now:', new Date())
 }
 bootstrap()

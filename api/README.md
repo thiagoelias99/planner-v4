@@ -73,7 +73,9 @@ export class HealthController {
 }
 ```
 
-### Data UTC
+### Datas UTC
+
+Utilitário `api/src/utils/date.ts`
 
 #### Infraestrutura
 
