@@ -1,6 +1,9 @@
 services:
+  # DATABASE_URL="postgresql://docker:docker@localhost:5432/plannerv4_dev"
   plannerv4-pg:
     image: bitnami/postgresql:latest
+    container_name: plannerv4-pg
+    restart: unless-stopped
     ports:
       - "5432:5432"
     environment:
@@ -12,6 +15,15 @@ services:
     networks:
       - plannerv4-net
 
+  plannerv4_redis:
+    image: redis:7-alpine
+    container_name: plannerv4_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - plannerv4-net
+
 volumes:
   plannerv4_postgres_data:
 
@@ -19,7 +31,6 @@ networks:
   plannerv4-net:
     driver: bridge
 
-# DATABASE_URL="postgresql://docker:docker@localhost:5432/plannerv4_dev"
 # docker compose -f compose.dev.yml up -d
 
 

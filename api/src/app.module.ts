@@ -13,6 +13,8 @@ import { AuthModule } from "@thallesp/nestjs-better-auth"
 import { AuthModule as AppAuthModule } from './auth/auth.module'
 import { ScheduleModule } from "@nestjs/schedule"
 import { CronService } from "./cron.service"
+import { BullModule } from '@nestjs/bullmq'
+import { NotificationsModule } from './notifications/notifications.module'
 
 @Module({
   imports: [
@@ -43,11 +45,21 @@ import { CronService } from "./cron.service"
     }),
     AuthModule.forRoot({ auth, enableRawBodyParser: true, }),
     ScheduleModule.forRoot(),
+    BullModule.forRoot({
+      connection: {
+        host: process.env.REDIS_HOST,
+        port: Number(process.env.REDIS_PORT),
+        ...(process.env.REDIS_USERNAME && { username: process.env.REDIS_USERNAME }),
+        ...(process.env.REDIS_PASSWORD && { password: process.env.REDIS_PASSWORD }),
+      },
+      prefix: 'plannerv4'
+    }),
     PrismaModule,
     UsersModule,
     PostsModule,
     HealthModule,
-    AppAuthModule
+    AppAuthModule,
+    NotificationsModule
   ],
   controllers: [AppController],
   providers: [

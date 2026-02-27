@@ -94,6 +94,14 @@ Utilitário `api/src/utils/date.ts`
 - Recebe ISO UTC
 - Converte para local do usuário
 
+### Cron Jobs
+
+Configurar cron jobs em `api/src/cron.service.ts`
+
+### Notification
+
+Configurar notificações em `api/src/notifications`
+
 ### Todo
 
 - [x] Health Checker
@@ -106,7 +114,10 @@ Utilitário `api/src/utils/date.ts`
 - [x] CORS
 - [x] Rate Limiting
 - [x] Log Remoto
-- [ ] Cronjob
-- [ ] Queue
+- [x] Cronjob
+- [ ] Monitoramento de Cronjob
+- [x] Queue
+- [x] Monitoramento de Queue
+- [ ] Monitoramento de Queue Socket
 - [ ] Padronização de Datas
 
