@@ -98,4 +98,27 @@ export class AuthController {
 
     return response
   }
+
+  @Post("apiKey")
+  async createApiKey(
+    @Headers() reqHeaders,
+    @Res({ passthrough: true }) res: Response
+  ) {
+    const { headers, response } = await auth.api.createApiKey({
+      headers: reqHeaders,
+      body: {
+
+      },
+      returnHeaders: true,
+    })
+
+    if (headers) {
+      headers.forEach((value, key) => {
+        res.setHeader(key, value)
+      })
+    }
+
+    return response
+  }
+
 }

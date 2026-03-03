@@ -74,6 +74,34 @@ CREATE TABLE "post" (
     CONSTRAINT "post_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "apikey" (
+    "id" TEXT NOT NULL,
+    "configId" TEXT NOT NULL DEFAULT 'default',
+    "name" TEXT,
+    "start" TEXT,
+    "referenceId" TEXT NOT NULL,
+    "prefix" TEXT,
+    "key" TEXT NOT NULL,
+    "refillInterval" INTEGER,
+    "refillAmount" INTEGER,
+    "lastRefillAt" TIMESTAMP(3),
+    "enabled" BOOLEAN DEFAULT true,
+    "rateLimitEnabled" BOOLEAN DEFAULT true,
+    "rateLimitTimeWindow" INTEGER DEFAULT 86400000,
+    "rateLimitMax" INTEGER DEFAULT 10,
+    "requestCount" INTEGER DEFAULT 0,
+    "remaining" INTEGER,
+    "lastRequest" TIMESTAMP(3),
+    "expiresAt" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "permissions" TEXT,
+    "metadata" TEXT,
+
+    CONSTRAINT "apikey_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "user_email_key" ON "user"("email");
 
@@ -88,6 +116,15 @@ CREATE INDEX "account_userId_idx" ON "account"("userId");
 
 -- CreateIndex
 CREATE INDEX "verification_identifier_idx" ON "verification"("identifier");
+
+-- CreateIndex
+CREATE INDEX "apikey_configId_idx" ON "apikey"("configId");
+
+-- CreateIndex
+CREATE INDEX "apikey_referenceId_idx" ON "apikey"("referenceId");
+
+-- CreateIndex
+CREATE INDEX "apikey_key_idx" ON "apikey"("key");
 
 -- AddForeignKey
 ALTER TABLE "session" ADD CONSTRAINT "session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;

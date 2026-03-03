@@ -54,6 +54,25 @@ export class AdminController {
 }
 ```
 
+#### ApiKey
+
+A chave pode ser gerada na rota `auth\apiKey` pode qualquer usuário autenticado.  
+As rotas guardadas devem utilizar `@ApiKey()` e `@AllowAnonymous()`. Exemplo em `app.api.controller`.
+
+```typescript
+@ApiTags("ApiKey")
+@Controller("api-key")
+@ApiKey()
+@AllowAnonymous()
+@ApiHeader({ name: "x-api-key", description: "API key for authentication" })
+export class AppApiKeyController {
+  @Get("users")
+  async getUsers(): Promise<PaginatedUserView> {
+    throw new NotImplementedException();
+  }
+}
+```
+
 ### Logger
 
 - Opcionalmente pode ser utilizado o New Relic para salvar os logs remotamente.
@@ -110,7 +129,7 @@ Configurar notificações em `api/src/notifications`
   - [x] Email e Senha
   - [x] Google
   - [x] Roles
-- [ ] Autenticação API Key
+- [x] Autenticação API Key
 - [x] CORS
 - [x] Rate Limiting
 - [x] Log Remoto

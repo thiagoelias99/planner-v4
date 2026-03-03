@@ -15,6 +15,8 @@ import { ScheduleModule } from "@nestjs/schedule"
 import { CronService } from "./cron.service"
 import { BullModule } from '@nestjs/bullmq'
 import { NotificationsModule } from './notifications/notifications.module'
+import { AppApiKeyController } from "./app.api.controller"
+import { ApiKeyGuard } from "./guards/api-key.guard"
 
 @Module({
   imports: [
@@ -61,10 +63,14 @@ import { NotificationsModule } from './notifications/notifications.module'
     AppAuthModule,
     NotificationsModule
   ],
-  controllers: [AppController],
+  controllers: [AppController, AppApiKeyController],
   providers: [
     AppService,
     CronService,
+    {
+      provide: APP_GUARD,
+      useClass: ApiKeyGuard
+    },
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard
