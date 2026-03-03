@@ -117,9 +117,16 @@ Utilitário `api/src/utils/date.ts`
 
 Configurar cron jobs em `api/src/cron.service.ts`
 
+```typescript
+  @Cron('30 21 * * *', { timeZone: 'America/Sao_Paulo' })
+  handleCron() {
+    this.logger.debug('Called every day at 21:30 America/Sao_Paulo')
+  }
+```
+
 ### Notification
 
-Configurar notificações em `api/src/notifications`
+Configurar notificações em `api/src/notifications`. As notificaçãoe utilizam `Queues` que podem ser gerenciadas.
 
 ### Todo
 
@@ -139,4 +146,8 @@ Configurar notificações em `api/src/notifications`
 - [x] Monitoramento de Queue
 - [ ] Monitoramento de Queue Socket
 - [x] Padronização de Datas
+- [ ] Notificação
+  - [ ] Email
+  - [ ] Whatsapp
+  - [ ] Telegram
 
