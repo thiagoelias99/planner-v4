@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger"
-import { IsOptional, IsPositive, IsString, Matches } from "class-validator"
+import { IsEnum, IsOptional, IsPositive, IsString, Matches } from "class-validator"
+import { ETickerType } from "./tickers.view"
 
 export class CreateTickerInput {
   @ApiProperty({ example: 'PETR4', description: 'Ticker symbol' })
@@ -13,9 +14,9 @@ export class CreateTickerInput {
   @IsString()
   name: string
 
-  @ApiProperty({ example: 'Stock', description: 'Ticker type' })
-  @IsString()
-  type: string
+  @ApiProperty({ example: ETickerType.STOCK, enum: ETickerType, description: 'Ticker type' })
+  @IsEnum(ETickerType)
+  type: ETickerType
 
   @ApiPropertyOptional({ example: 40.92, description: 'Ticker price' })
   @IsPositive()

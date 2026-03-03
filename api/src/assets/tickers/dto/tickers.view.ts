@@ -1,10 +1,19 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger"
 
+export enum ETickerType {
+  STOCK = 'STOCK',
+  ETF = 'ETF',
+  REIT = 'REIT',
+  GOLD = 'GOLD',
+  CRYPTO = 'CRYPTO',
+  INTERNATIONAL = 'INTERNATIONAL'
+}
+
 export interface ITickerView {
   id: string
   name: string
   symbol: string
-  type: string
+  type: ETickerType
   price: number
   change?: number
   changePercent?: number
@@ -28,8 +37,8 @@ export class TickerView implements ITickerView {
   @ApiProperty({ example: 'PETR4' })
   symbol: string
 
-  @ApiProperty({ example: 'Stock' })
-  type: string
+  @ApiProperty({ example: ETickerType.STOCK, enum: ETickerType })
+  type: ETickerType
 
   @ApiProperty({ example: 40.92 })
   price: number

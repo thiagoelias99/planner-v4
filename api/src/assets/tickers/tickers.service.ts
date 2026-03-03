@@ -4,6 +4,7 @@ import { PrismaService } from "../../prisma/prisma.service"
 import { CreateTickerInput } from "./dto/create-ticker.input"
 import { CustomLogger } from "../../utils/logger"
 import { UpdateTickerInput } from "./dto/update-ticker.input"
+import { QueryTickerInput } from "./dto/query-ticker.input"
 
 @Injectable()
 export class TickersService {
@@ -30,21 +31,40 @@ export class TickersService {
     }
   }
 
-  async tickers(params?: {
-    skip?: number
-    take?: number
-    where?: Prisma.TickerWhereInput
-    orderBy?: Prisma.TickerOrderByWithRelationInput
-  }): Promise<{ tickers: Ticker[], total: number }> {
+  async tickers(query?: QueryTickerInput): Promise<{ tickers: Ticker[], total: number }> {
+    const { page = 1, limit = 10, orderBy = 'symbol', order = 'asc', search, type, autoUpdate } = query || {}
 
-    const { skip, take, where, orderBy } = params || {}
+    const skip = (page - 1) * limit
+
+    // Build where clause
+    const where: Prisma.TickerWhereInput = {}
+
+    if (search) {
+      where.OR = [
+        { symbol: { contains: search, mode: 'insensitive' } },
+        { name: { contains: search, mode: 'insensitive' } },
+      ]
+    }
+
+    if (type) {
+      where.type = type
+    }
+
+    if (autoUpdate !== undefined) {
+      where.autoUpdate = autoUpdate
+    }
+
+    // Build orderBy clause
+    const orderByClause: Prisma.TickerOrderByWithRelationInput = {
+      [orderBy]: order
+    }
 
     const [tickers, total] = await this.prisma.$transaction([
       this.prisma.ticker.findMany({
         skip,
-        take,
+        take: limit,
         where,
-        orderBy: orderBy || { symbol: 'asc' },
+        orderBy: orderByClause,
       }),
       this.prisma.ticker.count({ where }),
     ])

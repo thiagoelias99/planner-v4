@@ -3,5 +3,6 @@
 - [ ] - Tickers
 - - [x] - Atualização Manual
 - - [ ] - Atualização automática
-- - [ ] - Query de busca
+- - [x] - Query de busca
+- - [x] - Definir tipos
 

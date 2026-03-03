@@ -1,12 +1,12 @@
 import { Ticker } from "../../../generated/prisma/client"
-import { TickerView } from "../dto/tickers.view"
+import { ETickerType, TickerView } from "../dto/tickers.view"
 
 export function prismaTickerToTickerView(ticker: Ticker): TickerView {
   return new TickerView({
     id: ticker.id,
     symbol: ticker.symbol,
     name: ticker.name,
-    type: ticker.type,
+    type: ticker.type as ETickerType,
     price: Number(ticker.price),
     change: ticker.change ? Number(ticker.change) : undefined,
     changePercent: ticker.changePercent ? Number(ticker.changePercent) : undefined,

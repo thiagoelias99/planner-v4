@@ -1,10 +1,11 @@
-import { Body, Controller, Get, NotImplementedException, Param, Post, Put } from '@nestjs/common'
+import { Body, Controller, Get, NotImplementedException, Param, Post, Put, Query } from '@nestjs/common'
 import { TickersService } from './tickers.service'
 import { PaginatedTickerView, TickerView } from "./dto/tickers.view"
 import { prismaTickerToTickerView } from "./utils"
 import { ApiOkResponse } from "@nestjs/swagger"
 import { CreateTickerInput } from "./dto/create-ticker.input"
 import { UpdateTickerInput } from "./dto/update-ticker.input"
+import { QueryTickerInput } from "./dto/query-ticker.input"
 
 @Controller('tickers')
 export class TickersController {
@@ -20,12 +21,14 @@ export class TickersController {
 
   @Get()
   @ApiOkResponse({ type: PaginatedTickerView })
-  async findAll(): Promise<PaginatedTickerView> {
-    const ticker = await this.tickersService.tickers()
+  async findAll(
+    @Query() query: QueryTickerInput
+  ): Promise<PaginatedTickerView> {
+    const ticker = await this.tickersService.tickers(query)
 
     return new PaginatedTickerView({
-      page: 1,
-      limit: 10,
+      page: query.page || 1,
+      limit: query.limit || 10,
       total: ticker.total,
       tickers: ticker.tickers.map(t => new TickerView(prismaTickerToTickerView(t)))
     })

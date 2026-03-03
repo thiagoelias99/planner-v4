@@ -184,6 +184,7 @@ Casos que o registro possua um campo do tipo `unique` no banco de dados.
 - Criar os DTOs de input sempre validando os dados com `ClassValidator`.
 - Criar os DTOs de view omitindo os dados restritos.
 - Criar os DTOs de view paginada sempre que necessário retornar um array.
+- Criar os DTOs de query para os endpoints de busca conforme dados disponíveis do schema. Exemplo `api/src/assets/tickers/dto/query-ticker.input.ts`
 - Aplicar a documentação do Swagger.
 
 ### Todo
