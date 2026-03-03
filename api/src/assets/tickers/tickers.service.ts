@@ -5,6 +5,9 @@ import { CreateTickerInput } from "./dto/create-ticker.input"
 import { CustomLogger } from "../../utils/logger"
 import { UpdateTickerInput } from "./dto/update-ticker.input"
 import { QueryTickerInput } from "./dto/query-ticker.input"
+import { getUpdatedTicker } from "./utils/alpha-vantage-api"
+import { prismaTickerToTickerView } from "./utils"
+import { Cron } from "@nestjs/schedule"
 
 @Injectable()
 export class TickersService {
@@ -83,6 +86,39 @@ export class TickersService {
 
       this.logger.error(`Unexpected error while updating ticker with id ${id}, ${err.message}, ${data}`, err.stack)
       throw new InternalServerErrorException(`An unexpected error occurred while updating the ticker. Please try again later.`)
+    }
+  }
+
+
+  // Run every day at 9:30 PM Sao Paulo time
+  @Cron('18 15 * * *', { timeZone: 'America/Sao_Paulo' })
+  async autoUpdateTickers(): Promise<void> {
+    this.logger.log('Starting auto-update of tickers...')
+
+    const tickersToUpdate = await this.prisma.ticker.findMany({
+      where: { autoUpdate: true }
+    })
+
+    for (const ticker of tickersToUpdate) {
+      try {
+        const updatedTicker = await getUpdatedTicker(prismaTickerToTickerView(ticker))
+
+        if (updatedTicker) {
+          await this.prisma.ticker.update({
+            where: { id: ticker.id },
+            data: {
+              price: updatedTicker.price,
+              change: updatedTicker.change,
+              changePercent: updatedTicker.changePercent,
+              updatedAt: new Date()
+            }
+          })
+        }
+      } catch (error) {
+        const err = error as Error
+
+        this.logger.error(`Error updating ticker with symbol ${ticker.symbol}, ${err.message}`, err.stack)
+      }
     }
   }
 }

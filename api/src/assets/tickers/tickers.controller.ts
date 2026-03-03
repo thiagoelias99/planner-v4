@@ -1,11 +1,12 @@
-import { Body, Controller, Get, NotImplementedException, Param, Post, Put, Query } from '@nestjs/common'
+import { Body, Controller, Get, HttpCode, NotImplementedException, Param, Post, Put, Query } from '@nestjs/common'
 import { TickersService } from './tickers.service'
 import { PaginatedTickerView, TickerView } from "./dto/tickers.view"
 import { prismaTickerToTickerView } from "./utils"
-import { ApiOkResponse } from "@nestjs/swagger"
+import { ApiNoContentResponse, ApiOkResponse } from "@nestjs/swagger"
 import { CreateTickerInput } from "./dto/create-ticker.input"
 import { UpdateTickerInput } from "./dto/update-ticker.input"
 import { QueryTickerInput } from "./dto/query-ticker.input"
+import { Roles } from "@thallesp/nestjs-better-auth"
 
 @Controller('tickers')
 export class TickersController {
@@ -17,6 +18,14 @@ export class TickersController {
   ): Promise<TickerView> {
     const ticker = await this.tickersService.create(createTickerDto)
     return new TickerView(prismaTickerToTickerView(ticker))
+  }
+
+  @Post('auto-update')
+  @Roles(["admin"])
+  @HttpCode(204)
+  @ApiNoContentResponse({ description: 'Auto-updated tickers' })
+  async autoUpdateTickers(): Promise<void> {
+    await this.tickersService.autoUpdateTickers()
   }
 
   @Get()
