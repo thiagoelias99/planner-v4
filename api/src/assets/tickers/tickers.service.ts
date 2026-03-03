@@ -3,6 +3,7 @@ import { Prisma, Ticker } from "../../generated/prisma/client"
 import { PrismaService } from "../../prisma/prisma.service"
 import { CreateTickerInput } from "./dto/create-ticker.input"
 import { CustomLogger } from "../../utils/logger"
+import { UpdateTickerInput } from "./dto/update-ticker.input"
 
 @Injectable()
 export class TickersService {
@@ -43,11 +44,25 @@ export class TickersService {
         skip,
         take,
         where,
-        orderBy,
+        orderBy: orderBy || { symbol: 'asc' },
       }),
       this.prisma.ticker.count({ where }),
     ])
 
     return { tickers, total }
+  }
+
+  async update(id: string, data: UpdateTickerInput): Promise<Ticker> {
+    try {
+      return await this.prisma.ticker.update({
+        where: { id },
+        data,
+      })
+    } catch (error) {
+      const err = error as Error
+
+      this.logger.error(`Unexpected error while updating ticker with id ${id}, ${err.message}, ${data}`, err.stack)
+      throw new InternalServerErrorException(`An unexpected error occurred while updating the ticker. Please try again later.`)
+    }
   }
 }

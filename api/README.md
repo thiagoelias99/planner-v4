@@ -1,7 +1,7 @@
 ## TODO
 
 - [ ] - Tickers
-- - [ ] - Atualização Manual
+- - [x] - Atualização Manual
 - - [ ] - Atualização automática
-- - [ ] - Normalização da entrada
+- - [ ] - Query de busca
 
