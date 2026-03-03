@@ -3,7 +3,6 @@ import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { PrismaModule } from './prisma/prisma.module'
 import { UsersModule } from './users/users.module'
-import { PostsModule } from './posts/posts.module'
 import { ConfigModule } from "@nestjs/config"
 import { HealthModule } from './health/health.module'
 import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler"
@@ -17,6 +16,7 @@ import { BullModule } from '@nestjs/bullmq'
 import { NotificationsModule } from './notifications/notifications.module'
 import { AppApiKeyController } from "./app.api.controller"
 import { ApiKeyGuard } from "./guards/api-key.guard"
+import { TickersModule } from './assets/tickers/tickers.module'
 
 @Module({
   imports: [
@@ -58,10 +58,10 @@ import { ApiKeyGuard } from "./guards/api-key.guard"
     }),
     PrismaModule,
     UsersModule,
-    PostsModule,
     HealthModule,
     AppAuthModule,
-    NotificationsModule
+    NotificationsModule,
+    TickersModule
   ],
   controllers: [AppController, AppApiKeyController],
   providers: [
