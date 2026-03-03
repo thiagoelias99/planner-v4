@@ -2,7 +2,7 @@ import { Body, Controller, Header, Headers, HttpCode, NotImplementedException, P
 import { AllowAnonymous } from "@thallesp/nestjs-better-auth"
 import { SignUpInput } from "./dto/signup.input"
 import { auth } from "../utils/auth"
-import { SignInInput } from "./dto/signin.input"
+import { SignInInput, SocialSignInInput } from "./dto/signin.input"
 import { type Response } from "express"
 
 @Controller('auth')
@@ -63,6 +63,30 @@ export class AuthController {
   ) {
     const { headers, response } = await auth.api.signOut({
       headers: reqHeaders,
+      returnHeaders: true,
+    })
+
+    if (headers) {
+      headers.forEach((value, key) => {
+        res.setHeader(key, value)
+      })
+    }
+
+    return response
+  }
+
+  @Post("google")
+  @HttpCode(302)
+  @AllowAnonymous()
+  async signInWithGoogle(
+    @Body() body: SocialSignInInput,
+    @Res({ passthrough: true }) res: Response
+  ) {
+    const { headers, response } = await auth.api.signInSocial({
+      body: {
+        provider: "google",
+        callbackURL: body.redirectUri || process.env.BETTER_AUTH_URL as string
+      },
       returnHeaders: true,
     })
 

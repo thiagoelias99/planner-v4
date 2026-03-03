@@ -106,9 +106,9 @@ Configurar notificações em `api/src/notifications`
 
 - [x] Health Checker
 - [x] Registro automático admin
-- [ ] Autenticação BetterAuth
+- [x] Autenticação BetterAuth
   - [x] Email e Senha
-  - [ ] Google
+  - [x] Google
   - [x] Roles
 - [ ] Autenticação API Key
 - [x] CORS
@@ -119,5 +119,5 @@ Configurar notificações em `api/src/notifications`
 - [x] Queue
 - [x] Monitoramento de Queue
 - [ ] Monitoramento de Queue Socket
-- [ ] Padronização de Datas
+- [x] Padronização de Datas
 
