@@ -4,49 +4,78 @@ import { PrismaService } from "../prisma/prisma.service"
 import { Prisma, User } from "../generated/prisma/client"
 import { PaginatedUserView } from "./dto/paginated-users.view"
 import { prismaUserToUserView } from "./utils"
+import { CustomLogger } from "../utils/logger"
+import { CreateUserInput } from "./dto/create-user.input"
+import { auth } from "../utils/auth"
+import { QueryUserInput } from "./dto/query-user.input"
 
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) { }
 
-  async user(
-    userWhereUniqueInput: Prisma.UserWhereUniqueInput,
-  ): Promise<User | null> {
+  private readonly logger = new CustomLogger(UsersService.name);
+
+  async create(input: CreateUserInput): Promise<User> {
+    await auth.api.signUpEmail({
+      returnHeaders: true,
+      body: {
+        email: input.email,
+        password: input.password,
+        name: input.name
+      }
+    })
+
+    const user = await this.user({ email: input.email })
+
+    if (!user) {
+      this.logger.error(`User with email ${input.email} was not found after registration.`)
+      throw new Error('User creation failed')
+    }
+
+    return user
+  }
+
+  async user(where: Prisma.UserWhereUniqueInput): Promise<User | null> {
     return this.prisma.user.findUnique({
-      where: userWhereUniqueInput,
-    })
-  }
-
-  async users(params: {
-    skip?: number
-    take?: number
-    cursor?: Prisma.UserWhereUniqueInput
-    where?: Prisma.UserWhereInput
-    orderBy?: Prisma.UserOrderByWithRelationInput
-  }): Promise<PaginatedUserView> {
-    const { skip, take, where, orderBy } = params
-    const users = await this.prisma.user.findMany({
-      skip,
-      take,
       where,
-      orderBy,
-    })
-
-    const total = await this.prisma.user.count({ where })
-
-
-    return new PaginatedUserView({
-      page: skip && take ? Math.floor(skip / take) + 1 : 1,
-      limit: take || users.length,
-      total,
-      users: users.map(prismaUserToUserView),
     })
   }
 
-  async createUser(data: Prisma.UserCreateInput): Promise<User> {
-    return this.prisma.user.create({
-      data,
-    })
+  async users(query?: QueryUserInput): Promise<{ users: User[], total: number }> {
+    const { page = 1, limit = 10, orderBy = 'symbol', order = 'asc', search, role } = query || {}
+
+    const skip = (page - 1) * limit
+
+    // Build where clause
+    const where: Prisma.UserWhereInput = {}
+
+    if (search) {
+      where.OR = [
+        { email: { contains: search, mode: 'insensitive' } },
+        { name: { contains: search, mode: 'insensitive' } },
+      ]
+    }
+
+    if (role) {
+      where.role = role
+    }
+
+    // Build orderBy clause
+    const orderByClause: Prisma.UserOrderByWithRelationInput = {
+      [orderBy]: order
+    }
+
+    const [users, total] = await this.prisma.$transaction([
+      this.prisma.user.findMany({
+        skip,
+        take: limit,
+        where,
+        orderBy: orderByClause,
+      }),
+      this.prisma.user.count({ where }),
+    ])
+
+    return { users, total }
   }
 
   async updateUser(params: {
