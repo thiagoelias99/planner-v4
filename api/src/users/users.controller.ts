@@ -41,17 +41,17 @@ export class UsersController {
     })
   }
 
-  @Get(':id')
-  @Roles([EUserRole.ADMIN])
-  async getUser(@Param('id') id: string): Promise<UsersView> {
-    throw new NotImplementedException()
-  }
-
   @Get("me")
   async getProfile(@Session() session: UserSession) {
     if (!session) {
       return { message: "No session found" }
     }
-    return session
+    return this.usersService.user({ id: session.session.userId })
+  }
+
+  @Get(':id')
+  @Roles([EUserRole.ADMIN])
+  async getUser(@Param('id') id: string): Promise<UsersView> {
+    throw new NotImplementedException()
   }
 }

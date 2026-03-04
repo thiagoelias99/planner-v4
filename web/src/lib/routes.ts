@@ -1,0 +1,18 @@
+export enum EPages {
+  HOME = '/',
+  TERMS_OF_SERVICE = '/termos-de-servico',
+  PRIVACY_POLICY = '/politica-de-privacidade',
+
+  // Auth Pages
+  SIGN_IN = '/app/entrar',
+  SIGN_UP = '/app/registro',
+  FORGOT_PASSWORD = '/app/recuperar-senha',
+  RESET_PASSWORD = '/app/redefinir-senha',
+
+  // Protected Pages
+  DASHBOARD = '/app/dashboard',
+  USER_ACCOUNT = '/app/conta',
+  FILES = '/app/arquivos',
+  TEAM = '/app/equipe',
+  FORM = '/app/form',
+}
