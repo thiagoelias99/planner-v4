@@ -1,11 +1,13 @@
-import { Body, Controller, Get, HttpCode, NotImplementedException, Post } from '@nestjs/common'
+import { Body, Controller, Get, HttpCode, NotImplementedException, Param, Post, Query } from '@nestjs/common'
 import { UsersService } from './users.service'
-import { UserModel } from "../generated/prisma/models"
 import { CreateUserInput } from "./dto/create-user.input"
-import { ApiOkResponse, ApiTags } from "@nestjs/swagger"
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger"
 import { PaginatedUserView } from "./dto/paginated-users.view"
-import { OptionalAuth, Roles, Session, type UserSession } from "@thallesp/nestjs-better-auth"
+import { Roles, Session, type UserSession } from "@thallesp/nestjs-better-auth"
 import { EUserRole } from "./utils/user-role"
+import { UsersView } from "./dto/users.view"
+import { prismaUserToUserView } from "./utils"
+import { QueryUserInput } from "./dto/query-user.input"
 
 @ApiTags('Users')
 @Controller('users')
@@ -14,21 +16,38 @@ export class UsersController {
 
   @Post()
   @HttpCode(201)
-  @ApiOkResponse()
-  async signupUser(
+  @Roles([EUserRole.ADMIN])
+  @ApiCreatedResponse({ type: UsersView })
+  async createUser(
     @Body() input: CreateUserInput,
-  ): Promise<UserModel> {
-    throw new NotImplementedException()
+  ): Promise<UsersView> {
+    const user = await this.usersService.create(input)
+    return new UsersView(prismaUserToUserView(user))
   }
 
   @Get()
   @Roles([EUserRole.ADMIN])
-  async getUsers(): Promise<PaginatedUserView> {
+  @ApiOkResponse({ type: PaginatedUserView })
+  async findAll(
+    @Query() query: QueryUserInput
+  ): Promise<PaginatedUserView> {
+    const users = await this.usersService.users(query)
+
+    return new PaginatedUserView({
+      page: query.page || 1,
+      limit: query.limit || 10,
+      total: users.total,
+      users: users.users.map(u => new UsersView(prismaUserToUserView(u)))
+    })
+  }
+
+  @Get(':id')
+  @Roles([EUserRole.ADMIN])
+  async getUser(@Param('id') id: string): Promise<UsersView> {
     throw new NotImplementedException()
   }
 
   @Get("me")
-  @OptionalAuth()
   async getProfile(@Session() session: UserSession) {
     if (!session) {
       return { message: "No session found" }
