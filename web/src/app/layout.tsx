@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/sonner"
 import CookiesNotification from "@/components/cookies-notification"
 import QueryContext from "@/context/query-context"
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
+import { ThemeProvider } from "next-themes"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,17 +28,24 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="pt-BR" className="">
+    <html lang="pt-BR" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} min-h-screen antialiased`}
       >
-        <QueryContext>
-          <NuqsAdapter>
-            {children}
-            <CookiesNotification />
-            <Toaster />
-          </NuqsAdapter>
-        </QueryContext>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <QueryContext>
+            <NuqsAdapter>
+              {children}
+              <CookiesNotification />
+              <Toaster />
+            </NuqsAdapter>
+          </QueryContext>
+        </ThemeProvider>
       </body>
     </html>
   )

@@ -2,11 +2,12 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { IconCalendar, IconCheck, IconMail, IconUser, IconX } from "@tabler/icons-react"
+import { IconCalendar, IconCheck, IconMail, IconPalette, IconUser, IconX } from "@tabler/icons-react"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { UpdateNameForm } from "./update-name-form"
 import { useProfile } from "@/hooks/query/use-profile"
+import { ThemeSelector } from "@/components/theme-selector"
 
 export default function UserAccountPage() {
   const { data: profile, isLoading } = useProfile()
@@ -66,6 +67,21 @@ export default function UserAccountPage() {
                 {format(new Date(profile.createdAt), "d 'de' MMMM 'de' yyyy", { locale: ptBR })}
               </p>
             </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <IconPalette className="size-5" />
+              Aparência
+            </CardTitle>
+            <CardDescription>
+              Personalize o tema da interface
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ThemeSelector />
           </CardContent>
         </Card>
 
