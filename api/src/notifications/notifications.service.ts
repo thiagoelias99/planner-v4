@@ -1,8 +1,9 @@
 import { InjectQueue } from "@nestjs/bullmq"
-import { Injectable, Logger } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { Queue } from "bullmq"
 import { DateService } from "../utils/date"
 import { NotificationProcessor } from "./notification.processor"
+import { CustomLogger } from "../utils/logger"
 
 @Injectable()
 export class NotificationsService {
@@ -11,7 +12,7 @@ export class NotificationsService {
     private notificationProcessor: NotificationProcessor
   ) { }
 
-  private readonly logger = new Logger(NotificationsService.name);
+  private readonly logger = new CustomLogger(NotificationsService.name);
   private readonly dateService = new DateService()
 
   async newEmailNotification(email: string, subject: string, message: string) {
