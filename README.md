@@ -3,14 +3,15 @@
 #### WEB
 
 - [ ] - Configurar autenticação
-- [ ] - Recuperar senha
-- [ ] - Redefinir senha
-- [ ] - Confirmar conta
+- [x] - Recuperar senha
+- [x] - Confirmar conta
 - [ ] - Atualizar perfil
 - [ ] - Listar usuário (admin)
 - [ ] - Atualizar usuários (admin)
+- [ ] - Erro fazer logout
+- [ ] - Erro depois que clica no email de verificação
 
 #### API
 
-- [ ] - Envio de Emails
+- [x] - Envio de Emails
 
