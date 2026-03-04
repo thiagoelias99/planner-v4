@@ -33,8 +33,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { User } from "@/generated/prisma/client"
 import { EPages } from "@/lib/routes"
+import { IUser } from "@/models/user"
 
 const data = {
   user: {
@@ -159,7 +159,7 @@ const data = {
 }
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
-  sessionUser: User
+  sessionUser: IUser
 }
 
 export function AppSidebar({ sessionUser, ...props }: AppSidebarProps) {

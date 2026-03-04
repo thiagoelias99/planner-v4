@@ -15,7 +15,7 @@ export class UsersService {
 
   private readonly logger = new CustomLogger(UsersService.name);
 
-  async create(input: CreateUserInput): Promise<User> {
+  async create(input: CreateUserInput): Promise<Prisma.UserGetPayload<{ include: { accounts: true } }>> {
     await auth.api.signUpEmail({
       returnHeaders: true,
       body: {
@@ -35,13 +35,16 @@ export class UsersService {
     return user
   }
 
-  async user(where: Prisma.UserWhereUniqueInput): Promise<User | null> {
+  async user(where: Prisma.UserWhereUniqueInput): Promise<Prisma.UserGetPayload<{ include: { accounts: true } }> | null> {
     return this.prisma.user.findUnique({
       where,
+      include: {
+        accounts: true
+      }
     })
   }
 
-  async users(query?: QueryUserInput): Promise<{ users: User[], total: number }> {
+  async users(query?: QueryUserInput): Promise<{ users: Prisma.UserGetPayload<{ include: { accounts: true } }>[], total: number }> {
     const { page = 1, limit = 10, orderBy = 'symbol', order = 'asc', search, role } = query || {}
 
     const skip = (page - 1) * limit
@@ -71,6 +74,7 @@ export class UsersService {
         take: limit,
         where,
         orderBy: orderByClause,
+        include: { accounts: true }
       }),
       this.prisma.user.count({ where }),
     ])

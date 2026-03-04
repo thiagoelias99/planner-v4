@@ -2,14 +2,15 @@
 
 #### WEB
 
-- [ ] - Configurar autenticação
+- [x] - Configurar autenticação
 - [x] - Recuperar senha
 - [x] - Confirmar conta
 - [ ] - Atualizar perfil
 - [ ] - Listar usuário (admin)
 - [ ] - Atualizar usuários (admin)
-- [ ] - Erro fazer logout
+- [x] - Erro fazer logout
 - [ ] - Erro depois que clica no email de verificação
+- [ ] - Listar usuários ADMIN
 
 #### API
 

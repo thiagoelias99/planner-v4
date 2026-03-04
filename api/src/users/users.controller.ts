@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, NotImplementedException, Param, Post, Query } from '@nestjs/common'
+import { BadRequestException, Body, Controller, Get, HttpCode, NotImplementedException, Param, Post, Query } from '@nestjs/common'
 import { UsersService } from './users.service'
 import { CreateUserInput } from "./dto/create-user.input"
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger"
@@ -42,11 +42,18 @@ export class UsersController {
   }
 
   @Get("me")
+  @ApiOkResponse({ type: UsersView })
   async getProfile(@Session() session: UserSession) {
     if (!session) {
       return { message: "No session found" }
     }
-    return this.usersService.user({ id: session.session.userId })
+    const user = await this.usersService.user({ id: session.session.userId })
+
+    if (!user) {
+      throw new BadRequestException("User not found")
+    }
+
+    return new UsersView(prismaUserToUserView(user))
   }
 
   @Get(':id')
