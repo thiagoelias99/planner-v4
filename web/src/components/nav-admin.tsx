@@ -2,25 +2,27 @@
 
 import {
   SidebarGroup,
+  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { EPages } from "@/lib/routes"
-import { LayoutDashboardIcon } from "lucide-react"
+import { UserIcon } from "lucide-react"
 import Link from "next/link"
 
 const items = [
   {
-    title: "Dashboard",
-    url: EPages.DASHBOARD,
-    icon: LayoutDashboardIcon,
+    title: "Usuários",
+    url: EPages.USERS,
+    icon: UserIcon,
   }
 ]
 
-export function NavMain() {
+export function NavAdmin() {
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+      <SidebarGroupLabel>Administração</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem key={item.title}>

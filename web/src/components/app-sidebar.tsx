@@ -20,7 +20,7 @@ import {
   IconUsers,
 } from "@tabler/icons-react"
 
-import { NavDocuments } from "@/components/nav-documents"
+import { NavAdmin } from "@/components/nav-admin"
 import { NavMain } from "@/components/nav-main"
 import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
@@ -187,9 +187,9 @@ export function AppSidebar({ sessionUser, ...props }: AppSidebarProps) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+        <NavMain />
+        <NavSecondary />
+        <NavAdmin />
       </SidebarContent>
       <SidebarFooter>
         <NavUser sessionUser={sessionUser} />

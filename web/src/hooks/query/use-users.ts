@@ -13,6 +13,7 @@ export const useUsers = (params: IUserQueryParams) => {
     queryKey: [queriesKeys.users, params],
     queryFn: async () => {
 
+      return []
 
     },
     refetchOnWindowFocus: true,
