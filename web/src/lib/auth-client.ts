@@ -1,4 +1,9 @@
 import { createAuthClient } from "better-auth/react"
+import { admin } from "better-auth/plugins"
+
 export const authClient = createAuthClient({
   baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3333",
+  plugins: [
+    admin()
+  ]
 })

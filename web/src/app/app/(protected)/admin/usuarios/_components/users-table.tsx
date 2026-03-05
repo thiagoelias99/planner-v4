@@ -1,17 +1,17 @@
 "use client"
 
 import { type ColumnDef } from "@tanstack/react-table"
-import { DataTable } from "./template/data-table"
+import { DataTable } from "../../../../../../components/tables/template/data-table"
 import { ptBR } from "date-fns/locale"
 import { format } from "date-fns"
-import { Button } from "../ui/button"
+import { Button } from "../../../../../../components/ui/button"
 import { EyeIcon } from "lucide-react"
 import { useState } from "react"
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
-import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet"
-import { Label } from "../ui/label"
-import { Input } from "../ui/input"
-import { Badge } from "../ui/badge"
+import { Avatar, AvatarFallback, AvatarImage } from "../../../../../../components/ui/avatar"
+import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "../../../../../../components/ui/sheet"
+import { Label } from "../../../../../../components/ui/label"
+import { Input } from "../../../../../../components/ui/input"
+import { Badge } from "../../../../../../components/ui/badge"
 
 interface IUser {
   id: string

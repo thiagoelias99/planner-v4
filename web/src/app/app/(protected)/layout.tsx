@@ -37,9 +37,10 @@ export default function ProtectedLayout({ children }: PropsWithChildren) {
     >
       <AppSidebar
         variant="inset"
+        // @ts-expect-error Plugin role is enabled
         sessionUser={{
           ...session.data?.user,
-          image: session.data?.user?.image || null,
+          image: session.data?.user?.image || undefined,
         }}
 
       />
