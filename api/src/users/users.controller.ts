@@ -91,10 +91,4 @@ export class UsersController {
 
     return new UsersView(prismaUserToUserView(users))
   }
-
-  @Get(':id')
-  @Roles([EUserRole.ADMIN])
-  async getUser(@Param('id') id: string): Promise<UsersView> {
-    throw new NotImplementedException()
-  }
 }
