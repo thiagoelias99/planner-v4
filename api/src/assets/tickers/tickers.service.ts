@@ -19,7 +19,7 @@ export class TickersService {
     try {
       return await this.prisma.ticker.create({
         data: {
-          ...data, price: data.price ?? 0
+          ...data, price: data.price ?? 0, symbol: data.symbol.toUpperCase()
         }
       })
     } catch (error) {
