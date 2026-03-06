@@ -1,6 +1,6 @@
 "use client"
 
-import UsersTable from "@/components/tables/users-table"
+import UsersTable from "@/app/app/(protected)/admin/usuarios/_components/users-table"
 import { DataTablePagination } from "@/components/tables/template/data-table-pagination"
 import { useUsers } from "@/hooks/query/use-users"
 import { parseAsInteger, useQueryStates } from 'nuqs'

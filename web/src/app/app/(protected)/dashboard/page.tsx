@@ -30,20 +30,6 @@ export default function DashboardPage() {
       <div className="px-4 lg:px-6">
         <ChartAreaInteractive />
       </div>
-      <div className="w-full px-4 lg:px-6">
-        <ExampleTable
-          data={paginatedData.data}
-          isLoading={isFetching}
-        />
-        <DataTablePagination
-          page={paginatedData.page}
-          limit={paginatedData.limit}
-          total={paginatedData.total}
-          totalPages={paginatedData.totalPages}
-          onPageChange={(page) => setParams((prev) => ({ ...prev, page }))}
-          onLimitChange={(limit) => setParams((prev) => ({ ...prev, limit, page: 1 }))}
-        />
-      </div>
     </div>
   )
 }

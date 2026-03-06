@@ -1,5 +1,5 @@
 
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { PrismaService } from "../prisma/prisma.service"
 import { Prisma, User } from "../generated/prisma/client"
 import { PaginatedUserView } from "./dto/paginated-users.view"
@@ -15,7 +15,7 @@ export class UsersService {
 
   private readonly logger = new CustomLogger(UsersService.name);
 
-  async create(input: CreateUserInput): Promise<User> {
+  async create(input: CreateUserInput): Promise<Prisma.UserGetPayload<{ include: { accounts: true } }>> {
     await auth.api.signUpEmail({
       returnHeaders: true,
       body: {
@@ -35,13 +35,16 @@ export class UsersService {
     return user
   }
 
-  async user(where: Prisma.UserWhereUniqueInput): Promise<User | null> {
+  async user(where: Prisma.UserWhereUniqueInput): Promise<Prisma.UserGetPayload<{ include: { accounts: true } }> | null> {
     return this.prisma.user.findUnique({
       where,
+      include: {
+        accounts: true
+      }
     })
   }
 
-  async users(query?: QueryUserInput): Promise<{ users: User[], total: number }> {
+  async users(query?: QueryUserInput): Promise<{ users: Prisma.UserGetPayload<{ include: { accounts: true } }>[], total: number }> {
     const { page = 1, limit = 10, orderBy = 'symbol', order = 'asc', search, role } = query || {}
 
     const skip = (page - 1) * limit
@@ -71,6 +74,7 @@ export class UsersService {
         take: limit,
         where,
         orderBy: orderByClause,
+        include: { accounts: true }
       }),
       this.prisma.user.count({ where }),
     ])
@@ -81,17 +85,36 @@ export class UsersService {
   async updateUser(params: {
     where: Prisma.UserWhereUniqueInput
     data: Prisma.UserUpdateInput
-  }): Promise<User> {
+  }): Promise<Prisma.UserGetPayload<{ include: { accounts: true } }> | null> {
     const { where, data } = params
-    return this.prisma.user.update({
+    await this.prisma.user.update({
       data,
       where,
     })
+
+    return this.user(where)
   }
 
-  async deleteUser(where: Prisma.UserWhereUniqueInput): Promise<User> {
-    return this.prisma.user.delete({
+  async deleteUser(where: Prisma.UserWhereUniqueInput): Promise<void> {
+    await this.prisma.user.delete({
       where,
+    })
+
+    return
+  }
+
+  async resetPassword({ id, redirectTo }: { id: string, redirectTo: string }): Promise<void> {
+    const user = await this.user({ id })
+
+    if (!user) {
+      throw new BadRequestException("User not found")
+    }
+
+    await auth.api.requestPasswordReset({
+      body: {
+        email: user.email,
+        redirectTo
+      }
     })
   }
 }

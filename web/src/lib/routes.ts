@@ -15,4 +15,8 @@ export enum EPages {
   FILES = '/app/arquivos',
   TEAM = '/app/equipe',
   FORM = '/app/form',
+
+  // Admin Pages
+  USERS = '/app/admin/usuarios',
+  USER = '/app/admin/usuarios/[id]',
 }

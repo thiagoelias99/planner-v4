@@ -57,11 +57,11 @@ export function SignInForm({
     setIsLoading(true)
     await authClient.signIn.social({
       provider: "google",
-      callbackURL: EPages.DASHBOARD,
+      callbackURL: `${process.env.NEXT_PUBLIC_URL}${EPages.DASHBOARD}`,
     }, {
       onSuccess: () => {
         setIsLoading(false)
-        router.replace(EPages.DASHBOARD)
+        router.replace(`${process.env.NEXT_PUBLIC_URL}${EPages.DASHBOARD}`)
       },
       onError: (ctx) => {
         console.error("Google sign-in error:", ctx)
@@ -74,7 +74,7 @@ export function SignInForm({
     await authClient.signIn.email({
       email: formData.email,
       password: formData.password,
-      callbackURL: EPages.DASHBOARD,
+      callbackURL: `${process.env.NEXT_PUBLIC_URL}${EPages.DASHBOARD}`,
       rememberMe: true,
     }, {
       onRequest: () => {
@@ -82,7 +82,7 @@ export function SignInForm({
       },
       onSuccess: () => {
         setIsLoading(false)
-        router.replace(EPages.DASHBOARD)
+        router.replace(`${process.env.NEXT_PUBLIC_URL}${EPages.DASHBOARD}`)
       },
       onError: async (ctx) => {
         console.error("Sign in error:", ctx)

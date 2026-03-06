@@ -1,8 +1,5 @@
 "use client"
 
-import * as React from "react"
-import { type Icon } from "@tabler/icons-react"
-
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -10,19 +7,20 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { EPages } from "@/lib/routes"
+import { SettingsIcon } from "lucide-react"
 
-export function NavSecondary({
-  items,
-  ...props
-}: {
-  items: {
-    title: string
-    url: string
-    icon: Icon
-  }[]
-} & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
+const items = [
+  {
+    title: "Configurações",
+    url: EPages.USER_ACCOUNT,
+    icon: SettingsIcon,
+  }
+]
+
+export function NavSecondary() {
   return (
-    <SidebarGroup {...props}>
+    <SidebarGroup className="mt-auto">
       <SidebarGroupContent>
         <SidebarMenu>
           {items.map((item) => (

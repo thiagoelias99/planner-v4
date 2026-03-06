@@ -30,22 +30,16 @@ import {
 } from "@/components/ui/sidebar"
 import { useRouter } from "next/navigation"
 import { authClient } from "@/lib/auth-client"
-import { User } from "@/generated/prisma/client"
 import { EPages } from "@/lib/routes"
+import { IUser } from "@/models/user"
 
-export function NavUser({ sessionUser }: { sessionUser: User }) {
+export function NavUser({ sessionUser }: { sessionUser: IUser }) {
   const { isMobile } = useSidebar()
 
   const router = useRouter()
 
   async function signOut() {
-    await authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          router.replace('/')
-        }
-      }
-    })
+    await authClient.signOut()
   }
 
   return (
