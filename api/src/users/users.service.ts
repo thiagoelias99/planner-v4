@@ -1,5 +1,5 @@
 
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { PrismaService } from "../prisma/prisma.service"
 import { Prisma, User } from "../generated/prisma/client"
 import { PaginatedUserView } from "./dto/paginated-users.view"
@@ -101,5 +101,20 @@ export class UsersService {
     })
 
     return
+  }
+
+  async resetPassword({ id, redirectTo }: { id: string, redirectTo: string }): Promise<void> {
+    const user = await this.user({ id })
+
+    if (!user) {
+      throw new BadRequestException("User not found")
+    }
+
+    await auth.api.requestPasswordReset({
+      body: {
+        email: user.email,
+        redirectTo
+      }
+    })
   }
 }

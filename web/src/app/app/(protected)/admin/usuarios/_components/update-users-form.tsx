@@ -27,7 +27,7 @@ interface UpdateUsersFormProps {
 }
 
 export default function UpdateUsersForm({ user, onSuccess }: UpdateUsersFormProps) {
-  const { updateUser } = useUser(user.id)
+  const { updateUser, requestPasswordReset } = useUser(user.id)
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -73,6 +73,17 @@ export default function UpdateUsersForm({ user, onSuccess }: UpdateUsersFormProp
     }
   }
 
+  async function handleRequestPasswordReset() {
+    try {
+      await requestPasswordReset.mutateAsync({ id: user.id })
+      toast.success("E-mail de redefinição de senha enviado com sucesso!")
+    } catch (error) {
+      const err = error as Error
+      const errorMessage = err?.message || "Erro ao solicitar redefinição de senha"
+      toast.error(errorMessage) // Substituir por um toast/notification mais adequado
+    }
+  }
+
   return (
     <FormBody onSubmit={form.handleSubmit(onSubmit)}>
       <FormInput
@@ -109,7 +120,8 @@ export default function UpdateUsersForm({ user, onSuccess }: UpdateUsersFormProp
           { label: "Administrador", value: EUserRole.ADMIN },
         ]}
       />
-      <Button type="submit" className="mt-4">Salvar</Button>
+      <Button type="submit" className="mt-4 w-full">Salvar</Button>
+      <Button type="button" variant="outline" className="mt-4 w-full" onClick={handleRequestPasswordReset}>Resetar Senha</Button>
     </FormBody>
   )
 }

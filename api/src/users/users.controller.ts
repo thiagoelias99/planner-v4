@@ -1,7 +1,7 @@
 import { BadRequestException, Body, Controller, Get, HttpCode, NotImplementedException, Param, Post, Put, Query } from '@nestjs/common'
 import { UsersService } from './users.service'
 import { CreateUserInput } from "./dto/create-user.input"
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger"
+import { ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger"
 import { PaginatedUserView } from "./dto/paginated-users.view"
 import { Roles, Session, type UserSession } from "@thallesp/nestjs-better-auth"
 import { EUserRole } from "./utils/user-role"
@@ -24,6 +24,15 @@ export class UsersController {
   ): Promise<UsersView> {
     const user = await this.usersService.create(input)
     return new UsersView(prismaUserToUserView(user))
+  }
+
+  @Post(':id/reset-password')
+  @HttpCode(204)
+  @Roles([EUserRole.ADMIN])
+  @ApiNoContentResponse()
+  async resetPassword(@Param('id') id: string, @Query("redirectTo") redirectTo: string): Promise<void> {
+    await this.usersService.resetPassword({ id, redirectTo })
+    return
   }
 
   @Get()

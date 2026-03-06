@@ -33,5 +33,16 @@ export const useUser = (id: string) => {
     }
   })
 
-  return { ...query, updateUser }
+  const requestPasswordReset = useMutation({
+    mutationFn: async ({ id }: { id: string }) => {
+      const response = await apiClient.post(`/users/${id}/reset-password`, null, {
+        params: {
+          redirectTo: new URL(`${process.env.NEXT_PUBLIC_URL}/app/redefinir-senha`).toString()
+        }
+      })
+      return response.data
+    }
+  })
+
+  return { ...query, updateUser, requestPasswordReset }
 }
