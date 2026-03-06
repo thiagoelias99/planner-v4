@@ -8,10 +8,9 @@ import { Button } from "../../../../../../components/ui/button"
 import { EyeIcon } from "lucide-react"
 import { useState } from "react"
 import { Avatar, AvatarFallback, AvatarImage } from "../../../../../../components/ui/avatar"
-import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "../../../../../../components/ui/sheet"
-import { Label } from "../../../../../../components/ui/label"
-import { Input } from "../../../../../../components/ui/input"
+import { Sheet, SheetBody, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "../../../../../../components/ui/sheet"
 import { Badge } from "../../../../../../components/ui/badge"
+import CreateUsersForm from "./create-users-form"
 
 interface IUser {
   id: string
@@ -130,52 +129,9 @@ export default function UsersTable({
             Visualize as informações completas do usuário selecionado.
           </SheetDescription>
         </SheetHeader>
-        {selectedUser && (
-          <div className="grid flex-1 auto-rows-min gap-6 px-4">
-            <div className="flex items-center gap-4">
-              <Avatar className="h-16 w-16">
-                <AvatarImage src={selectedUser.image || undefined} alt={selectedUser.name} />
-                <AvatarFallback className="text-lg">
-                  {selectedUser.name.charAt(0).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-            </div>
-            <div className="grid gap-3">
-              <Label htmlFor="sheet-user-name">Nome</Label>
-              <Input id="sheet-user-name" value={selectedUser.name} disabled />
-            </div>
-            <div className="grid gap-3">
-              <Label htmlFor="sheet-user-email">E-mail</Label>
-              <Input id="sheet-user-email" value={selectedUser.email} disabled />
-            </div>
-            <div className="grid gap-3">
-              <Label htmlFor="sheet-user-id">ID</Label>
-              <Input id="sheet-user-id" value={selectedUser.id} disabled />
-            </div>
-            <div className="grid gap-3">
-              <Label htmlFor="sheet-user-status">Status de Verificação</Label>
-              <Badge variant={selectedUser.emailVerified ? "default" : "secondary"} className="w-fit">
-                {selectedUser.emailVerified ? "E-mail Verificado" : "E-mail Não Verificado"}
-              </Badge>
-            </div>
-            <div className="grid gap-3">
-              <Label htmlFor="sheet-user-created">Data de Criação</Label>
-              <Input
-                id="sheet-user-created"
-                value={format(new Date(selectedUser.createdAt), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
-                disabled
-              />
-            </div>
-            <div className="grid gap-3">
-              <Label htmlFor="sheet-user-updated">Última Atualização</Label>
-              <Input
-                id="sheet-user-updated"
-                value={format(new Date(selectedUser.updatedAt), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
-                disabled
-              />
-            </div>
-          </div>
-        )}
+        <SheetBody>
+          <CreateUsersForm />
+        </SheetBody>
         <SheetFooter>
           <SheetClose asChild>
             <Button variant="outline">Fechar</Button>

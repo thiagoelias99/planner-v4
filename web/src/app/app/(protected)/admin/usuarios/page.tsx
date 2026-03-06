@@ -6,8 +6,14 @@ import UsersSearch from "@/app/app/(protected)/admin/usuarios/_components/users-
 import Container from "@/components/ui/container"
 import { useUsers } from "@/hooks/query/use-users"
 import { parseAsInteger, parseAsString, useQueryStates } from "nuqs"
+import { Sheet, SheetBody, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+import { Button } from "@/components/ui/button"
+import CreateUsersForm from "./_components/create-users-form"
+import { useState } from "react"
+import { PlusIcon } from "lucide-react"
 
 export default function UsersPage() {
+  const [isSheetOpen, setIsSheetOpen] = useState(false)
   const [params, setParams] = useQueryStates({
     page: parseAsInteger.withDefault(1),
     limit: parseAsInteger.withDefault(16),
@@ -48,6 +54,28 @@ export default function UsersPage() {
 
   return (
     <Container>
+      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+        <SheetTrigger asChild>
+          <Button className="w-fit self-end"><PlusIcon /> Novo Usuário</Button>
+        </SheetTrigger>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>Novo Usuário</SheetTitle>
+            <SheetDescription>
+              Preencha as informações para criar um novo usuário.
+            </SheetDescription>
+          </SheetHeader>
+          <SheetBody>
+            <CreateUsersForm onSuccess={() => setIsSheetOpen(false)} />
+          </SheetBody>
+          <SheetFooter>
+            <SheetClose asChild>
+              <Button variant="outline">Fechar</Button>
+            </SheetClose>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
+
       <UsersSearch
         search={params.search}
         role={params.role}

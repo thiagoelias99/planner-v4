@@ -19,8 +19,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     )
   }
 
-  console.log("Session data:", session.data)
-
+  // @ts-expect-error - Role Plugin
   if (!session.data?.session || (session.data?.user?.role !== EUserRole.ADMIN)) {
     redirect(EPages.DASHBOARD)
   }
