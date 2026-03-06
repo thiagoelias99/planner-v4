@@ -85,17 +85,21 @@ export class UsersService {
   async updateUser(params: {
     where: Prisma.UserWhereUniqueInput
     data: Prisma.UserUpdateInput
-  }): Promise<User> {
+  }): Promise<Prisma.UserGetPayload<{ include: { accounts: true } }> | null> {
     const { where, data } = params
-    return this.prisma.user.update({
+    await this.prisma.user.update({
       data,
       where,
     })
+
+    return this.user(where)
   }
 
-  async deleteUser(where: Prisma.UserWhereUniqueInput): Promise<User> {
-    return this.prisma.user.delete({
+  async deleteUser(where: Prisma.UserWhereUniqueInput): Promise<void> {
+    await this.prisma.user.delete({
       where,
     })
+
+    return
   }
 }

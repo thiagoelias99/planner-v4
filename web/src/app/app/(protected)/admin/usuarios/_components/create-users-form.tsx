@@ -1,7 +1,7 @@
 
 "use client"
 
-import { FormInput } from "@/components/form"
+import { FormBody, FormInput } from "@/components/form"
 import { Button } from "@/components/ui/button"
 import { useUsers } from "@/hooks/query/use-users"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -35,7 +35,7 @@ export default function CreateUsersForm({ onSuccess }: CreateUsersFormProps) {
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
-      const response = await createUser.mutateAsync(data)
+      await createUser.mutateAsync(data)
       form.reset()
       toast.success("Usuário criado com sucesso!")
       if (onSuccess) {
@@ -73,10 +73,8 @@ export default function CreateUsersForm({ onSuccess }: CreateUsersFormProps) {
   }
 
   return (
-    <form
-      onSubmit={form.handleSubmit(onSubmit)}
-      className="flex flex-col gap-4 justify-start items-start"
-    >
+    <FormBody
+      onSubmit={form.handleSubmit(onSubmit)}>
       <FormInput
         control={form.control}
         name="name"
@@ -97,6 +95,6 @@ export default function CreateUsersForm({ onSuccess }: CreateUsersFormProps) {
         type="password"
       />
       <Button type="submit" className="mt-4">Salvar</Button>
-    </form>
+    </FormBody>
   )
 }

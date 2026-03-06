@@ -3,6 +3,16 @@ export enum EUserRole {
   USER = "user"
 }
 
+interface EUserRoleMapperType {
+  label: string,
+  variant: "default" | "secondary" | "destructive" | "outline"
+}
+
+export const eUserRoleMapper: Record<EUserRole, EUserRoleMapperType> = {
+  [EUserRole.ADMIN]: { label: "Admin", variant: "default" },
+  [EUserRole.USER]: { label: "Usuário", variant: "secondary" },
+}
+
 export interface IUser {
   id: string
   name: string

@@ -5,22 +5,13 @@ import { DataTable } from "../../../../../../components/tables/template/data-tab
 import { ptBR } from "date-fns/locale"
 import { format } from "date-fns"
 import { Button } from "../../../../../../components/ui/button"
-import { EyeIcon } from "lucide-react"
+import { Edit2Icon } from "lucide-react"
 import { useState } from "react"
 import { Avatar, AvatarFallback, AvatarImage } from "../../../../../../components/ui/avatar"
 import { Sheet, SheetBody, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "../../../../../../components/ui/sheet"
 import { Badge } from "../../../../../../components/ui/badge"
-import CreateUsersForm from "./create-users-form"
-
-interface IUser {
-  id: string
-  name: string
-  email: string
-  emailVerified: boolean
-  image?: string | null
-  createdAt: string | Date
-  updatedAt: string | Date
-}
+import UpdateUsersForm from "./update-users-form"
+import { EUserRole, eUserRoleMapper, IUser } from "@/models/user"
 
 interface Props {
   data?: IUser[]
@@ -34,6 +25,7 @@ export default function UsersTable({
   emptyMessage = "Nenhum usuário encontrado"
 }: Props) {
 
+  const [isSheetOpen, setIsSheetOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState<IUser | null>(null)
 
   function getColumns(): ColumnDef<IUser>[] {
@@ -80,11 +72,19 @@ export default function UsersTable({
         size: 120,
       },
       {
-        accessorKey: "createdAt",
-        header: () => <p className="text-center">Data Registro</p>,
-        cell: (row) => <p className="text-center text-sm">{format(new Date(row.getValue() as string), "dd/MM/yy", {
-          locale: ptBR
-        })}</p>,
+        accessorKey: "role",
+        header: () => <p className="text-center">Função</p>,
+        cell: (row) => {
+          const role = row.getValue() as EUserRole
+          const roleInfo = eUserRoleMapper[role]
+          return (
+            <div className="flex justify-center">
+              <Badge variant={roleInfo.variant}>
+                {roleInfo.label}
+              </Badge>
+            </div>
+          )
+        },
         size: 120,
       },
       {
@@ -99,9 +99,12 @@ export default function UsersTable({
                 <Button
                   variant="outline"
                   size="icon"
-                  onClick={() => setSelectedUser(user)}
+                  onClick={() => {
+                    setSelectedUser(user)
+                    setIsSheetOpen(true)
+                  }}
                 >
-                  <EyeIcon className="h-4 w-4" />
+                  <Edit2Icon className="h-4 w-4" />
                 </Button>
               </SheetTrigger>
             </div>
@@ -113,7 +116,7 @@ export default function UsersTable({
   }
 
   return (
-    <Sheet>
+    <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
       <SheetTrigger asChild className="w-full">
         <DataTable
           columns={getColumns()}
@@ -130,7 +133,7 @@ export default function UsersTable({
           </SheetDescription>
         </SheetHeader>
         <SheetBody>
-          <CreateUsersForm />
+          {selectedUser && <UpdateUsersForm user={selectedUser} onSuccess={() => setIsSheetOpen(false)} />}
         </SheetBody>
         <SheetFooter>
           <SheetClose asChild>

@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, HttpCode, NotImplementedException, Param, Post, Query } from '@nestjs/common'
+import { BadRequestException, Body, Controller, Get, HttpCode, NotImplementedException, Param, Post, Put, Query } from '@nestjs/common'
 import { UsersService } from './users.service'
 import { CreateUserInput } from "./dto/create-user.input"
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger"
@@ -8,6 +8,7 @@ import { EUserRole } from "./utils/user-role"
 import { UsersView } from "./dto/users.view"
 import { prismaUserToUserView } from "./utils"
 import { QueryUserInput } from "./dto/query-user.input"
+import { UpdateUserInput } from "./dto/update-user.input"
 
 @ApiTags('Users')
 @Controller('users')
@@ -57,8 +58,28 @@ export class UsersController {
   }
 
   @Get(':id')
+  @ApiOkResponse({ type: UsersView })
   @Roles([EUserRole.ADMIN])
   async getUser(@Param('id') id: string): Promise<UsersView> {
-    throw new NotImplementedException()
+    const user = await this.usersService.user({ id })
+
+    if (!user) {
+      throw new BadRequestException("User not found")
+    }
+
+    return new UsersView(prismaUserToUserView(user))
+  }
+
+  @Put(':id')
+  @ApiOkResponse({ type: UsersView })
+  @Roles([EUserRole.ADMIN])
+  async updateUser(@Param('id') id: string, @Body() input: UpdateUserInput): Promise<UsersView> {
+    const users = await this.usersService.updateUser({ where: { id }, data: input })
+
+    if (!users) {
+      throw new BadRequestException("User not found")
+    }
+
+    return new UsersView(prismaUserToUserView(users))
   }
 }
