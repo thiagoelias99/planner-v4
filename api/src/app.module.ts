@@ -17,6 +17,7 @@ import { NotificationsModule } from './notifications/notifications.module'
 import { AppApiKeyController } from "./app.api.controller"
 import { ApiKeyGuard } from "./guards/api-key.guard"
 import { TickersModule } from './assets/tickers/tickers.module'
+import { TickerOrdersModule } from './assets/ticker-orders/ticker-orders.module';
 
 @Module({
   imports: [
@@ -61,7 +62,8 @@ import { TickersModule } from './assets/tickers/tickers.module'
     HealthModule,
     AppAuthModule,
     NotificationsModule,
-    TickersModule
+    TickersModule,
+    TickerOrdersModule
   ],
   controllers: [AppController, AppApiKeyController],
   providers: [

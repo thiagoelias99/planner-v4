@@ -117,5 +117,23 @@ model Ticker {
   autoUpdate    Boolean? @default(false) @map("auto_update")
   updatedAt     DateTime @updatedAt @map("updated_at")
 
+  TickerOrders TickerOrder[]
+
   @@map("tickers")
+}
+
+model TickerOrder {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  ticker    String
+  type      String
+  quantity  Int
+  price     Decimal  @db.Decimal(10, 2)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  Ticker Ticker @relation(fields: [ticker], references: [symbol])
+
+  @@index([userId, ticker, type])
+  @@map("ticker_orders")
 }
