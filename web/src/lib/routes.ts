@@ -12,9 +12,7 @@ export enum EPages {
   // Protected Pages
   DASHBOARD = '/app/dashboard',
   USER_ACCOUNT = '/app/conta',
-  FILES = '/app/arquivos',
-  TEAM = '/app/equipe',
-  FORM = '/app/form',
+  ORDERS = '/app/ordens',
 
   // Admin Pages
   USERS = '/app/admin/usuarios',

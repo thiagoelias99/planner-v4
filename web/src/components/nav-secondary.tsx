@@ -8,9 +8,14 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { EPages } from "@/lib/routes"
-import { SettingsIcon } from "lucide-react"
+import { SettingsIcon, TicketsIcon } from "lucide-react"
 
 const items = [
+  {
+    title: "Ordens",
+    url: EPages.ORDERS,
+    icon: TicketsIcon,
+  },
   {
     title: "Configurações",
     url: EPages.USER_ACCOUNT,

@@ -5,7 +5,7 @@ import { NotificationsService } from "./notifications/notifications.service"
 @Injectable()
 export class CronService {
   constructor(
-    private readonly notificationsService: NotificationsService
+    // private readonly notificationsService: NotificationsService
   ) { }
 
   private readonly logger = new Logger(CronService.name);

@@ -17,7 +17,7 @@ import { NotificationsModule } from './notifications/notifications.module'
 import { AppApiKeyController } from "./app.api.controller"
 import { ApiKeyGuard } from "./guards/api-key.guard"
 import { TickersModule } from './assets/tickers/tickers.module'
-import { TickerOrdersModule } from './assets/ticker-orders/ticker-orders.module';
+import { TickerOrdersModule } from './assets/ticker-orders/ticker-orders.module'
 
 @Module({
   imports: [
@@ -47,21 +47,21 @@ import { TickerOrdersModule } from './assets/ticker-orders/ticker-orders.module'
       ]
     }),
     AuthModule.forRoot({ auth, enableRawBodyParser: true, }),
-    ScheduleModule.forRoot(),
-    BullModule.forRoot({
-      connection: {
-        host: process.env.REDIS_HOST,
-        port: Number(process.env.REDIS_PORT),
-        ...(process.env.REDIS_USERNAME && { username: process.env.REDIS_USERNAME }),
-        ...(process.env.REDIS_PASSWORD && { password: process.env.REDIS_PASSWORD }),
-      },
-      prefix: 'plannerv4'
-    }),
+    // ScheduleModule.forRoot(),
+    // BullModule.forRoot({
+    //   connection: {
+    //     host: process.env.REDIS_HOST,
+    //     port: Number(process.env.REDIS_PORT),
+    //     ...(process.env.REDIS_USERNAME && { username: process.env.REDIS_USERNAME }),
+    //     ...(process.env.REDIS_PASSWORD && { password: process.env.REDIS_PASSWORD }),
+    //   },
+    //   prefix: 'plannerv4'
+    // }),
     PrismaModule,
     UsersModule,
     HealthModule,
     AppAuthModule,
-    NotificationsModule,
+    // NotificationsModule,
     TickersModule,
     TickerOrdersModule
   ],

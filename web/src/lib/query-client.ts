@@ -6,4 +6,5 @@ export const queriesKeys = {
   users: "users",
   profile: "profile",
   tickers: "tickers",
+  tickerOrders: "tickerOrders",
 }

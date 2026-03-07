@@ -12,8 +12,6 @@ Ao criar uma nova funcionalidade CRUD, seguir esta ordem:
 6. **Componente de Busca/Filtros** → Criar search em `_components/`
 7. **Página Principal** → Montar tudo em `page.tsx`
 
----
-
 ## Modelos e Tipos
 
 - Criar arquivo em **web/src/models/** com interfaces TypeScript correspondentes aos DTOs da API
@@ -21,43 +19,10 @@ Ao criar uma nova funcionalidade CRUD, seguir esta ordem:
 - Criar mappers para tradução e estilização (ex: badges variants)
 - Exemplo: **web/src/models/user.ts** e **web/src/models/ticker.ts**
 
-```typescript
-export interface IEntity {
-  id: string;
-  name: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export enum EEntityType {
-  TYPE_A = "TYPE_A",
-  TYPE_B = "TYPE_B",
-}
-
-export const eEntityTypeMapper: Record<
-  EEntityType,
-  { label: string; variant: "default" | "secondary" }
-> = {
-  [EEntityType.TYPE_A]: { label: "Tipo A", variant: "default" },
-  [EEntityType.TYPE_B]: { label: "Tipo B", variant: "secondary" },
-};
-```
-
----
-
 ## Query Keys
 
 - Adicionar chave no objeto **queriesKeys** em **web/src/lib/query-client.ts**
 - Use nomes no singular para manter consistência
-
-```typescript
-export const queriesKeys = {
-  users: "users",
-  tickers: "tickers",
-};
-```
-
----
 
 ## Hooks React Query
 
@@ -67,39 +32,6 @@ export const queriesKeys = {
 - Sempre usar `queryClient.invalidateQueries` no `onSuccess` das mutações
 - Usar `keepPreviousData` para melhor UX durante paginação
 - Exemplos: **web/src/hooks/query/use-users.ts**, **web/src/hooks/query/use-tickers.ts**
-
-```typescript
-export const useEntities = (params?: IQueryParams) => {
-  const queryClient = useQueryClient();
-
-  const query = useQuery({
-    queryKey: [queriesKeys.entities, params],
-    queryFn: async () => {
-      const response = await apiClient.get<IPaginatedData<IEntity>>(
-        "/entities",
-        { params },
-      );
-      return response.data;
-    },
-    refetchOnWindowFocus: true,
-    placeholderData: keepPreviousData,
-  });
-
-  const createEntity = useMutation({
-    mutationFn: async (data: ICreateInput) => {
-      const response = await apiClient.post<IEntity>("/entities", data);
-      return response.data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [queriesKeys.entities] });
-    },
-  });
-
-  return { ...query, createEntity };
-};
-```
-
----
 
 ## Formulários
 
@@ -112,43 +44,6 @@ export const useEntities = (params?: IQueryParams) => {
 - Após sucesso, chamar callback `onSuccess` para fechar modais/sheets
 - Exemplos: **web/src/app/app/(protected)/admin/usuarios/\_components/create-users-form.tsx**
 
-```typescript
-const formSchema = z.object({
-  name: z.string().min(2, "Mínimo 2 caracteres"),
-  price: z.string().optional(), // Para campos numéricos em inputs text
-});
-
-async function onSubmit(data: z.infer<typeof formSchema>) {
-  try {
-    const submitData = {
-      ...data,
-      price: data.price ? parseFloat(data.price) : undefined, // Converter para number
-    };
-    await createEntity.mutateAsync(submitData);
-    form.reset();
-    toast.success("Criado com sucesso!");
-    if (onSuccess) onSuccess(data);
-  } catch (error) {
-    // Tratamento de erros específicos
-    if (error instanceof AxiosError) {
-      const messages = error?.response?.data?.message;
-      const errorMessages = Array.isArray(messages)
-        ? messages
-        : [messages].filter(Boolean);
-
-      if (errorMessages.some((msg) => msg.toLowerCase().includes("email"))) {
-        form.setError("email", { message: "E-mail já está em uso" });
-        return;
-      }
-
-      toast.error(errorMessages.join("\n"));
-    }
-  }
-}
-```
-
----
-
 ## Tabelas
 
 - Criar um componente customizado da **web/src/components/tables/template/data-table.tsx** adaptando a exibição das colunas
@@ -156,41 +51,6 @@ async function onSubmit(data: z.infer<typeof formSchema>) {
 - Para badges de status/tipo, usar os mappers criados nos modelos
 - Para formatação de valores (moeda, data), usar `Intl.NumberFormat` e `date-fns`
 - Exemplo: **web/src/app/app/(protected)/admin/usuarios/\_components/users-table.tsx** e **tickers-table.tsx**
-
-```typescript
-// Exemplo de coluna com badge
-{
-  accessorKey: "type",
-  header: () => <p className="text-center">Tipo</p>,
-  cell: (row) => {
-    const type = row.getValue() as EEntityType
-    const typeInfo = eEntityTypeMapper[type]
-    return (
-      <div className="flex justify-center">
-        <Badge variant={typeInfo.variant}>
-          {typeInfo.label}
-        </Badge>
-      </div>
-    )
-  },
-}
-
-// Exemplo de coluna com formatação de moeda
-{
-  accessorKey: "price",
-  header: () => <p className="text-end">Preço</p>,
-  cell: (row) => {
-    const price = row.getValue() as number
-    return (
-      <p className="text-end font-semibold">
-        {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(price)}
-      </p>
-    )
-  },
-}
-```
-
----
 
 ## Paginação e Filtros
 
@@ -202,32 +62,6 @@ async function onSubmit(data: z.infer<typeof formSchema>) {
 - Implementar `hasActiveFilters` para mostrar botão de limpar apenas quando necessário
 - Exemplo: **web/src/app/app/(protected)/admin/usuarios/\_components/users-search.tsx**
 
-```typescript
-const [params, setParams] = useQueryStates({
-  page: parseAsInteger.withDefault(1),
-  limit: parseAsInteger.withDefault(16),
-  search: parseAsString.withDefault(""),
-  type: parseAsString.withDefault("all"),
-  orderBy: parseAsString.withDefault("name"),
-  order: parseAsString.withDefault("asc")
-})
-
-// Converter "all" para undefined ao enviar para API
-const { data } = useEntities({
-  page: params.page,
-  limit: params.limit,
-  search: params.search || undefined,
-  type: params.type !== "all" ? params.type : undefined,
-  orderBy: params.orderBy,
-  order: params.order
-})
-
-// Ao mudar filtro, resetar página para 1
-onTypeChange={(value) => setParams({ type: value, page: 1 })}
-```
-
----
-
 ## Página Principal
 
 - Estrutura padrão: Container > Ações (Sheets/Botões) > Busca/Filtros > Tabela > Paginação
@@ -235,52 +69,6 @@ onTypeChange={(value) => setParams({ type: value, page: 1 })}
 - Para ações especiais (auto-update, sync, etc), criar mutações específicas nos hooks
 - Mostrar loading/disabled states durante mutações
 - Exemplo: **web/src/app/app/(protected)/admin/usuarios/page.tsx** e **tickers/page.tsx**
-
-```typescript
-export default function EntitiesPage() {
-  const [isSheetOpen, setIsSheetOpen] = useState(false)
-  const [params, setParams] = useQueryStates({ /* ... */ })
-
-  const { data, specialAction } = useEntities(params)
-
-  const handleSpecialAction = async () => {
-    try {
-      await specialAction.mutateAsync()
-      toast.success("Ação executada com sucesso!")
-    } catch (error) {
-      toast.error("Erro ao executar ação")
-    }
-  }
-
-  return (
-    <Container>
-      {/* Botões de ação */}
-      <div className="flex gap-2 w-fit self-end">
-        <Button onClick={handleSpecialAction} disabled={specialAction.isPending}>
-          Ação Especial
-        </Button>
-        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-          <SheetTrigger asChild>
-            <Button><PlusIcon /> Novo</Button>
-          </SheetTrigger>
-          {/* Sheet content */}
-        </Sheet>
-      </div>
-
-      {/* Busca e filtros */}
-      <EntitiesSearch {...searchProps} />
-
-      {/* Tabela */}
-      <EntitiesTable data={paginatedData.data} isLoading={!data} />
-
-      {/* Paginação */}
-      <DataTablePagination {...paginationProps} />
-    </Container>
-  )
-}
-```
-
----
 
 ## Convenções de Nomenclatura
 
@@ -294,8 +82,6 @@ export default function EntitiesPage() {
 - **Interfaces**: prefixo `I` (ex: `IEntity`)
 - **Enums**: prefixo `E` (ex: `EEntityType`)
 - **Mappers de enum**: sufixo `Mapper` (ex: `eEntityTypeMapper`)
-
----
 
 ## Boas Práticas
 
