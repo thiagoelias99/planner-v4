@@ -89,6 +89,40 @@ CREATE TABLE "apikey" (
     CONSTRAINT "apikey_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "tickers" (
+    "id" TEXT NOT NULL,
+    "symbol" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "type" TEXT NOT NULL,
+    "price" DECIMAL(10,2) NOT NULL,
+    "change" DECIMAL(10,2) DEFAULT 0,
+    "change_percent" DECIMAL(4,3) DEFAULT 0,
+    "auto_update" BOOLEAN DEFAULT false,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "tickers_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ticker_orders" (
+    "id" TEXT NOT NULL,
+    "user_id" TEXT NOT NULL,
+    "ticker" TEXT NOT NULL,
+    "type" TEXT NOT NULL,
+    "quantity" INTEGER NOT NULL,
+    "price" DECIMAL(10,2) NOT NULL,
+    "previous_mean_price" DECIMAL(10,2) NOT NULL,
+    "previous_total_quantity" INTEGER NOT NULL,
+    "new_mean_price" DECIMAL(10,2) NOT NULL,
+    "new_total_quantity" INTEGER NOT NULL,
+    "gain_loss" DECIMAL(10,2) NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "ticker_orders_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "user_email_key" ON "user"("email");
 
@@ -113,8 +147,17 @@ CREATE INDEX "apikey_referenceId_idx" ON "apikey"("referenceId");
 -- CreateIndex
 CREATE INDEX "apikey_key_idx" ON "apikey"("key");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "tickers_symbol_key" ON "tickers"("symbol");
+
+-- CreateIndex
+CREATE INDEX "ticker_orders_user_id_ticker_type_idx" ON "ticker_orders"("user_id", "ticker", "type");
+
 -- AddForeignKey
 ALTER TABLE "session" ADD CONSTRAINT "session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "account" ADD CONSTRAINT "account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ticker_orders" ADD CONSTRAINT "ticker_orders_ticker_fkey" FOREIGN KEY ("ticker") REFERENCES "tickers"("symbol") ON DELETE RESTRICT ON UPDATE CASCADE;
