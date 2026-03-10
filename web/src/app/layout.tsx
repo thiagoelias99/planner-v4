@@ -18,8 +18,8 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Next.js 16 Starter",
-  description: "A starter template for Next.js 16 with TypeScript and Tailwind CSS.",
+  title: "TE Planner",
+  description: "Planeje seu dia a dia de forma eficiente.",
 }
 
 export default function RootLayout({
@@ -29,6 +29,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
+      <head>
+        <meta name="apple-mobile-web-app-title" content="TE Planner" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} min-h-screen antialiased`}
       >

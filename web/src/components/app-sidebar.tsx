@@ -39,7 +39,7 @@ export function AppSidebar({ sessionUser, ...props }: AppSidebarProps) {
                   alt="Logo"
                   className=""
                 />
-                <span className="text-base font-semibold">Logoipsum</span>
+                <span className="text-base font-semibold">TE Planner</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
