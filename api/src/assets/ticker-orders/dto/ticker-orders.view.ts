@@ -12,6 +12,11 @@ export interface ITickerOrderView {
   type: ETickerOrderType
   quantity: number
   price: number
+  previousMeanPrice: number
+  previousTotalQuantity: number
+  gainLoss: number
+  newMeanPrice: number
+  newTotalQuantity: number
   createdAt: Date
   updatedAt: Date
 }
@@ -41,6 +46,21 @@ export class TickerOrderView implements ITickerOrderView {
 
   @ApiProperty({ example: 40.92 })
   price: number
+
+  @ApiProperty({ example: 40.92 })
+  previousMeanPrice: number
+
+  @ApiProperty({ example: 100 })
+  previousTotalQuantity: number
+
+  @ApiProperty({ example: 50.5 })
+  gainLoss: number
+
+  @ApiProperty({ example: 42.0 })
+  newMeanPrice: number
+
+  @ApiProperty({ example: 150 })
+  newTotalQuantity: number
 
   @ApiProperty({ example: new Date() })
   createdAt: Date

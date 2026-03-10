@@ -123,14 +123,19 @@ model Ticker {
 }
 
 model TickerOrder {
-  id        String   @id @default(cuid())
-  userId    String   @map("user_id")
-  ticker    String
-  type      String
-  quantity  Int
-  price     Decimal  @db.Decimal(10, 2)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id                    String   @id @default(cuid())
+  userId                String   @map("user_id")
+  ticker                String
+  type                  String
+  quantity              Int
+  price                 Decimal  @db.Decimal(10, 2)
+  previousMeanPrice     Decimal  @map("previous_mean_price") @db.Decimal(10, 2)
+  previousTotalQuantity Int      @map("previous_total_quantity")
+  newMeanPrice          Decimal  @map("new_mean_price") @db.Decimal(10, 2)
+  newTotalQuantity      Int      @map("new_total_quantity")
+  gainLoss              Decimal  @map("gain_loss") @db.Decimal(10, 2)
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
 
   Ticker Ticker @relation(fields: [ticker], references: [symbol])
 

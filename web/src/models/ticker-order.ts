@@ -20,6 +20,11 @@ export interface ITickerOrder {
   type: ETickerOrderType
   quantity: number
   price: number
+  previousMeanPrice: number
+  previousTotalQuantity: number
+  gainLoss: number
+  newMeanPrice: number
+  newTotalQuantity: number
   createdAt: Date
   updatedAt: Date
 }

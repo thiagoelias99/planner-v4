@@ -9,6 +9,11 @@ export function prismaTickerOrderToTickerOrderView(tickerOrder: TickerOrder): Ti
     type: tickerOrder.type as ETickerOrderType,
     quantity: tickerOrder.quantity,
     price: Number(tickerOrder.price),
+    previousMeanPrice: Number(tickerOrder.previousMeanPrice),
+    previousTotalQuantity: tickerOrder.previousTotalQuantity,
+    gainLoss: Number(tickerOrder.gainLoss),
+    newMeanPrice: Number(tickerOrder.newMeanPrice),
+    newTotalQuantity: tickerOrder.newTotalQuantity,
     createdAt: tickerOrder.createdAt,
     updatedAt: tickerOrder.updatedAt,
   })

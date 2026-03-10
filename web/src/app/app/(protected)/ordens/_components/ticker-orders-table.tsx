@@ -93,6 +93,74 @@ export default function TickerOrdersTable({
         size: 140,
       },
       {
+        accessorKey: "previousMeanPrice",
+        header: () => <p className="text-end">PM Anterior</p>,
+        cell: (row) => {
+          const price = row.getValue() as number
+          return (
+            <p className="text-end text-sm text-muted-foreground">
+              {new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              }).format(price)}
+            </p>
+          )
+        },
+        size: 130,
+      },
+      {
+        accessorKey: "previousTotalQuantity",
+        header: () => <p className="text-end">Qtd Anterior</p>,
+        cell: (row) => {
+          const quantity = row.getValue() as number
+          return <p className="text-end text-sm text-muted-foreground">{quantity}</p>
+        },
+        size: 120,
+      },
+      {
+        accessorKey: "gainLoss",
+        header: () => <p className="text-end">Ganho/Perda</p>,
+        cell: (row) => {
+          const gainLoss = row.getValue() as number
+          const isPositive = gainLoss >= 0
+          return (
+            <p className={`text-end font-medium ${isPositive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+              {new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+                signDisplay: 'always'
+              }).format(gainLoss)}
+            </p>
+          )
+        },
+        size: 140,
+      },
+      {
+        accessorKey: "newMeanPrice",
+        header: () => <p className="text-end">Novo PM</p>,
+        cell: (row) => {
+          const price = row.getValue() as number
+          return (
+            <p className="text-end font-medium">
+              {new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              }).format(price)}
+            </p>
+          )
+        },
+        size: 130,
+      },
+      {
+        accessorKey: "newTotalQuantity",
+        header: () => <p className="text-end">Nova Qtd</p>,
+        cell: (row) => {
+          const quantity = row.getValue() as number
+          return <p className="text-end font-medium">{quantity}</p>
+        },
+        size: 120,
+      },
+      {
         accessorKey: "createdAt",
         header: () => <p className="text-center">Criado em</p>,
         cell: (row) => {
