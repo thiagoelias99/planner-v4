@@ -24,6 +24,9 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
+  TickerOrders TickerOrder[]
+  FixedIncomes FixedIncome[]
+
   @@unique([email])
   @@map("user")
 }
@@ -138,8 +141,29 @@ model TickerOrder {
   createdAt             DateTime @default(now()) @map("created_at")
   updatedAt             DateTime @updatedAt @map("updated_at")
 
+  User   User   @relation(fields: [userId], references: [id])
   Ticker Ticker @relation(fields: [ticker], references: [symbol])
 
   @@index([userId, ticker, type])
   @@map("ticker_orders")
+}
+
+model FixedIncome {
+  id                String    @id @default(cuid())
+  userId            String    @map("user_id")
+  description       String
+  agency            String?
+  note              String?
+  initialInvestment Decimal   @map("initial_investment") @db.Decimal(10, 2)
+  currentValue      Decimal   @map("current_value") @db.Decimal(10, 2)
+  date              DateTime  @map("date")
+  dueDate           DateTime  @map("due_date")
+  fixedRate         Decimal   @default(0) @map("fixed_rate") @db.Decimal(10, 2)
+  posFixedIndex     String    @default("NONE") @map("pos_fixed_index")
+  retrievedAt       DateTime? @map("retrieved_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  User User @relation(fields: [userId], references: [id])
+
+  @@map("fixed_incomes")
 }
