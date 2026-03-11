@@ -23,7 +23,13 @@ RUN apt-get update -y && apt-get install -y openssl
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# build nest
+# prisma precisa de DATABASE_URL para gerar client
+ENV DATABASE_URL="postgresql://user:pass@localhost:5432/db"
+
+# gera client com tipos
+RUN npx prisma generate
+
+# build do nest
 RUN npm run build
 
 # -------------------------
@@ -44,9 +50,9 @@ RUN npm ci --omit=dev
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
 
-# gera prisma client no ambiente final
+# gera engine correto no runtime
 RUN npx prisma generate
 
 EXPOSE 3333
 
-CMD ["node", "dist/main.js"]
+CMD ["node", "dist/src/main.js"]
