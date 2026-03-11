@@ -17,6 +17,11 @@ const items = [
     icon: TicketsIcon,
   },
   {
+    title: "Renda Fixa",
+    url: EPages.FIXED_INCOMES,
+    icon: TicketsIcon,
+  },
+  {
     title: "Configurações",
     url: EPages.USER_ACCOUNT,
     icon: SettingsIcon,

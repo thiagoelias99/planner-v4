@@ -13,6 +13,7 @@ export enum EPages {
   DASHBOARD = '/app/dashboard',
   USER_ACCOUNT = '/app/conta',
   ORDERS = '/app/ordens',
+  FIXED_INCOMES = '/app/renda-fixa',
 
   // Admin Pages
   USERS = '/app/admin/usuarios',

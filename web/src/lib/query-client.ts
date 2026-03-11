@@ -7,4 +7,5 @@ export const queriesKeys = {
   profile: "profile",
   tickers: "tickers",
   tickerOrders: "tickerOrders",
+  fixedIncome: "fixedIncome",
 }
