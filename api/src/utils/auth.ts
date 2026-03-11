@@ -12,7 +12,7 @@ export const auth = betterAuth({
   database: prismaAdapter(PrismaService.getInstance(), {
     provider: "postgresql",
   }),
-  trustedOrigins: ["http://localhost:3000"],
+  trustedOrigins: process.env.ALLOWED_ORIGINS?.split(';').filter(origin => origin.trim()) || ["http://localhost:3000"],
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: false,
