@@ -21,6 +21,11 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# env fake para prisma generate
+ENV DATABASE_URL="postgresql://user:pass@localhost:5432/db"
+
+RUN npx prisma generate
+
 RUN npm run build
 
 # -------------------------
@@ -38,8 +43,8 @@ RUN npm ci --omit=dev
 
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
-
-RUN npx prisma generate
+COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
 EXPOSE 3333
 
