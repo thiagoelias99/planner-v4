@@ -1,44 +1,50 @@
-# -------------------------
-# STAGE 1 — DEPENDENCIES
-# -------------------------
-FROM node:24-alpine AS deps
+# syntax=docker/dockerfile:1
 
-WORKDIR /app
+# Stage 1: Builder
+FROM node:20-alpine AS builder
 RUN apk add --no-cache libc6-compat
-
-COPY package*.json ./
-RUN npm install
-
-# -------------------------
-# STAGE 2 — BUILDER
-# -------------------------
-FROM node:24-alpine AS builder
-
 WORKDIR /app
 
-COPY --from=deps /app/node_modules ./node_modules
+# Copy package files
+COPY package.json package-lock.json* ./
+
+# Install all dependencies (including devDependencies for build)
+RUN npm ci
+
+# Copy source code
 COPY . .
 
-# Build Next.js
+# Set environment variables for build
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
+
+# Build the application
 RUN npm run build
 
-# -------------------------
-# STAGE 3 — RUNNER
-# -------------------------
-FROM node:24-alpine AS runner
-
+# Stage 2: Runner
+FROM node:20-alpine AS runner
 WORKDIR /app
+
+# Set environment
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 
-# Copia build e node_modules
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Copy necessary files from builder
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/package.json ./
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+# Switch to non-root user
+USER nextjs
+
+# Expose port
 EXPOSE 3000
 
-# Executa migrações antes do server
-CMD node server.js
+# Start the application
+CMD ["node", "server.js"]
