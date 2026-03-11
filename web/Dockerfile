@@ -41,4 +41,4 @@ COPY --from=builder /app/.next/static ./.next/static
 EXPOSE 3000
 
 # Executa migrações antes do server
-CMD npx prisma migrate deploy && node server.js
+CMD node server.js
