@@ -15,10 +15,14 @@ const formSchema = z.object({
     .min(2, "O nome deve conter pelo menos 2 caracteres.")
     .max(100, "O nome deve conter no máximo 100 caracteres.")
     .optional(),
-  type: z.nativeEnum(ETickerType, {
+  type: z.enum(ETickerType, {
     message: "Selecione um tipo válido.",
   }).optional(),
-  price: z.string().optional(),
+  price: z.string()
+    .refine((value) => {
+      const num = parseFloat(value.replace(",", "."))
+      return !isNaN(num) && num >= 0
+    }, "O preço deve ser um número positivo.").optional(),
   autoUpdate: z.boolean().optional(),
 })
 
@@ -36,7 +40,7 @@ export default function UpdateTickersForm({ ticker, onSuccess }: UpdateTickersFo
     defaultValues: {
       name: ticker.name,
       type: ticker.type,
-      price: ticker.price?.toString(),
+      price: ticker.price?.toString().replace(".", ","),
       autoUpdate: ticker.autoUpdate,
     },
   })
@@ -47,7 +51,7 @@ export default function UpdateTickersForm({ ticker, onSuccess }: UpdateTickersFo
       const submitData: { name?: string; type?: ETickerType; price?: number; autoUpdate?: boolean } = {
         name: data.name,
         type: data.type,
-        price: data.price && data.price !== "" ? parseFloat(data.price) : undefined,
+        price: data.price && data.price !== "" ? parseFloat(data.price.replace(",", ".")) : undefined,
         autoUpdate: data.autoUpdate,
       }
       await updateTicker.mutateAsync(submitData)

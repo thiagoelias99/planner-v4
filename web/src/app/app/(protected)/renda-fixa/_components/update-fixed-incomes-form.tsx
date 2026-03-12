@@ -1,6 +1,6 @@
 "use client"
 
-import { FormBody, FormInput, FormSelect, FormTextarea } from "@/components/form"
+import { FormBody, FormCurrencyInput, FormInput, FormPercentageInput, FormSelect, FormTextarea } from "@/components/form"
 import { Button } from "@/components/ui/button"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AxiosError } from "axios"
@@ -22,12 +22,24 @@ const formSchema = z.object({
   note: z.string()
     .max(500, "As observações devem conter no máximo 500 caracteres.")
     .optional(),
-  initialInvestment: z.string().optional(),
-  currentValue: z.string().optional(),
+  initialInvestment: z.string()
+    .refine((value) => {
+      const num = parseFloat(value.replace(",", "."))
+      return !isNaN(num) && num >= 0
+    }, "O preço deve ser um número positivo.").optional(),
+  currentValue: z.string()
+    .refine((value) => {
+      const num = parseFloat(value.replace(",", "."))
+      return !isNaN(num) && num >= 0
+    }, "O preço deve ser um número positivo.").optional(),
   date: z.string().optional(),
   dueDate: z.string().optional(),
-  fixedRate: z.string().optional(),
-  posFixedIndex: z.nativeEnum(EPosFixedIndex, {
+  fixedRate: z.string()
+    .refine((value) => {
+      const num = parseFloat(value.replace(",", "."))
+      return !isNaN(num) && num >= 0
+    }, "O preço deve ser um número positivo.").optional(),
+  posFixedIndex: z.enum(EPosFixedIndex, {
     message: "Selecione um índice válido.",
   }).optional(),
   retrievedAt: z.string().optional(),
@@ -77,11 +89,11 @@ export default function UpdateFixedIncomesForm({ fixedIncome, onSuccess }: Updat
       if (data.description) submitData.description = data.description
       if (data.agency) submitData.agency = data.agency
       if (data.note) submitData.note = data.note
-      if (data.initialInvestment) submitData.initialInvestment = parseFloat(data.initialInvestment)
-      if (data.currentValue) submitData.currentValue = parseFloat(data.currentValue)
+      if (data.initialInvestment) submitData.initialInvestment = parseFloat(data.initialInvestment.replace(",", "."))
+      if (data.currentValue) submitData.currentValue = parseFloat(data.currentValue.replace(",", "."))
       if (data.date) submitData.date = new Date(data.date).toISOString()
       if (data.dueDate) submitData.dueDate = new Date(data.dueDate).toISOString()
-      if (data.fixedRate) submitData.fixedRate = parseFloat(data.fixedRate)
+      if (data.fixedRate) submitData.fixedRate = parseFloat(data.fixedRate.replace(",", "."))
       if (data.posFixedIndex) submitData.posFixedIndex = data.posFixedIndex
       if (data.retrievedAt) submitData.retrievedAt = new Date(data.retrievedAt).toISOString()
 
@@ -125,13 +137,13 @@ export default function UpdateFixedIncomesForm({ fixedIncome, onSuccess }: Updat
         placeholder="Ex: Liquidez D+1"
       />
       <div className="grid grid-cols-2 gap-4">
-        <FormInput
+        <FormCurrencyInput
           control={form.control}
           name="initialInvestment"
           label="Valor Inicial (R$)"
           placeholder="Ex: 10000.00"
         />
-        <FormInput
+        <FormCurrencyInput
           control={form.control}
           name="currentValue"
           label="Valor Atual (R$)"
@@ -150,8 +162,8 @@ export default function UpdateFixedIncomesForm({ fixedIncome, onSuccess }: Updat
           label="Data de Vencimento"
         />
       </div>
-      <div className="grid grid-cols-2 gap-4">
-        <FormInput
+      <div className="grid grid-cols-2 gap-4 w-full">
+        <FormPercentageInput
           control={form.control}
           name="fixedRate"
           label="Taxa Fixa (%)"

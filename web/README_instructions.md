@@ -44,6 +44,14 @@ Ao criar uma nova funcionalidade CRUD, seguir esta ordem:
 - Após sucesso, chamar callback `onSuccess` para fechar modais/sheets
 - Exemplos: **web/src/app/app/(protected)/admin/usuarios/\_components/create-users-form.tsx**
 
+### Campos disponíveis
+
+Os arquivos dos componentes podem ter algumas observações inclusas.
+
+- **FormBody** - Utilizar como layout principal do formulário.
+- **FormCurrencyInput** - Utilizar para campos monetários.
+- **FormPercentageInput** - Utilizar para campos de porcentagem.
+
 ## Tabelas
 
 - Criar um componente customizado da **web/src/components/tables/template/data-table.tsx** adaptando a exibição das colunas

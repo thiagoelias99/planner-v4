@@ -1,6 +1,6 @@
 "use client"
 
-import { FormBody, FormInput, FormSelect, FormTextarea } from "@/components/form"
+import { FormBody, FormCurrencyInput, FormInput, FormSelect, FormTextarea } from "@/components/form"
 import { Button } from "@/components/ui/button"
 import { useFixedIncomes } from "@/hooks/query/use-fixed-incomes"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -22,9 +22,15 @@ const formSchema = z.object({
     .max(500, "As observações devem conter no máximo 500 caracteres.")
     .optional(),
   initialInvestment: z.string()
-    .min(1, "O valor inicial é obrigatório."),
+    .refine((value) => {
+      const num = parseFloat(value.replace(",", "."))
+      return !isNaN(num) && num >= 0
+    }, "O preço deve ser um número positivo."),
   currentValue: z.string()
-    .min(1, "O valor atual é obrigatório."),
+    .refine((value) => {
+      const num = parseFloat(value.replace(",", "."))
+      return !isNaN(num) && num >= 0
+    }, "O preço deve ser um número positivo."),
   date: z.string()
     .min(1, "A data de início é obrigatória."),
   dueDate: z.string()
@@ -70,11 +76,11 @@ export default function CreateFixedIncomesForm({ onSuccess }: CreateFixedIncomes
         description: data.description,
         agency: data.agency || undefined,
         note: data.note || undefined,
-        initialInvestment: parseFloat(data.initialInvestment),
-        currentValue: parseFloat(data.currentValue),
+        initialInvestment: parseFloat(data.initialInvestment.replace(",", ".")),
+        currentValue: parseFloat(data.currentValue.replace(",", ".")),
         date: new Date(data.date).toISOString(),
         dueDate: new Date(data.dueDate).toISOString(),
-        fixedRate: parseFloat(data.fixedRate),
+        fixedRate: parseFloat(data.fixedRate.replace(",", ".")),
         posFixedIndex: data.posFixedIndex,
         retrievedAt: data.retrievedAt ? new Date(data.retrievedAt).toISOString() : undefined,
       }
@@ -119,13 +125,13 @@ export default function CreateFixedIncomesForm({ onSuccess }: CreateFixedIncomes
         label="Observações"
         placeholder="Ex: Liquidez D+1"
       />
-      <FormInput
+      <FormCurrencyInput
         control={form.control}
         name="initialInvestment"
         label="Valor Inicial (R$)"
         placeholder="Ex: 10000.00"
       />
-      <FormInput
+      <FormCurrencyInput
         control={form.control}
         name="currentValue"
         label="Valor Atual (R$)"

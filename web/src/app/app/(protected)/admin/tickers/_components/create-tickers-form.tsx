@@ -1,6 +1,6 @@
 "use client"
 
-import { FormBody, FormInput, FormSelect } from "@/components/form"
+import { FormBody, FormCurrencyInput, FormInput, FormSelect } from "@/components/form"
 import { Button } from "@/components/ui/button"
 import { useTickers } from "@/hooks/query/use-tickers"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -18,10 +18,14 @@ const formSchema = z.object({
   name: z.string()
     .min(2, "O nome deve conter pelo menos 2 caracteres.")
     .max(100, "O nome deve conter no máximo 100 caracteres."),
-  type: z.nativeEnum(ETickerType, {
+  type: z.enum(ETickerType, {
     message: "Selecione um tipo válido.",
   }),
-  price: z.string().optional(),
+  price: z.string()
+    .refine((value) => {
+      const num = parseFloat(value.replace(",", "."))
+      return !isNaN(num) && num >= 0
+    }, "O preço deve ser um número positivo.").optional(),
 })
 
 export type CreateTickerFormData = z.infer<typeof formSchema>
@@ -49,7 +53,7 @@ export default function CreateTickersForm({ onSuccess }: CreateTickersFormProps)
         symbol: data.symbol,
         name: data.name,
         type: data.type,
-        price: data.price && data.price !== "" ? parseFloat(data.price) : undefined,
+        price: data.price && data.price !== "" ? parseFloat(data.price.replace(",", ".")) : undefined,
       }
       await createTicker.mutateAsync(submitData)
       form.reset()
@@ -112,7 +116,7 @@ export default function CreateTickersForm({ onSuccess }: CreateTickersFormProps)
           { label: "Internacional", value: ETickerType.INTERNATIONAL },
         ]}
       />
-      <FormInput
+      <FormCurrencyInput
         control={form.control}
         name="price"
         label="Preço (opcional)"

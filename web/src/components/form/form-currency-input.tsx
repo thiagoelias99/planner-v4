@@ -2,6 +2,33 @@ import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui
 import { Input } from "@/components/ui/input"
 import { Controller, Control, FieldValues, Path } from "react-hook-form"
 
+/**
+ * Exemplo de validação com ZOD (numero positivo, incluindo 0.00)
+ *   price: z.string()
+     .refine((value) => {
+       const num = parseFloat(value.replace(",", "."))
+       return !isNaN(num) && num >= 0
+     }, "O preço deve ser um número positivo.")
+
+  * Exemplo de conversão no onSubmit (substituir , por . antes de converter para número)
+      async function onSubmit(data: z.infer<typeof formSchema>) {
+        try {
+          // Convert strings to numbers
+          const submitData = {
+            price: parseFloat(data.price.replace(",", ".")),
+          }
+          await createTickerOrder.mutateAsync(submitData)
+          form.reset()
+          toast.success("Ordem criada com sucesso!")
+          if (onSuccess) {
+            onSuccess(data)
+          }
+        } catch (error) {
+          // Handle errors...
+        }
+      }
+ */
+
 interface FormCurrencyInputProps<T extends FieldValues> {
   control: Control<T>
   name: Path<T>
@@ -48,7 +75,7 @@ export function FormCurrencyInput<T extends FieldValues>({
               type="number"
               aria-invalid={fieldState.invalid}
               placeholder={placeholder}
-              onChange={(e) => field.onChange(Number(e.target.value))}
+              onChange={(e) => field.onChange((e.target.value))}
               step={step}
               min={min}
               max={max}

@@ -1,6 +1,6 @@
 "use client"
 
-import { FormBody, FormInput, FormSelect } from "@/components/form"
+import { FormBody, FormCurrencyInput, FormInput, FormSelect } from "@/components/form"
 import { Button } from "@/components/ui/button"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AxiosError } from "axios"
@@ -24,8 +24,10 @@ const formSchema = z.object({
     .regex(/^\d+$/, "A quantidade deve ser um número inteiro positivo.")
     .optional(),
   price: z.string()
-    .regex(/^\d+(\.\d+)?$/, "O preço deve ser um número positivo.")
-    .optional(),
+    .refine((value) => {
+      const num = parseFloat(value.replace(",", "."))
+      return !isNaN(num) && num >= 0
+    }, "O preço deve ser um número positivo."),
 })
 
 export type UpdateTickerOrderFormData = z.infer<typeof formSchema>
@@ -60,7 +62,7 @@ export default function UpdateTickerOrdersForm({ tickerOrder, onSuccess, onDelet
 
       if (data.type) submitData.type = data.type
       if (data.quantity) submitData.quantity = parseInt(data.quantity)
-      if (data.price) submitData.price = parseFloat(data.price)
+      if (data.price) submitData.price = parseFloat(data.price.replace(",", "."))
 
       await updateTickerOrder.mutateAsync(submitData)
       toast.success("Ordem atualizada com sucesso!")
@@ -141,7 +143,7 @@ export default function UpdateTickerOrdersForm({ tickerOrder, onSuccess, onDelet
         label="Quantidade"
         placeholder="Ex: 100"
       />
-      <FormInput
+      <FormCurrencyInput
         control={form.control}
         name="price"
         label="Preço"

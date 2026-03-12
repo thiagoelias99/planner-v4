@@ -1,6 +1,6 @@
 "use client"
 
-import { FormBody, FormInput, FormSelect } from "@/components/form"
+import { FormBody, FormCurrencyInput, FormInput, FormSelect } from "@/components/form"
 import { Button } from "@/components/ui/button"
 import { useTickerOrders } from "@/hooks/query/use-ticker-orders"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -15,15 +15,17 @@ const formSchema = z.object({
     .min(1, "O ticker é obrigatório.")
     .max(20, "O ticker deve conter no máximo 20 caracteres.")
     .regex(/^[A-Za-z0-9]+$/, "O ticker deve conter apenas letras e números sem espaços."),
-  type: z.nativeEnum(ETickerOrderType, {
+  type: z.enum(ETickerOrderType, {
     message: "Selecione um tipo válido.",
   }),
   quantity: z.string()
     .min(1, "A quantidade é obrigatória.")
     .regex(/^\d+$/, "A quantidade deve ser um número inteiro positivo."),
   price: z.string()
-    .min(1, "O preço é obrigatório.")
-    .regex(/^\d+(\.\d+)?$/, "O preço deve ser um número positivo."),
+    .refine((value) => {
+      const num = parseFloat(value.replace(",", "."))
+      return !isNaN(num) && num >= 0
+    }, "O preço deve ser um número positivo.")
 })
 
 export type CreateTickerOrderFormData = z.infer<typeof formSchema>
@@ -51,7 +53,7 @@ export default function CreateTickerOrdersForm({ onSuccess }: CreateTickerOrders
         ticker: data.ticker,
         type: data.type,
         quantity: parseInt(data.quantity),
-        price: parseFloat(data.price),
+        price: parseFloat(data.price.replace(",", ".")),
       }
       await createTickerOrder.mutateAsync(submitData)
       form.reset()
@@ -120,7 +122,7 @@ export default function CreateTickerOrdersForm({ onSuccess }: CreateTickerOrders
         label="Quantidade"
         placeholder="Ex: 100"
       />
-      <FormInput
+      <FormCurrencyInput
         control={form.control}
         name="price"
         label="Preço"
