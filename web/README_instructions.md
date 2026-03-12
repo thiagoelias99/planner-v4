@@ -46,11 +46,27 @@ Ao criar uma nova funcionalidade CRUD, seguir esta ordem:
 
 ### Campos disponíveis
 
-Os arquivos dos componentes podem ter algumas observações inclusas.
+Todos os componentes estão localizados em **web/src/components/form**. Os arquivos dos componentes podem ter observações adicionais inclusas.
 
-- **FormBody** - Utilizar como layout principal do formulário.
-- **FormCurrencyInput** - Utilizar para campos monetários.
-- **FormPercentageInput** - Utilizar para campos de porcentagem.
+- **FormBody** - Utilizar como layout principal do formulário. Adiciona spacing adequado entre campos.
+
+- **FormInput** - Input de texto genérico. Suporta diferentes tipos: `text`, `email`, `password`, `tel`, `url`. Props opcionais: `placeholder`, `description`, `autoComplete`, `disabled`, `required`.
+
+- **FormNumberInput** - Input para números. Converte automaticamente para `Number`. Props opcionais: `step`, `min`, `max`, `placeholder`, `description`, `disabled`, `required`.
+
+- **FormCurrencyInput** - Input para valores monetários. **Importante**: No schema Zod usar `z.string()` e validar com `refine`. No `onSubmit` converter usando `parseFloat(data.field.replace(",", "."))`. Props opcionais: `currency`, `step`, `min`, `max`, `placeholder`, `description`, `disabled`, `required`. Consultar comentários no arquivo para exemplos de validação.
+
+- **FormPercentageInput** - Input para porcentagem com símbolo %. **Importante**: No schema Zod usar `z.string()` e validar com `refine`. No `onSubmit` converter usando `parseFloat(data.field.replace(",", "."))`. Props opcionais: `step`, `min`, `max`, `placeholder`, `description`, `disabled`, `required`, `className`. Consultar comentários no arquivo para exemplos de validação.
+
+- **FormDateInput** - Input para datas. Suporta diferentes modos: `datetime`, `date`, `time`, `month`. Formata automaticamente o valor. Props opcionais: `mode`, `min`, `max`, `placeholder`, `description`, `disabled`, `required`.
+
+- **FormSelect** - Select dropdown. Requer prop `options` com array de `{label: string, value: string}`. Props opcionais: `placeholder`, `description`, `orientation` (vertical/horizontal/responsive), `minWidth`, `disabled`, `required`.
+
+- **FormSwitch** - Switch/toggle boolean. Renderiza em layout horizontal com label e descrição à esquerda. Props opcionais: `description`, `disabled`, `required`.
+
+- **FormTextarea** - Área de texto para conteúdo longo. Props opcionais: `minHeight`, `placeholder`, `description`, `disabled`, `required`.
+
+- **FormColorInput** - Seletor de cor. Renderiza input de texto (para código hex) e color picker lado a lado. Props opcionais: `placeholder`, `description`, `disabled`, `required`.
 
 ## Tabelas
 

@@ -1,6 +1,8 @@
 import { Field, FieldContent, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { cn } from "@/lib/utils"
 import { Controller, Control, FieldValues, Path } from "react-hook-form"
+import { ClassNameValue } from "tailwind-merge"
 
 export interface SelectOption {
   label: string
@@ -18,6 +20,7 @@ interface FormSelectProps<T extends FieldValues> {
   disabled?: boolean
   required?: boolean
   minWidth?: string
+  className?: ClassNameValue
 }
 
 export function FormSelect<T extends FieldValues>({
@@ -31,6 +34,7 @@ export function FormSelect<T extends FieldValues>({
   disabled = false,
   required = false,
   minWidth = "120px",
+  className,
 }: FormSelectProps<T>) {
   return (
     <Controller
@@ -40,6 +44,7 @@ export function FormSelect<T extends FieldValues>({
         <Field
           orientation={orientation}
           data-invalid={fieldState.invalid}
+          className={cn("w-full", className)}
         >
           <FieldContent>
             <FieldLabel htmlFor={field.name}>

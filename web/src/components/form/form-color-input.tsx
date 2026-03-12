@@ -1,6 +1,17 @@
 import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { cn } from "@/lib/utils"
 import { Controller, Control, FieldValues, Path } from "react-hook-form"
+import { ClassNameValue } from "tailwind-merge"
+
+/**
+ * Validação:
+ * const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$/
+
+color: z.string().refine(value => hexColorRegex.test(value), {
+  message: "A cor deve estar no formato hexadecimal válido (#RRGGBB ou #RRGGBBAA)"
+}),
+ */
 
 interface FormColorInputProps<T extends FieldValues> {
   control: Control<T>
@@ -10,6 +21,7 @@ interface FormColorInputProps<T extends FieldValues> {
   description?: string
   disabled?: boolean
   required?: boolean
+  className?: ClassNameValue
 }
 
 export function FormColorInput<T extends FieldValues>({
@@ -20,13 +32,14 @@ export function FormColorInput<T extends FieldValues>({
   description,
   disabled = false,
   required = false,
+  className,
 }: FormColorInputProps<T>) {
   return (
     <Controller
       name={name}
       control={control}
       render={({ field, fieldState }) => (
-        <Field data-invalid={fieldState.invalid}>
+        <Field data-invalid={fieldState.invalid} className={cn("w-full", className)}>
           <FieldLabel htmlFor={field.name}>
             {label}
           </FieldLabel>

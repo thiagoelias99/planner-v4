@@ -1,6 +1,6 @@
 "use client"
 
-import { FormBody, FormCurrencyInput, FormInput, FormSelect } from "@/components/form"
+import { FormBody, FormCurrencyInput, FormInput, FormNumberInput, FormSelect } from "@/components/form"
 import { Button } from "@/components/ui/button"
 import { useTickerOrders } from "@/hooks/query/use-ticker-orders"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -18,9 +18,7 @@ const formSchema = z.object({
   type: z.enum(ETickerOrderType, {
     message: "Selecione um tipo válido.",
   }),
-  quantity: z.string()
-    .min(1, "A quantidade é obrigatória.")
-    .regex(/^\d+$/, "A quantidade deve ser um número inteiro positivo."),
+  quantity: z.number().positive("A quantidade deve ser um número positivo.").int("A quantidade deve ser um número inteiro."),
   price: z.string()
     .refine((value) => {
       const num = parseFloat(value.replace(",", "."))
@@ -41,7 +39,7 @@ export default function CreateTickerOrdersForm({ onSuccess }: CreateTickerOrders
     defaultValues: {
       ticker: "",
       type: ETickerOrderType.BUY,
-      quantity: "",
+      quantity: 0,
       price: "",
     },
   })
@@ -52,7 +50,7 @@ export default function CreateTickerOrdersForm({ onSuccess }: CreateTickerOrders
       const submitData = {
         ticker: data.ticker,
         type: data.type,
-        quantity: parseInt(data.quantity),
+        quantity: data.quantity,
         price: parseFloat(data.price.replace(",", ".")),
       }
       await createTickerOrder.mutateAsync(submitData)
@@ -116,7 +114,7 @@ export default function CreateTickerOrdersForm({ onSuccess }: CreateTickerOrders
           { label: "Venda", value: ETickerOrderType.SELL },
         ]}
       />
-      <FormInput
+      <FormNumberInput
         control={form.control}
         name="quantity"
         label="Quantidade"

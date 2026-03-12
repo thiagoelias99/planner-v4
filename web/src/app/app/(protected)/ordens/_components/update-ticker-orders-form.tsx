@@ -1,6 +1,6 @@
 "use client"
 
-import { FormBody, FormCurrencyInput, FormInput, FormSelect } from "@/components/form"
+import { FormBody, FormCurrencyInput, FormInput, FormNumberInput, FormSelect } from "@/components/form"
 import { Button } from "@/components/ui/button"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AxiosError } from "axios"
@@ -20,9 +20,7 @@ const formSchema = z.object({
   type: z.enum(ETickerOrderType, {
     message: "Selecione um tipo válido.",
   }).optional(),
-  quantity: z.string()
-    .regex(/^\d+$/, "A quantidade deve ser um número inteiro positivo.")
-    .optional(),
+  quantity: z.number().positive("A quantidade deve ser um número positivo.").int("A quantidade deve ser um número inteiro.").optional(),
   price: z.string()
     .refine((value) => {
       const num = parseFloat(value.replace(",", "."))
@@ -46,7 +44,7 @@ export default function UpdateTickerOrdersForm({ tickerOrder, onSuccess, onDelet
     defaultValues: {
       ticker: tickerOrder.ticker,
       type: tickerOrder.type,
-      quantity: tickerOrder.quantity.toString(),
+      quantity: tickerOrder.quantity,
       price: tickerOrder.price.toString(),
     },
   })
@@ -61,7 +59,7 @@ export default function UpdateTickerOrdersForm({ tickerOrder, onSuccess, onDelet
       } = {}
 
       if (data.type) submitData.type = data.type
-      if (data.quantity) submitData.quantity = parseInt(data.quantity)
+      if (data.quantity) submitData.quantity = data.quantity
       if (data.price) submitData.price = parseFloat(data.price.replace(",", "."))
 
       await updateTickerOrder.mutateAsync(submitData)
@@ -137,7 +135,7 @@ export default function UpdateTickerOrdersForm({ tickerOrder, onSuccess, onDelet
           { label: "Venda", value: ETickerOrderType.SELL },
         ]}
       />
-      <FormInput
+      <FormNumberInput
         control={form.control}
         name="quantity"
         label="Quantidade"

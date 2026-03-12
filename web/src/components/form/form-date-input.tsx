@@ -1,7 +1,9 @@
 import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { cn } from "@/lib/utils"
 import { format } from "date-fns"
 import { Controller, Control, FieldValues, Path } from "react-hook-form"
+import { ClassNameValue } from "tailwind-merge"
 
 interface FormDateInputProps<T extends FieldValues> {
   control: Control<T>
@@ -14,6 +16,7 @@ interface FormDateInputProps<T extends FieldValues> {
   required?: boolean
   min?: Date | string
   max?: Date | string
+  className?: ClassNameValue
 }
 
 export function FormDateInput<T extends FieldValues>({
@@ -27,6 +30,7 @@ export function FormDateInput<T extends FieldValues>({
   required = false,
   min,
   max,
+  className,
 }: FormDateInputProps<T>) {
   const typeMapping = {
     datetime: "datetime-local",
@@ -68,7 +72,7 @@ export function FormDateInput<T extends FieldValues>({
       name={name}
       control={control}
       render={({ field, fieldState }) => (
-        <Field data-invalid={fieldState.invalid}>
+        <Field data-invalid={fieldState.invalid} className={cn("w-full", className)}>
           <FieldLabel htmlFor={field.name}>
             {label}
           </FieldLabel>

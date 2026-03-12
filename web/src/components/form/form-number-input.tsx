@@ -1,6 +1,8 @@
 import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { cn } from "@/lib/utils"
 import { Controller, Control, FieldValues, Path } from "react-hook-form"
+import { ClassNameValue } from "tailwind-merge"
 
 interface FormNumberInputProps<T extends FieldValues> {
   control: Control<T>
@@ -13,6 +15,7 @@ interface FormNumberInputProps<T extends FieldValues> {
   max?: number
   disabled?: boolean
   required?: boolean
+  className?: ClassNameValue
 }
 
 export function FormNumberInput<T extends FieldValues>({
@@ -26,13 +29,14 @@ export function FormNumberInput<T extends FieldValues>({
   max,
   disabled = false,
   required = false,
+  className,
 }: FormNumberInputProps<T>) {
   return (
     <Controller
       name={name}
       control={control}
       render={({ field, fieldState }) => (
-        <Field data-invalid={fieldState.invalid}>
+        <Field data-invalid={fieldState.invalid} className={cn("w-full", className)}>
           <FieldLabel htmlFor={field.name}>
             {label}
           </FieldLabel>

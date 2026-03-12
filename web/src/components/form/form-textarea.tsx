@@ -1,6 +1,8 @@
 import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field"
 import { Textarea } from "@/components/ui/textarea"
+import { cn } from "@/lib/utils"
 import { Controller, Control, FieldValues, Path } from "react-hook-form"
+import { ClassNameValue } from "tailwind-merge"
 
 interface FormTextareaProps<T extends FieldValues> {
   control: Control<T>
@@ -11,6 +13,7 @@ interface FormTextareaProps<T extends FieldValues> {
   minHeight?: string
   disabled?: boolean
   required?: boolean
+  className?: ClassNameValue
 }
 
 export function FormTextarea<T extends FieldValues>({
@@ -22,13 +25,14 @@ export function FormTextarea<T extends FieldValues>({
   minHeight = "120px",
   disabled = false,
   required = false,
+  className,
 }: FormTextareaProps<T>) {
   return (
     <Controller
       name={name}
       control={control}
       render={({ field, fieldState }) => (
-        <Field data-invalid={fieldState.invalid}>
+        <Field data-invalid={fieldState.invalid} className={cn("w-full", className)}>
           <FieldLabel htmlFor={field.name}>
             {label}
           </FieldLabel>

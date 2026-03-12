@@ -1,6 +1,8 @@
 import { Field, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { cn } from "@/lib/utils"
 import { Controller, Control, FieldValues, Path } from "react-hook-form"
+import { ClassNameValue } from "tailwind-merge"
 
 /**
  * Exemplo de validação com ZOD (numero positivo, incluindo 0.00)
@@ -41,6 +43,7 @@ interface FormCurrencyInputProps<T extends FieldValues> {
   max?: number
   disabled?: boolean
   required?: boolean
+  className?: ClassNameValue
 }
 
 export function FormCurrencyInput<T extends FieldValues>({
@@ -55,13 +58,14 @@ export function FormCurrencyInput<T extends FieldValues>({
   max,
   disabled = false,
   required = false,
+  className,
 }: FormCurrencyInputProps<T>) {
   return (
     <Controller
       name={name}
       control={control}
       render={({ field, fieldState }) => (
-        <Field data-invalid={fieldState.invalid}>
+        <Field data-invalid={fieldState.invalid} className={cn("w-full", className)}>
           <FieldLabel htmlFor={field.name}>
             {label}
           </FieldLabel>

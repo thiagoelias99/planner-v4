@@ -1,8 +1,9 @@
 import { cn } from "@/lib/utils"
 import React from 'react'
+import { ClassNameValue } from "tailwind-merge"
 
 interface FormBodyProps extends Omit<React.FormHTMLAttributes<HTMLFormElement>, 'className'> {
-  className?: string
+  className?: ClassNameValue
   children: React.ReactNode
 }
 
