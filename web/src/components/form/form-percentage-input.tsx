@@ -52,7 +52,7 @@ export function FormPercentageInput<T extends FieldValues>({
   placeholder,
   description,
   step = 0.01,
-  min = 0.01,
+  min = 0.00,
   max = 100,
   disabled = false,
   required = false,

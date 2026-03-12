@@ -1,6 +1,6 @@
 "use client"
 
-import { FormBody, FormCurrencyInput, FormInput, FormPercentageInput, FormSelect, FormTextarea } from "@/components/form"
+import { FormBody, FormCurrencyInput, FormDateInput, FormInput, FormPercentageInput, FormSelect, FormTextarea } from "@/components/form"
 import { Button } from "@/components/ui/button"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AxiosError } from "axios"
@@ -9,7 +9,9 @@ import * as z from "zod"
 import { toast } from "sonner"
 import { EPosFixedIndex, IFixedIncome } from "@/models/fixed-income"
 import { useFixedIncome } from "@/hooks/query/use-fixed-income"
-import { format } from "date-fns"
+import { FormDatePicker } from "@/components/form/form-date-picker"
+import { addHours, format } from "date-fns"
+import { ptBR } from "date-fns/locale"
 
 const formSchema = z.object({
   description: z.string()
@@ -63,11 +65,11 @@ export default function UpdateFixedIncomesForm({ fixedIncome, onSuccess }: Updat
       note: fixedIncome.note || "",
       initialInvestment: fixedIncome.initialInvestment?.toString(),
       currentValue: fixedIncome.currentValue?.toString(),
-      date: format(new Date(fixedIncome.date), "yyyy-MM-dd"),
-      dueDate: format(new Date(fixedIncome.dueDate), "yyyy-MM-dd"),
+      date: fixedIncome.date ? format(new Date(fixedIncome.date), "yyyy-MM-dd", { locale: ptBR }) : undefined,
+      dueDate: fixedIncome.dueDate ? format(new Date(fixedIncome.dueDate), "yyyy-MM-dd", { locale: ptBR }) : undefined,
       fixedRate: fixedIncome.fixedRate?.toString(),
       posFixedIndex: fixedIncome.posFixedIndex,
-      retrievedAt: fixedIncome.retrievedAt ? format(new Date(fixedIncome.retrievedAt), "yyyy-MM-dd") : "",
+      retrievedAt: fixedIncome.retrievedAt ? format(new Date(fixedIncome.retrievedAt), "yyyy-MM-dd", { locale: ptBR }) : undefined,
     },
   })
 
@@ -91,11 +93,11 @@ export default function UpdateFixedIncomesForm({ fixedIncome, onSuccess }: Updat
       if (data.note) submitData.note = data.note
       if (data.initialInvestment) submitData.initialInvestment = parseFloat(data.initialInvestment.replace(",", "."))
       if (data.currentValue) submitData.currentValue = parseFloat(data.currentValue.replace(",", "."))
-      if (data.date) submitData.date = new Date(data.date).toISOString()
-      if (data.dueDate) submitData.dueDate = new Date(data.dueDate).toISOString()
+      if (data.date) submitData.date = addHours(new Date(data.date), 12).toISOString()
+      if (data.dueDate) submitData.dueDate = addHours(new Date(data.dueDate), 12).toISOString()
       if (data.fixedRate) submitData.fixedRate = parseFloat(data.fixedRate.replace(",", "."))
       if (data.posFixedIndex) submitData.posFixedIndex = data.posFixedIndex
-      if (data.retrievedAt) submitData.retrievedAt = new Date(data.retrievedAt).toISOString()
+      if (data.retrievedAt) submitData.retrievedAt = addHours(new Date(data.retrievedAt), 12).toISOString()
 
       await updateFixedIncome.mutateAsync(submitData)
       toast.success("Renda fixa atualizada com sucesso!")
@@ -150,13 +152,13 @@ export default function UpdateFixedIncomesForm({ fixedIncome, onSuccess }: Updat
           placeholder="Ex: 10500.00"
         />
       </div>
-      <div className="grid grid-cols-2 gap-4">
-        <FormInput
+      <div className="grid grid-cols-2 gap-4 w-full">
+        <FormDateInput
           control={form.control}
           name="date"
           label="Data de Início"
         />
-        <FormInput
+        <FormDateInput
           control={form.control}
           name="dueDate"
           label="Data de Vencimento"
@@ -184,7 +186,7 @@ export default function UpdateFixedIncomesForm({ fixedIncome, onSuccess }: Updat
           ]}
         />
       </div>
-      <FormInput
+      <FormDatePicker
         control={form.control}
         name="retrievedAt"
         label="Data de Atualização do Valor"

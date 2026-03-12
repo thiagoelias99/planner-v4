@@ -58,7 +58,21 @@ Todos os componentes estão localizados em **web/src/components/form**. Os arqui
 
 - **FormPercentageInput** - Input para porcentagem com símbolo %. **Importante**: No schema Zod usar `z.string()` e validar com `refine`. No `onSubmit` converter usando `parseFloat(data.field.replace(",", "."))`. Props opcionais: `step`, `min`, `max`, `placeholder`, `description`, `disabled`, `required`, `className`. Consultar comentários no arquivo para exemplos de validação.
 
-- **FormDateInput** - Input para datas. Suporta diferentes modos: `datetime`, `date`, `time`, `month`. Formata automaticamente o valor. Props opcionais: `mode`, `min`, `max`, `placeholder`, `description`, `disabled`, `required`.
+- **FormDateInput** - Input nativo HTML para datas (type="date"). **Importante**: No schema Zod usar `z.string()` (ou `.optional()`). Para valores padrão, formatar como `"yyyy-MM-dd"`. No `onSubmit`, converter usando `new Date(data.field).toISOString()` ou `addHours(new Date(data.field), 12).toISOString()` para ajustar timezone. Props opcionais: `description`, `className`. Exemplo de uso:
+
+  ```tsx
+  // Schema Zod
+  date: z.string().optional(),
+
+  // Default values
+  date: fixedIncome.date ? format(new Date(fixedIncome.date), "yyyy-MM-dd", { locale: ptBR }) : undefined,
+
+  // Componente
+  <FormDateInput control={form.control} name="date" label="Data de Início" />
+
+  // Submit
+  if (data.date) submitData.date = addHours(new Date(data.date), 12).toISOString()
+  ```
 
 - **FormSelect** - Select dropdown. Requer prop `options` com array de `{label: string, value: string}`. Props opcionais: `placeholder`, `description`, `orientation` (vertical/horizontal/responsive), `minWidth`, `disabled`, `required`.
 

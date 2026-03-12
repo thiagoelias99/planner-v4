@@ -1,6 +1,6 @@
 "use client"
 
-import { FormBody, FormCurrencyInput, FormInput, FormSelect, FormTextarea } from "@/components/form"
+import { FormBody, FormCurrencyInput, FormDateInput, FormInput, FormPercentageInput, FormSelect, FormTextarea } from "@/components/form"
 import { Button } from "@/components/ui/button"
 import { useFixedIncomes } from "@/hooks/query/use-fixed-incomes"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { toast } from "sonner"
 import { EPosFixedIndex } from "@/models/fixed-income"
-import { format } from "date-fns"
+import { addHours, format } from "date-fns"
 
 const formSchema = z.object({
   description: z.string()
@@ -31,12 +31,13 @@ const formSchema = z.object({
       const num = parseFloat(value.replace(",", "."))
       return !isNaN(num) && num >= 0
     }, "O preço deve ser um número positivo."),
-  date: z.string()
-    .min(1, "A data de início é obrigatória."),
-  dueDate: z.string()
-    .min(1, "A data de vencimento é obrigatória."),
+  date: z.string(),
+  dueDate: z.string(),
   fixedRate: z.string()
-    .min(1, "A taxa fixa é obrigatória."),
+    .refine((value) => {
+      const num = parseFloat(value.replace(",", "."))
+      return !isNaN(num) && num >= 0
+    }, "O preço deve ser um número positivo."),
   posFixedIndex: z.enum(EPosFixedIndex, {
     message: "Selecione um índice válido.",
   }),
@@ -52,8 +53,6 @@ interface CreateFixedIncomesFormProps {
 export default function CreateFixedIncomesForm({ onSuccess }: CreateFixedIncomesFormProps) {
   const { createFixedIncome } = useFixedIncomes()
 
-  const today = format(new Date(), "yyyy-MM-dd")
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -62,8 +61,8 @@ export default function CreateFixedIncomesForm({ onSuccess }: CreateFixedIncomes
       note: "",
       initialInvestment: "",
       currentValue: "",
-      date: today,
-      dueDate: "",
+      date: format(new Date(), "yyyy-MM-dd"),
+      dueDate: format(new Date(), "yyyy-MM-dd"),
       fixedRate: "0",
       posFixedIndex: EPosFixedIndex.CDI,
       retrievedAt: undefined,
@@ -78,11 +77,11 @@ export default function CreateFixedIncomesForm({ onSuccess }: CreateFixedIncomes
         note: data.note || undefined,
         initialInvestment: parseFloat(data.initialInvestment.replace(",", ".")),
         currentValue: parseFloat(data.currentValue.replace(",", ".")),
-        date: new Date(data.date).toISOString(),
-        dueDate: new Date(data.dueDate).toISOString(),
+        date: addHours(new Date(data.date), 12).toISOString(),
+        dueDate: addHours(new Date(data.dueDate), 12).toISOString(),
         fixedRate: parseFloat(data.fixedRate.replace(",", ".")),
         posFixedIndex: data.posFixedIndex,
-        retrievedAt: data.retrievedAt ? new Date(data.retrievedAt).toISOString() : undefined,
+        retrievedAt: data.retrievedAt ? addHours(new Date(data.retrievedAt), 12).toISOString() : undefined,
       }
 
       await createFixedIncome.mutateAsync(submitData)
@@ -137,20 +136,20 @@ export default function CreateFixedIncomesForm({ onSuccess }: CreateFixedIncomes
         label="Valor Atual (R$)"
         placeholder="Ex: 10500.00"
       />
-      <div className="grid grid-cols-2 gap-4">
-        <FormInput
+      <div className="grid grid-cols-2 gap-4 w-full">
+        <FormDateInput
           control={form.control}
           name="date"
           label="Data do Aporte"
         />
-        <FormInput
+        <FormDateInput
           control={form.control}
           name="dueDate"
           label="Data de Vencimento"
         />
       </div>
-      <div className="grid grid-cols-2 gap-4">
-        <FormInput
+      <div className="grid grid-cols-2 gap-4 w-full">
+        <FormPercentageInput
           control={form.control}
           name="fixedRate"
           label="Taxa Fixa (%)"
@@ -171,7 +170,7 @@ export default function CreateFixedIncomesForm({ onSuccess }: CreateFixedIncomes
           ]}
         />
       </div>
-      <FormInput
+      <FormDateInput
         control={form.control}
         name="retrievedAt"
         label="Data de Resgate"
