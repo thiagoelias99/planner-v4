@@ -90,6 +90,25 @@ Todos os componentes estão localizados em **web/src/components/form**. Os arqui
 - Para formatação de valores (moeda, data), usar `Intl.NumberFormat` e `date-fns`
 - Exemplo: **web/src/app/app/(protected)/admin/usuarios/\_components/users-table.tsx** e **tickers-table.tsx**
 
+### Versão Mobile
+
+- Criar componente mobile separado (`mobile-entities-table.tsx`) com layout em cards otimizado para dispositivos móveis
+- Usar componentes estruturais `CardHeader`, `CardContent`, `CardFooter` do **@/components/ui/card** com classe `gap-1.5` no Card
+- Exibir apenas as informações mais relevantes de forma compacta
+- Manter funcionalidades essenciais (botão de editar, ações principais)
+- Props devem incluir callback `onEdit` para integração com o Sheet
+- Implementar responsividade no componente principal da tabela:
+  ```tsx
+  <div className="hidden sm:block">
+    <DataTable columns={getColumns()} data={data} />
+  </div>
+  <div className="sm:hidden">
+    <MobileEntitiesTable data={data} onEdit={(item) => {...}} />
+  </div>
+  ```
+- Incluir estados de loading (skeleton) e empty state
+- Exemplo: **web/src/app/app/(protected)/admin/tickers/\_components/mobile-tickers-table.tsx**
+
 ## Paginação e Filtros
 
 - Utilizar **data-table-pagination.tsx** para paginação

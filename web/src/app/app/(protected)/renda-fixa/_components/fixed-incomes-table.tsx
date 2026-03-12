@@ -11,6 +11,7 @@ import { Sheet, SheetBody, SheetClose, SheetContent, SheetDescription, SheetFoot
 import { Badge } from "../../../../../components/ui/badge"
 import UpdateFixedIncomesForm from "./update-fixed-incomes-form"
 import { EPosFixedIndex, ePosFixedIndexMapper, IFixedIncome } from "@/models/fixed-income"
+import MobileFixedIncomesTable from "./mobile-fixed-incomes-table"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -194,12 +195,27 @@ export default function FixedIncomesTable({
   return (
     <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
       <SheetTrigger asChild className="w-full">
-        <DataTable
-          columns={getColumns()}
-          data={data}
-          isLoading={isLoading}
-          emptyMessage={emptyMessage}
-        />
+        <div>
+          <div className="hidden sm:block">
+            <DataTable
+              columns={getColumns()}
+              data={data}
+              isLoading={isLoading}
+              emptyMessage={emptyMessage}
+            />
+          </div>
+          <div className="sm:hidden">
+            <MobileFixedIncomesTable
+              data={data}
+              isLoading={isLoading}
+              emptyMessage={emptyMessage}
+              onEdit={(fixedIncome) => {
+                setSelectedFixedIncome(fixedIncome)
+                setIsSheetOpen(true)
+              }}
+            />
+          </div>
+        </div>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>

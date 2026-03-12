@@ -11,6 +11,7 @@ import { Sheet, SheetBody, SheetClose, SheetContent, SheetDescription, SheetFoot
 import { Badge } from "@/components/ui/badge"
 import UpdateTickerOrdersForm from "./update-ticker-orders-form"
 import { ETickerOrderType, eTickerOrderTypeMapper, ITickerOrder } from "@/models/ticker-order"
+import MobileTickerOrdersTable from "./mobile-ticker-orders-table"
 
 interface Props {
   data?: ITickerOrder[]
@@ -31,8 +32,9 @@ export default function TickerOrdersTable({
     return [
       {
         accessorKey: "ticker",
-        header: () => <p className="text-start">Ticker</p>,
-        cell: (row) => <p className="text-start font-medium">{row.getValue() as string}</p>,
+        header: () => <p className="text-center">Ticker</p>,
+        cell: (row) => <p className="text-center font-medium">{row.getValue() as string}</p>,
+        size: 140,
       },
       {
         accessorKey: "type",
@@ -52,20 +54,20 @@ export default function TickerOrdersTable({
       },
       {
         accessorKey: "quantity",
-        header: () => <p className="text-end">Quantidade</p>,
+        header: () => <p className="text-center">Quantidade</p>,
         cell: (row) => {
           const quantity = row.getValue() as number
-          return <p className="text-end font-medium">{quantity}</p>
+          return <p className="text-center font-medium">{quantity}</p>
         },
         size: 120,
       },
       {
         accessorKey: "price",
-        header: () => <p className="text-end">Preço</p>,
+        header: () => <p className="text-center">Preço</p>,
         cell: (row) => {
           const price = row.getValue() as number
           return (
-            <p className="text-end font-medium">
+            <p className="text-center font-medium">
               {new Intl.NumberFormat('pt-BR', {
                 style: 'currency',
                 currency: 'BRL',
@@ -77,12 +79,12 @@ export default function TickerOrdersTable({
       },
       {
         id: "total",
-        header: () => <p className="text-end">Total</p>,
+        header: () => <p className="text-center">Total</p>,
         cell: (row) => {
           const tickerOrder = row.row.original
           const total = tickerOrder.quantity * tickerOrder.price
           return (
-            <p className="text-end font-bold">
+            <p className="text-center font-bold">
               {new Intl.NumberFormat('pt-BR', {
                 style: 'currency',
                 currency: 'BRL',
@@ -94,11 +96,11 @@ export default function TickerOrdersTable({
       },
       {
         accessorKey: "previousMeanPrice",
-        header: () => <p className="text-end">PM Anterior</p>,
+        header: () => <p className="text-center">PM Anterior</p>,
         cell: (row) => {
           const price = row.getValue() as number
           return (
-            <p className="text-end text-sm text-muted-foreground">
+            <p className="text-center text-sm text-muted-foreground">
               {new Intl.NumberFormat('pt-BR', {
                 style: 'currency',
                 currency: 'BRL',
@@ -110,21 +112,21 @@ export default function TickerOrdersTable({
       },
       {
         accessorKey: "previousTotalQuantity",
-        header: () => <p className="text-end">Qtd Anterior</p>,
+        header: () => <p className="text-center">Qtd Anterior</p>,
         cell: (row) => {
           const quantity = row.getValue() as number
-          return <p className="text-end text-sm text-muted-foreground">{quantity}</p>
+          return <p className="text-center text-sm text-muted-foreground">{quantity}</p>
         },
         size: 120,
       },
       {
         accessorKey: "gainLoss",
-        header: () => <p className="text-end">Ganho/Perda</p>,
+        header: () => <p className="text-center">Ganho/Perda</p>,
         cell: (row) => {
           const gainLoss = row.getValue() as number
           const isPositive = gainLoss >= 0
           return (
-            <p className={`text-end font-medium ${isPositive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+            <p className={`text-center font-medium ${isPositive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
               {new Intl.NumberFormat('pt-BR', {
                 style: 'currency',
                 currency: 'BRL',
@@ -137,11 +139,11 @@ export default function TickerOrdersTable({
       },
       {
         accessorKey: "newMeanPrice",
-        header: () => <p className="text-end">Novo PM</p>,
+        header: () => <p className="text-center">Novo PM</p>,
         cell: (row) => {
           const price = row.getValue() as number
           return (
-            <p className="text-end font-medium">
+            <p className="text-center font-medium">
               {new Intl.NumberFormat('pt-BR', {
                 style: 'currency',
                 currency: 'BRL',
@@ -153,10 +155,10 @@ export default function TickerOrdersTable({
       },
       {
         accessorKey: "newTotalQuantity",
-        header: () => <p className="text-end">Nova Qtd</p>,
+        header: () => <p className="text-center">Nova Qtd</p>,
         cell: (row) => {
           const quantity = row.getValue() as number
-          return <p className="text-end font-medium">{quantity}</p>
+          return <p className="text-center font-medium">{quantity}</p>
         },
         size: 120,
       },
@@ -204,12 +206,27 @@ export default function TickerOrdersTable({
   return (
     <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
       <SheetTrigger asChild className="w-full">
-        <DataTable
-          columns={getColumns()}
-          data={data}
-          isLoading={isLoading}
-          emptyMessage={emptyMessage}
-        />
+        <div>
+          <div className="hidden sm:block">
+            <DataTable
+              columns={getColumns()}
+              data={data}
+              isLoading={isLoading}
+              emptyMessage={emptyMessage}
+            />
+          </div>
+          <div className="sm:hidden">
+            <MobileTickerOrdersTable
+              data={data}
+              isLoading={isLoading}
+              emptyMessage={emptyMessage}
+              onEdit={(tickerOrder) => {
+                setSelectedTickerOrder(tickerOrder)
+                setIsSheetOpen(true)
+              }}
+            />
+          </div>
+        </div>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>

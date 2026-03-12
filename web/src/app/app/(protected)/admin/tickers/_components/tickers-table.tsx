@@ -11,6 +11,7 @@ import { Sheet, SheetBody, SheetClose, SheetContent, SheetDescription, SheetFoot
 import { Badge } from "../../../../../../components/ui/badge"
 import UpdateTickersForm from "./update-tickers-form"
 import { ETickerType, eTickerTypeMapper, ITicker } from "@/models/ticker"
+import MobileTickersTable from "./mobile-tickers-table"
 
 interface Props {
   data?: ITicker[]
@@ -31,9 +32,9 @@ export default function TickersTable({
     return [
       {
         accessorKey: "symbol",
-        header: () => <p className="text-start">Símbolo</p>,
-        cell: (row) => <p className="text-start font-bold">{row.getValue() as string}</p>,
-        size: 120,
+        header: () => <p className="text-center">Símbolo</p>,
+        cell: (row) => <p className="text-center font-bold">{row.getValue() as string}</p>,
+        size: 100,
       },
       {
         accessorKey: "name",
@@ -54,20 +55,20 @@ export default function TickersTable({
             </div>
           )
         },
-        size: 120,
+        size: 80,
       },
       {
         accessorKey: "price",
-        header: () => <p className="text-end">Preço</p>,
+        header: () => <p className="text-center">Preço</p>,
         cell: (row) => {
           const price = row.getValue() as number
           return (
-            <p className="text-end font-semibold">
+            <p className="text-center font-semibold">
               {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(price)}
             </p>
           )
         },
-        size: 120,
+        size: 80,
       },
       {
         accessorKey: "changePercent",
@@ -145,12 +146,27 @@ export default function TickersTable({
   return (
     <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
       <SheetTrigger asChild className="w-full">
-        <DataTable
-          columns={getColumns()}
-          data={data}
-          isLoading={isLoading}
-          emptyMessage={emptyMessage}
-        />
+        <div>
+          <div className="hidden sm:block">
+            <DataTable
+              columns={getColumns()}
+              data={data}
+              isLoading={isLoading}
+              emptyMessage={emptyMessage}
+            />
+          </div>
+          <div className="sm:hidden">
+            <MobileTickersTable
+              data={data}
+              isLoading={isLoading}
+              emptyMessage={emptyMessage}
+              onEdit={(ticker) => {
+                setSelectedTicker(ticker)
+                setIsSheetOpen(true)
+              }}
+            />
+          </div>
+        </div>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>

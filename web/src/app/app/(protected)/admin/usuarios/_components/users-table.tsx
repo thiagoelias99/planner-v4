@@ -2,8 +2,6 @@
 
 import { type ColumnDef } from "@tanstack/react-table"
 import { DataTable } from "../../../../../../components/tables/template/data-table"
-import { ptBR } from "date-fns/locale"
-import { format } from "date-fns"
 import { Button } from "../../../../../../components/ui/button"
 import { Edit2Icon } from "lucide-react"
 import { useState } from "react"
@@ -12,6 +10,7 @@ import { Sheet, SheetBody, SheetClose, SheetContent, SheetDescription, SheetFoot
 import { Badge } from "../../../../../../components/ui/badge"
 import UpdateUsersForm from "./update-users-form"
 import { EUserRole, eUserRoleMapper, IUser } from "@/models/user"
+import MobileUsersTable from "./mobile-users-table"
 
 interface Props {
   data?: IUser[]
@@ -118,12 +117,27 @@ export default function UsersTable({
   return (
     <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
       <SheetTrigger asChild className="w-full">
-        <DataTable
-          columns={getColumns()}
-          data={data}
-          isLoading={isLoading}
-          emptyMessage={emptyMessage}
-        />
+        <div>
+          <div className="hidden sm:block">
+            <DataTable
+              columns={getColumns()}
+              data={data}
+              isLoading={isLoading}
+              emptyMessage={emptyMessage}
+            />
+          </div>
+          <div className="sm:hidden">
+            <MobileUsersTable
+              data={data}
+              isLoading={isLoading}
+              emptyMessage={emptyMessage}
+              onEdit={(user) => {
+                setSelectedUser(user)
+                setIsSheetOpen(true)
+              }}
+            />
+          </div>
+        </div>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
