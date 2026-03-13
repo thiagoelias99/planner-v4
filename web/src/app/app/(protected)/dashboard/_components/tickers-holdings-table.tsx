@@ -123,7 +123,7 @@ export function TickersHoldingsTable({ holdings }: ITickersHoldingsTableProps) {
                   </TableBody>
                 </Table>
               </div>
-              
+
               {/* Mobile View */}
               <div className="md:hidden space-y-3">
                 {typeHoldings.map((holding) => (

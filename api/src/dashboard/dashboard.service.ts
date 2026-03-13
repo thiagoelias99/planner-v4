@@ -6,7 +6,7 @@ import { CustomLogger } from '../utils/logger'
 export class DashboardService {
   private readonly logger = new CustomLogger('DashboardService')
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async getSummary(userId: string) {
     // 1. Variable Income (Current & Invested)
@@ -28,7 +28,7 @@ export class DashboardService {
       FROM RankedOrders
       WHERE rn = 1 AND new_total_quantity > 0
     `
-    
+
     let variableIncomeTotalInvested = 0
     let variableIncomeTotalBalance = 0
 
