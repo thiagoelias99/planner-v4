@@ -8,7 +8,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { EPages } from "@/lib/routes"
-import { TicketIcon, UserIcon, Landmark } from "lucide-react"
+import { TicketIcon, UserIcon } from "lucide-react"
 import Link from "next/link"
 
 const items = [
@@ -21,11 +21,6 @@ const items = [
     title: "Tickers",
     url: EPages.TICKERS,
     icon: TicketIcon,
-  },
-  {
-    title: "Outros Ativos",
-    url: EPages.OTHER_ASSETS,
-    icon: Landmark,
   }
 ]
 

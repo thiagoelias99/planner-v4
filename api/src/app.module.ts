@@ -18,6 +18,7 @@ import { TickersModule } from './assets/tickers/tickers.module'
 import { TickerOrdersModule } from './assets/ticker-orders/ticker-orders.module'
 import { FixedIncomesModule } from './assets/fixed-incomes/fixed-incomes.module'
 import { OtherAssetsModule } from './assets/other-assets/other-assets.module'
+import { AssetBalanceStrategyModule } from './assets/asset-balance-strategy/asset-balance-strategy.module'
 
 @Module({
   imports: [
@@ -65,7 +66,8 @@ import { OtherAssetsModule } from './assets/other-assets/other-assets.module'
     TickersModule,
     TickerOrdersModule,
     FixedIncomesModule,
-    OtherAssetsModule
+    OtherAssetsModule,
+    AssetBalanceStrategyModule
   ],
   controllers: [AppController, AppApiKeyController],
   providers: [

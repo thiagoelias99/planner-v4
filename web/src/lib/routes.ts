@@ -14,9 +14,10 @@ export enum EPages {
   USER_ACCOUNT = '/app/conta',
   ORDERS = '/app/ordens',
   FIXED_INCOMES = '/app/renda-fixa',
+  OTHER_ASSETS = '/app/admin/outros-ativos',
+  ASSET_BALANCE = '/app/balanco-de-ativos',
 
   // Admin Pages
   USERS = '/app/admin/usuarios',
   TICKERS = '/app/admin/tickers',
-  OTHER_ASSETS = '/app/admin/outros-ativos',
 }

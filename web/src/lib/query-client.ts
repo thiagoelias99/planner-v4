@@ -9,4 +9,5 @@ export const queriesKeys = {
   tickerOrders: "tickerOrders",
   fixedIncome: "fixedIncome",
   otherAssets: "otherAssets",
+  assetBalanceStrategy: "asset-balance-strategy",
 }

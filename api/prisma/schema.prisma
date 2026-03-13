@@ -24,9 +24,10 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
-  TickerOrders TickerOrder[]
-  FixedIncomes FixedIncome[]
-  otherAssets  OtherAsset[]
+  TickerOrders         TickerOrder[]
+  FixedIncomes         FixedIncome[]
+  otherAssets          OtherAsset[]
+  assetBalanceStrategy AssetBalanceStrategy?
 
   @@unique([email])
   @@map("user")
@@ -183,4 +184,27 @@ model OtherAsset {
   User User @relation(fields: [userId], references: [id])
 
   @@map("other_assets")
+}
+
+model AssetBalanceStrategy {
+  id             String   @id @default(cuid())
+  userId         String   @unique @map("user_id")
+  notes          String?
+  cashBox        Decimal  @default(10) @map("cash_box") @db.Decimal(10, 2)
+  fixedIncome    Decimal  @default(10) @map("fixed_income") @db.Decimal(10, 2)
+  variableIncome Decimal  @default(10) @map("variable_income") @db.Decimal(10, 2)
+  pension        Decimal  @default(10) @db.Decimal(10, 2)
+  property       Decimal  @default(10) @db.Decimal(10, 2)
+  share          Decimal  @default(10) @db.Decimal(10, 2)
+  reit           Decimal  @default(10) @db.Decimal(10, 2)
+  international  Decimal  @default(10) @db.Decimal(10, 2)
+  gold           Decimal  @default(10) @db.Decimal(10, 2)
+  crypto         Decimal  @default(10) @db.Decimal(10, 2)
+  other          Decimal  @default(0) @db.Decimal(10, 2)
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  User User @relation(fields: [userId], references: [id])
+
+  @@map("asset_balance_strategies")
 }

@@ -8,7 +8,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { EPages } from "@/lib/routes"
-import { SettingsIcon, TicketsIcon } from "lucide-react"
+import { LandmarkIcon, ScaleIcon, TicketsIcon, UserIcon } from "lucide-react"
 
 const items = [
   {
@@ -22,9 +22,19 @@ const items = [
     icon: TicketsIcon,
   },
   {
-    title: "Configurações",
+    title: "Outros Ativos",
+    url: EPages.OTHER_ASSETS,
+    icon: LandmarkIcon,
+  },
+  {
+    title: "Balanço de Ativos",
+    url: EPages.ASSET_BALANCE,
+    icon: ScaleIcon,
+  },
+  {
+    title: "Minha Conta",
     url: EPages.USER_ACCOUNT,
-    icon: SettingsIcon,
+    icon: UserIcon,
   }
 ]
 
