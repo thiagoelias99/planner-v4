@@ -10,4 +10,5 @@ export const queriesKeys = {
   fixedIncome: "fixedIncome",
   otherAssets: "otherAssets",
   assetBalanceStrategy: "asset-balance-strategy",
+  dashboard: "dashboard",
 }
