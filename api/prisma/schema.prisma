@@ -26,6 +26,7 @@ model User {
 
   TickerOrders TickerOrder[]
   FixedIncomes FixedIncome[]
+  otherAssets  OtherAsset[]
 
   @@unique([email])
   @@map("user")
@@ -166,4 +167,20 @@ model FixedIncome {
   User User @relation(fields: [userId], references: [id])
 
   @@map("fixed_incomes")
+}
+
+model OtherAsset {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  description String
+  agency      String?
+  note        String?
+  value       Decimal  @db.Decimal(10, 2)
+  type        String   @map("type")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  User User @relation(fields: [userId], references: [id])
+
+  @@map("other_assets")
 }

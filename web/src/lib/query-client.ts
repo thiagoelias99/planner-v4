@@ -8,4 +8,5 @@ export const queriesKeys = {
   tickers: "tickers",
   tickerOrders: "tickerOrders",
   fixedIncome: "fixedIncome",
+  otherAssets: "otherAssets",
 }

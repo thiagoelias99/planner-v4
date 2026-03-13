@@ -18,4 +18,5 @@ export enum EPages {
   // Admin Pages
   USERS = '/app/admin/usuarios',
   TICKERS = '/app/admin/tickers',
+  OTHER_ASSETS = '/app/admin/outros-ativos',
 }

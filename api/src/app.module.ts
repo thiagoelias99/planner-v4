@@ -17,6 +17,7 @@ import { ApiKeyGuard } from "./guards/api-key.guard"
 import { TickersModule } from './assets/tickers/tickers.module'
 import { TickerOrdersModule } from './assets/ticker-orders/ticker-orders.module'
 import { FixedIncomesModule } from './assets/fixed-incomes/fixed-incomes.module'
+import { OtherAssetsModule } from './assets/other-assets/other-assets.module'
 
 @Module({
   imports: [
@@ -63,7 +64,8 @@ import { FixedIncomesModule } from './assets/fixed-incomes/fixed-incomes.module'
     // NotificationsModule,
     TickersModule,
     TickerOrdersModule,
-    FixedIncomesModule
+    FixedIncomesModule,
+    OtherAssetsModule
   ],
   controllers: [AppController, AppApiKeyController],
   providers: [

@@ -91,7 +91,7 @@ export class TickersService {
 
 
   // Run every day at 9:30 PM Sao Paulo time
-  @Cron('30 06 * * *', { timeZone: 'America/Sao_Paulo' })
+  @Cron('30 21 * * *', { timeZone: 'America/Sao_Paulo' })
   async autoUpdateTickers(): Promise<void> {
     this.logger.log('Starting auto-update of tickers...')
 
