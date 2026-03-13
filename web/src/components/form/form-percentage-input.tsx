@@ -77,7 +77,7 @@ export function FormPercentageInput<T extends FieldValues>({
               type="number"
               aria-invalid={fieldState.invalid}
               placeholder={placeholder}
-              onChange={(e) => field.onChange(Number(e.target.value))}
+              onChange={(e) => field.onChange((e.target.value))}
               step={step}
               min={min}
               max={max}

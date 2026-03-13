@@ -24,9 +24,16 @@ export async function getUpdatedTicker(ticker: ITickerView): Promise<ITickerView
 
     const response = await axios.get<GlobalQuoteResponse>(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${ticker.symbol}.SAO&apikey=${apiKey}`)
 
+    console.log(`Fetched data for ${ticker.symbol}:`, response.data)
+
+    // Aguarda 1200ms antes de retornar
+    await new Promise(resolve => setTimeout(resolve, 1200))
+
     if (!response || !response.data["Global Quote"] || !response.data["Global Quote"]["05. price"] || response.data["Global Quote"]["05. price"] === "0.0000") {
       return null
     }
+
+    console.log(`Parsed data for ${ticker.symbol}: price=${response.data["Global Quote"]["05. price"]}, change=${response.data["Global Quote"]["09. change"]}, changePercent=${response.data["Global Quote"]["10. change percent"]}`)
 
     return ({
       ...ticker,

@@ -6,19 +6,17 @@ import { UsersModule } from './users/users.module'
 import { ConfigModule } from "@nestjs/config"
 import { HealthModule } from './health/health.module'
 import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler"
+import { ScheduleModule } from "@nestjs/schedule"
 import { APP_GUARD } from "@nestjs/core"
 import { auth } from "./utils/auth"
 import { AuthModule } from "@thallesp/nestjs-better-auth"
 import { AuthModule as AppAuthModule } from './auth/auth.module'
-import { ScheduleModule } from "@nestjs/schedule"
 import { CronService } from "./cron.service"
-import { BullModule } from '@nestjs/bullmq'
-import { NotificationsModule } from './notifications/notifications.module'
 import { AppApiKeyController } from "./app.api.controller"
 import { ApiKeyGuard } from "./guards/api-key.guard"
 import { TickersModule } from './assets/tickers/tickers.module'
 import { TickerOrdersModule } from './assets/ticker-orders/ticker-orders.module'
-import { FixedIncomesModule } from './assets/fixed-incomes/fixed-incomes.module';
+import { FixedIncomesModule } from './assets/fixed-incomes/fixed-incomes.module'
 
 @Module({
   imports: [
@@ -30,25 +28,25 @@ import { FixedIncomesModule } from './assets/fixed-incomes/fixed-incomes.module'
         {
           name: 'long',
           ttl: 60 * 1000, // 60 seconds
-          limit: 100,
+          limit: process.env.NODE_ENV === 'production' ? 100 : 120,
           blockDuration: 10000  // 10 seconds
         },
         {
           name: 'medium',
           ttl: 10 * 1000, // 10 seconds
-          limit: 20,
+          limit: process.env.NODE_ENV === 'production' ? 20 : 40,
           blockDuration: 5 * 1000 // 5 seconds
         },
         {
           name: 'short',
           ttl: 1 * 1000, // 1 second
-          limit: 3,
+          limit: process.env.NODE_ENV === 'production' ? 6 : 20,
           blockDuration: 1 * 1000 // 1 second
         }
       ]
     }),
     AuthModule.forRoot({ auth, enableRawBodyParser: true, }),
-    // ScheduleModule.forRoot(),
+    ScheduleModule.forRoot(),
     // BullModule.forRoot({
     //   connection: {
     //     host: process.env.REDIS_HOST,

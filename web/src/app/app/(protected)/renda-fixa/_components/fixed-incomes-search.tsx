@@ -84,7 +84,6 @@ export default function FixedIncomesSearch({
               <SelectItem value="description">Descrição</SelectItem>
               <SelectItem value="initialInvestment">Valor Inicial</SelectItem>
               <SelectItem value="currentValue">Valor Atual</SelectItem>
-              <SelectItem value="createdAt">Data de Criação</SelectItem>
               <SelectItem value="updatedAt">Última Atualização</SelectItem>
             </SelectContent>
           </Select>

@@ -9,7 +9,6 @@ enum OrderDirection {
 }
 
 enum FixedIncomeOrderBy {
-  CREATED_AT = 'createdAt',
   UPDATED_AT = 'updatedAt',
   DATE = 'date',
   DUE_DATE = 'dueDate',

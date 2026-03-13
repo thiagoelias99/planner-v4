@@ -177,7 +177,7 @@ export default function UpdateFixedIncomesForm({ fixedIncome, onSuccess }: Updat
           label="Índice Pós-Fixado"
           placeholder="Selecione o índice"
           options={[
-            { label: "Prefixado", value: EPosFixedIndex.NONE },
+            { label: "Nenhum", value: EPosFixedIndex.NONE },
             { label: "CDI", value: EPosFixedIndex.CDI },
             { label: "IPCA", value: EPosFixedIndex.IPCA },
             { label: "IGP-M", value: EPosFixedIndex.IGPM },

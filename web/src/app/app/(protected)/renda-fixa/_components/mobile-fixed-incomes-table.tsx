@@ -128,10 +128,10 @@ export default function MobileFixedIncomesTable({
             <CardFooter className="flex items-center justify-between border-t pt-2">
               <div>
                 <p className="text-muted-foreground text-xs">Vencimento</p>
-                <p className={`text-sm font-medium ${isExpired ? 'text-red-500' : ''}`}>
+                <p className={`text-sm font-medium ${isExpired ? 'text-green-500' : ''}`}>
                   {format(dueDate, "dd/MM/yyyy", { locale: ptBR })}
                   <span className="text-xs text-muted-foreground ml-1">
-                    ({fixedIncome.remainingDays > 0 ? `${fixedIncome.remainingDays} dias` : 'Vencido'})
+                    ({fixedIncome.remainingDays > 0 ? `${fixedIncome.remainingDays} dias` : fixedIncome.retrievedAt ? "Resgatado" : "Vencido"})
                   </span>
                 </p>
               </div>

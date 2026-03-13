@@ -91,7 +91,7 @@ export class TickersService {
 
 
   // Run every day at 9:30 PM Sao Paulo time
-  @Cron('18 15 * * *', { timeZone: 'America/Sao_Paulo' })
+  @Cron('30 06 * * *', { timeZone: 'America/Sao_Paulo' })
   async autoUpdateTickers(): Promise<void> {
     this.logger.log('Starting auto-update of tickers...')
 
@@ -102,6 +102,8 @@ export class TickersService {
     for (const ticker of tickersToUpdate) {
       try {
         const updatedTicker = await getUpdatedTicker(prismaTickerToTickerView(ticker))
+
+        console.log(`Updated ticker data for ${ticker.symbol}:`, updatedTicker)
 
         if (updatedTicker) {
           await this.prisma.ticker.update({
@@ -114,6 +116,8 @@ export class TickersService {
             }
           })
         }
+        // this.logger.log(`Ticker with symbol ${ticker.symbol} updated successfully.`)
+
       } catch (error) {
         const err = error as Error
 

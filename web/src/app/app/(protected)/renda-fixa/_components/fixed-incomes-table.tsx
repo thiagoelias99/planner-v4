@@ -136,33 +136,33 @@ export default function FixedIncomesTable({
 
           return (
             <div className="flex flex-col items-center">
-              <p className={`text-center text-sm ${isExpired ? 'text-red-500 font-semibold' : ''}`}>
+              <p className={`text-center text-sm ${isExpired ? 'text-green-500 font-semibold' : ''}`}>
                 {format(new Date(date), "dd/MM/yyyy", { locale: ptBR })}
               </p>
               <p className="text-xs text-muted-foreground">
-                {fixedIncome.remainingDays > 0 ? `${fixedIncome.remainingDays} dias` : 'Vencido'}
+                {fixedIncome.remainingDays > 0 ? `${fixedIncome.remainingDays} dias` : fixedIncome.retrievedAt ? "Resgatado" : "Vencido"}
               </p>
             </div>
           )
         },
         size: 120,
       },
-      {
-        accessorKey: "retrievedAt",
-        header: () => <p className="text-center">Resgate</p>,
-        cell: (row) => {
-          const date = row.getValue() as Date | null
-          if (!date) {
-            return <p className="text-center text-sm text-muted-foreground">-</p>
-          }
-          return (
-            <p className="text-center text-sm">
-              {format(new Date(date), "dd/MM/yyyy", { locale: ptBR })}
-            </p>
-          )
-        },
-        size: 120,
-      },
+      // {
+      //   accessorKey: "retrievedAt",
+      //   header: () => <p className="text-center">Resgate</p>,
+      //   cell: (row) => {
+      //     const date = row.getValue() as Date | null
+      //     if (!date) {
+      //       return <p className="text-center text-sm text-muted-foreground">-</p>
+      //     }
+      //     return (
+      //       <p className="text-center text-sm">
+      //         {format(new Date(date), "dd/MM/yyyy", { locale: ptBR })}
+      //       </p>
+      //     )
+      //   },
+      //   size: 120,
+      // },
       {
         id: "actions",
         header: () => <p className="text-center">Ações</p>,
