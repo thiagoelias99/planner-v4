@@ -74,7 +74,10 @@ export class TickerOrdersService {
     const where: Prisma.TickerOrderWhereInput = { userId }
 
     if (ticker) {
-      where.ticker = ticker
+      where.ticker = {
+        contains: ticker,
+        mode: 'insensitive'
+      }
     }
 
     if (type) {

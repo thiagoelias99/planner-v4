@@ -18,7 +18,7 @@ interface ITickerOrderQueryParams {
   limit: number
   orderBy?: string
   order?: string
-  search?: string
+  ticker?: string
   type?: string
 }
 

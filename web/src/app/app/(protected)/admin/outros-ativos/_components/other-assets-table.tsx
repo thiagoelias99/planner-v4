@@ -33,13 +33,18 @@ export default function OtherAssetsTable({
       {
         accessorKey: "description",
         header: () => <p className="text-start">Descrição</p>,
-        cell: (row) => <p className="text-start font-bold">{row.getValue() as string}</p>,
+        cell: (row) => {
+          const description = row.getValue() as string
+          const asset = row.row.original
+
+          return (
+            <div className="flex flex-col">
+              <p className="text-start font-bold">{description}</p>
+              {asset.agency && <p className="text-start text-xs text-muted-foreground">{asset.agency}</p>}
+            </div>
+          )
+        },
         size: 250,
-      },
-      {
-        accessorKey: "agency",
-        header: () => <p className="text-center">Agência</p>,
-        cell: (row) => <p className="text-center">{row.getValue() as string || "-"}</p>,
       },
       {
         accessorKey: "type",
@@ -63,7 +68,7 @@ export default function OtherAssetsTable({
         cell: (row) => {
           const value = row.getValue() as number
           return (
-            <p className="text-center font-semibold text-primary">
+            <p className="text-center font-semibold">
               {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value)}
             </p>
           )
@@ -145,9 +150,9 @@ export default function OtherAssetsTable({
         </SheetHeader>
         <SheetBody className="flex-1 overflow-y-auto pr-2 pb-4 pt-4">
           {selectedAsset && (
-            <UpdateOtherAssetsForm 
-              asset={selectedAsset} 
-              onSuccess={() => setIsSheetOpen(false)} 
+            <UpdateOtherAssetsForm
+              asset={selectedAsset}
+              onSuccess={() => setIsSheetOpen(false)}
               onDeleted={() => setIsSheetOpen(false)}
             />
           )}

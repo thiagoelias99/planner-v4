@@ -17,7 +17,7 @@ export default function OrdersPage() {
   const [params, setParams] = useQueryStates({
     page: parseAsInteger.withDefault(1),
     limit: parseAsInteger.withDefault(16),
-    search: parseAsString.withDefault(""),
+    ticker: parseAsString.withDefault(""),
     type: parseAsString.withDefault("all"),
     orderBy: parseAsString.withDefault("createdAt"),
     order: parseAsString.withDefault("desc")
@@ -26,7 +26,7 @@ export default function OrdersPage() {
   const { data: tickerOrders } = useTickerOrders({
     page: params.page,
     limit: params.limit,
-    search: params.search || undefined,
+    ticker: params.ticker || undefined,
     type: params.type !== "all" ? params.type : undefined,
     orderBy: params.orderBy,
     order: params.order
@@ -42,7 +42,7 @@ export default function OrdersPage() {
 
   const handleClearFilters = () => {
     setParams({
-      search: "",
+      ticker: "",
       type: "all",
       orderBy: "createdAt",
       order: "desc",
@@ -50,7 +50,7 @@ export default function OrdersPage() {
     })
   }
 
-  const hasActiveFilters = !!params.search || (params.type !== "all") || (params.orderBy !== "createdAt") || (params.order !== "desc")
+  const hasActiveFilters = !!params.ticker || (params.type !== "all") || (params.orderBy !== "createdAt") || (params.order !== "desc")
 
   return (
     <Container>
@@ -77,11 +77,11 @@ export default function OrdersPage() {
       </Sheet>
 
       <TickerOrdersSearch
-        search={params.search}
+        ticker={params.ticker}
         type={params.type}
         orderBy={params.orderBy}
         order={params.order}
-        onSearchChange={(value) => setParams({ search: value, page: 1 })}
+        onTickerChange={(value) => setParams({ ticker: value, page: 1 })}
         onTypeChange={(value) => setParams({ type: value, page: 1 })}
         onOrderByChange={(value) => setParams({ orderBy: value, page: 1 })}
         onOrderChange={(value) => setParams({ order: value, page: 1 })}

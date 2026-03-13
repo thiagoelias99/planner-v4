@@ -6,11 +6,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search, X } from "lucide-react"
 
 interface TickerOrdersSearchProps {
-  search: string
+  ticker: string
   type: string
   orderBy: string
   order: string
-  onSearchChange: (value: string) => void
+  onTickerChange: (value: string) => void
   onTypeChange: (value: string) => void
   onOrderByChange: (value: string) => void
   onOrderChange: (value: string) => void
@@ -19,11 +19,11 @@ interface TickerOrdersSearchProps {
 }
 
 export default function TickerOrdersSearch({
-  search,
+  ticker,
   type,
   orderBy,
   order,
-  onSearchChange,
+  onTickerChange,
   onTypeChange,
   onOrderByChange,
   onOrderChange,
@@ -37,8 +37,8 @@ export default function TickerOrdersSearch({
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Buscar por ticker..."
-            value={search}
-            onChange={(e) => onSearchChange(e.target.value)}
+            value={ticker}
+            onChange={(e) => onTickerChange(e.target.value)}
             className="pl-9"
           />
         </div>

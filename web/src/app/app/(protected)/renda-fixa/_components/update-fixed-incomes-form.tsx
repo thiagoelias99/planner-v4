@@ -170,6 +170,7 @@ export default function UpdateFixedIncomesForm({ fixedIncome, onSuccess }: Updat
           name="fixedRate"
           label="Taxa Fixa (%)"
           placeholder="Ex: 120.00"
+          max={9999}
         />
         <FormSelect
           control={form.control}
@@ -189,7 +190,7 @@ export default function UpdateFixedIncomesForm({ fixedIncome, onSuccess }: Updat
       <FormDatePicker
         control={form.control}
         name="retrievedAt"
-        label="Data de Atualização do Valor"
+        label="Data de Resgate"
       />
       <Button type="submit" className="mt-4 w-full">Salvar</Button>
     </FormBody>

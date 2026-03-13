@@ -58,6 +58,15 @@ export default function FixedIncomesTable({
         },
       },
       {
+        accessorKey: "fixedRate",
+        header: () => <p className="text-center">Taxa</p>,
+        cell: (row) => {
+          const rate = row.getValue() as number
+          return <p className="text-center font-semibold">{rate.toFixed(2)}%</p>
+        },
+        size: 100,
+      },
+      {
         accessorKey: "posFixedIndex",
         header: () => <p className="text-center">Índice</p>,
         cell: (row) => {
@@ -72,15 +81,6 @@ export default function FixedIncomesTable({
           )
         },
         size: 120,
-      },
-      {
-        accessorKey: "fixedRate",
-        header: () => <p className="text-center">Taxa</p>,
-        cell: (row) => {
-          const rate = row.getValue() as number
-          return <p className="text-center font-semibold">{rate.toFixed(2)}%</p>
-        },
-        size: 100,
       },
       {
         accessorKey: "initialInvestment",
@@ -136,12 +136,16 @@ export default function FixedIncomesTable({
 
           return (
             <div className="flex flex-col items-center">
-              <p className={`text-center text-sm ${isExpired ? 'text-green-500 font-semibold' : ''}`}>
+              <p className={`text-center text-sm ${isExpired ? 'font-semibold' : ''}`}>
                 {format(new Date(date), "dd/MM/yyyy", { locale: ptBR })}
               </p>
-              <p className="text-xs text-muted-foreground">
-                {fixedIncome.remainingDays > 0 ? `${fixedIncome.remainingDays} dias` : fixedIncome.retrievedAt ? "Resgatado" : "Vencido"}
-              </p>
+              {fixedIncome.retrievedAt ? (
+                <Badge variant="secondary">Resgatado</Badge>
+              ) : (
+                <p className="text-xs text-muted-foreground">
+                  {isExpired ? "Vencido" : `${fixedIncome.remainingDays} dias`}
+                </p>
+              )}
             </div>
           )
         },
