@@ -63,7 +63,7 @@ export class AssetBalanceStrategyService {
     const sum =
       updateData.cashBox +
       updateData.fixedIncome +
-      updateData.variableIncome +
+      // updateData.variableIncome +
       updateData.pension +
       updateData.property +
       updateData.share +
@@ -84,7 +84,7 @@ export class AssetBalanceStrategyService {
           notes: updateData.notes,
           cashBox: new Prisma.Decimal(updateData.cashBox),
           fixedIncome: new Prisma.Decimal(updateData.fixedIncome),
-          variableIncome: new Prisma.Decimal(updateData.variableIncome),
+          // variableIncome: new Prisma.Decimal(updateData.variableIncome),
           pension: new Prisma.Decimal(updateData.pension),
           property: new Prisma.Decimal(updateData.property),
           share: new Prisma.Decimal(updateData.share),
@@ -99,7 +99,7 @@ export class AssetBalanceStrategyService {
           notes: updateData.notes,
           cashBox: new Prisma.Decimal(updateData.cashBox),
           fixedIncome: new Prisma.Decimal(updateData.fixedIncome),
-          variableIncome: new Prisma.Decimal(updateData.variableIncome),
+          // variableIncome: new Prisma.Decimal(updateData.variableIncome),
           pension: new Prisma.Decimal(updateData.pension),
           property: new Prisma.Decimal(updateData.property),
           share: new Prisma.Decimal(updateData.share),

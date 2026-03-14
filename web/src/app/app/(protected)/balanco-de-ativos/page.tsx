@@ -23,10 +23,10 @@ const formSchema = z.object({
     const num = parseFloat(val.replace(",", "."))
     if (isNaN(num) || num < 0) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Deve ser maior ou igual a 0." })
   }),
-  variableIncome: z.string().superRefine((val, ctx) => {
-    const num = parseFloat(val.replace(",", "."))
-    if (isNaN(num) || num < 0) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Deve ser maior ou igual a 0." })
-  }),
+  // variableIncome: z.string().superRefine((val, ctx) => {
+  //   const num = parseFloat(val.replace(",", "."))
+  //   if (isNaN(num) || num < 0) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Deve ser maior ou igual a 0." })
+  // }),
   pension: z.string().superRefine((val, ctx) => {
     const num = parseFloat(val.replace(",", "."))
     if (isNaN(num) || num < 0) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Deve ser maior ou igual a 0." })
@@ -70,7 +70,7 @@ export default function AssetBalanceStrategyPage() {
     defaultValues: {
       cashBox: "10",
       fixedIncome: "10",
-      variableIncome: "10",
+      // variableIncome: "10",
       pension: "10",
       property: "10",
       share: "10",
@@ -89,7 +89,7 @@ export default function AssetBalanceStrategyPage() {
       form.reset({
         cashBox: strategy.cashBox.toString().replace(".", ","),
         fixedIncome: strategy.fixedIncome.toString().replace(".", ","),
-        variableIncome: strategy.variableIncome.toString().replace(".", ","),
+        // variableIncome: strategy.variableIncome.toString().replace(".", ","),
         pension: strategy.pension.toString().replace(".", ","),
         property: strategy.property.toString().replace(".", ","),
         share: strategy.share.toString().replace(".", ","),
@@ -108,7 +108,7 @@ export default function AssetBalanceStrategyPage() {
 
   const calculateSum = () => {
     const fields = [
-      formValues.cashBox, formValues.fixedIncome, formValues.variableIncome,
+      formValues.cashBox, formValues.fixedIncome, // formValues.variableIncome,
       formValues.pension, formValues.property, formValues.share,
       formValues.reit, formValues.international, formValues.gold,
       formValues.crypto, formValues.other
@@ -134,7 +134,7 @@ export default function AssetBalanceStrategyPage() {
       const submitData = {
         cashBox: parseFloat(data.cashBox.replace(",", ".")),
         fixedIncome: parseFloat(data.fixedIncome.replace(",", ".")),
-        variableIncome: parseFloat(data.variableIncome.replace(",", ".")),
+        // variableIncome: parseFloat(data.variableIncome.replace(",", ".")),
         pension: parseFloat(data.pension.replace(",", ".")),
         property: parseFloat(data.property.replace(",", ".")),
         share: parseFloat(data.share.replace(",", ".")),
@@ -201,7 +201,7 @@ export default function AssetBalanceStrategyPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
               <FormPercentageInput control={form.control} name="cashBox" label="Caixinha" />
               <FormPercentageInput control={form.control} name="fixedIncome" label="Renda Fixa" />
-              <FormPercentageInput control={form.control} name="variableIncome" label="Renda Variável" />
+              {/* <FormPercentageInput control={form.control} name="variableIncome" label="Renda Variável" /> */}
               <FormPercentageInput control={form.control} name="pension" label="Previdência" />
               <FormPercentageInput control={form.control} name="property" label="Imóveis" />
               <FormPercentageInput control={form.control} name="share" label="Ações" />

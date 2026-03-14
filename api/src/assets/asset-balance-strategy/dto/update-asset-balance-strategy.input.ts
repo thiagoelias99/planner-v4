@@ -14,11 +14,11 @@ export class UpdateAssetBalanceStrategyInput {
   @Max(100)
   fixedIncome: number
 
-  @ApiProperty({ example: 10, description: 'Percentage allocation for Variable Income' })
-  @IsNumber()
-  @Min(0)
-  @Max(100)
-  variableIncome: number
+  // @ApiProperty({ example: 10, description: 'Percentage allocation for Variable Income' })
+  // @IsNumber()
+  // @Min(0)
+  // @Max(100)
+  // variableIncome: number
 
   @ApiProperty({ example: 10, description: 'Percentage allocation for Pension' })
   @IsNumber()

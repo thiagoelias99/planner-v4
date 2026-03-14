@@ -4,7 +4,7 @@ export interface IAssetBalanceStrategy {
   notes?: string
   cashBox: number
   fixedIncome: number
-  variableIncome: number
+  // variableIncome: number
   pension: number
   property: number
   share: number
@@ -21,7 +21,7 @@ export interface IUpdateAssetBalanceStrategy {
   notes?: string
   cashBox: number
   fixedIncome: number
-  variableIncome: number
+  // variableIncome: number
   pension: number
   property: number
   share: number
