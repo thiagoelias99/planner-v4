@@ -1,9 +1,6 @@
 "use client"
 
 import { useDashboard } from "@/hooks/query/use-dashboard"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from "@/components/ui/chart"
-import { PieChart, Pie, Cell } from "recharts"
 import { TickersHoldingsTable } from "./_components/tickers-holdings-table"
 import Container from "@/components/ui/container"
 import LoadingIndicator from "@/components/ui/loading-indicator"
@@ -42,7 +39,7 @@ export default function DashboardPage() {
   const strategyData = strategy ? [
     { key: "Caixa", value: Number(strategy.cashBox), fill: "var(--color-cash)" },
     { key: "Renda Fixa", value: Number(strategy.fixedIncome), fill: "var(--color-fixed)" },
-    { key: "Renda Variável", value: Number(strategy.variableIncome), fill: "var(--color-variable)" },
+    // { key: "Renda Variável", value: Number(strategy.variableIncome), fill: "var(--color-variable)" },
     { key: "Previdência", value: Number(strategy.pension), fill: "var(--color-pension)" },
     { key: "Imóveis", value: Number(strategy.property), fill: "var(--color-property)" },
     { key: "Ações M.", value: Number(strategy.share), fill: "var(--color-share)" },
