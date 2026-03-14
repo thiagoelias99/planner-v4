@@ -121,11 +121,38 @@ Todos os componentes estão localizados em **web/src/components/form**. Os arqui
 
 ## Página Principal
 
+- **Sempre** utilizar o componente **Container** (`@/components/ui/container`) como wrapper principal de todas as páginas para manter espaçamento e layout consistentes
 - Estrutura padrão: Container > Ações (Sheets/Botões) > Busca/Filtros > Tabela > Paginação
 - Usar `useState` para controlar abertura/fechamento de Sheets
 - Para ações especiais (auto-update, sync, etc), criar mutações específicas nos hooks
 - Mostrar loading/disabled states durante mutações
 - Exemplo: **web/src/app/app/(protected)/admin/usuarios/page.tsx** e **tickers/page.tsx**
+
+### Exemplo de estrutura de página:
+
+```tsx
+import Container from "@/components/ui/container";
+import LoadingIndicator from "@/components/ui/loading-indicator";
+
+export default function EntitiesPage() {
+  const { data, isLoading } = useEntities();
+
+  if (isLoading) {
+    return (
+      <Container className="items-center justify-center">
+        <LoadingIndicator size="xl" />
+      </Container>
+    );
+  }
+
+  return (
+    <Container>
+      <h1>Título da Página</h1>
+      {/* Ações, formulários, tabelas, etc */}
+    </Container>
+  );
+}
+```
 
 ## Convenções de Nomenclatura
 
@@ -143,6 +170,8 @@ Todos os componentes estão localizados em **web/src/components/form**. Os arqui
 ## Boas Práticas
 
 - ✅ Sempre usar `"use client"` no topo dos componentes React com hooks
+- ✅ Utilizar o componente **Container** (`@/components/ui/container`) em todas as páginas para layout consistente
+- ✅ Utilizar o componente **LoadingIndicator** (`@/components/ui/loading-indicator`) para estados de carregamento, com tamanhos: `sm`, `default`, `lg`, `xl`, `2xl`, `3xl`
 - ✅ Validar formulários com Zod antes de enviar para API
 - ✅ Tratar erros específicos e mostrar feedback claro ao usuário
 - ✅ Invalidar queries após mutações para manter dados sincronizados

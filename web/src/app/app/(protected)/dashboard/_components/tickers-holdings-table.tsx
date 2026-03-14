@@ -55,7 +55,10 @@ export function TickersHoldingsTable({ holdings }: ITickersHoldingsTableProps) {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <CardTitle>{eTickerTypeMapper[type].label}</CardTitle>
-                  <Badge variant={eTickerTypeMapper[type].variant}>
+                  <Badge
+                    className="text-white"
+                    style={{ backgroundColor: eTickerTypeMapper[type].fill }}
+                  >
                     {typeHoldings.length} {typeHoldings.length === 1 ? "ativo" : "ativos"}
                   </Badge>
                 </div>
@@ -63,7 +66,7 @@ export function TickersHoldingsTable({ holdings }: ITickersHoldingsTableProps) {
                   <p className="text-sm font-medium">
                     {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalValue)}
                   </p>
-                  <p className={`text-xs ${totalProfitLoss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <p className={`text-xs ${totalProfitLoss >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                     {totalProfitLoss >= 0 ? '+' : ''}
                     {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalProfitLoss)}
                     {' '}({totalProfitLossPercent.toFixed(2)}%)
@@ -108,7 +111,7 @@ export function TickersHoldingsTable({ holdings }: ITickersHoldingsTableProps) {
                           {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(holding.totalValue)}
                         </TableCell>
                         <TableCell className="text-right">
-                          <div className={holding.profitLoss >= 0 ? 'text-green-600' : 'text-red-600'}>
+                          <div className={holding.profitLoss >= 0 ? ' text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}>
                             <p className="font-medium">
                               {holding.profitLoss >= 0 ? '+' : ''}
                               {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(holding.profitLoss)}
@@ -137,7 +140,7 @@ export function TickersHoldingsTable({ holdings }: ITickersHoldingsTableProps) {
                         <p className="font-medium text-sm">
                           {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(holding.totalValue)}
                         </p>
-                        <p className={`text-xs ${holding.profitLoss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        <p className={`text-xs ${holding.profitLoss >= 0 ? 'text-green-600 dark:text-green-600' : 'text-red-600 dark:text-red-400'}`}>
                           {holding.profitLoss >= 0 ? '+' : ''}
                           {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(holding.profitLoss)}
                         </p>
@@ -162,7 +165,7 @@ export function TickersHoldingsTable({ holdings }: ITickersHoldingsTableProps) {
                       </div>
                       <div>
                         <p className="text-muted-foreground">Rentabilidade</p>
-                        <p className={`font-medium ${holding.profitLoss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        <p className={`font-medium ${holding.profitLoss >= 0 ? 'text-green-600 dark:text-green-600' : 'text-red-600 dark:text-red-400'}`}>
                           {holding.profitLossPercent.toFixed(2)}%
                         </p>
                       </div>

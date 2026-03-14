@@ -37,6 +37,17 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-cash: var(--color-cash);
+  --color-fixed: var(--color-fixed);
+  --color-variable: var(--color-variable);
+  --color-pension: var(--color-pension);
+  --color-property: var(--color-property);
+  --color-share: var(--color-share);
+  --color-reit: var(--color-reit);
+  --color-intl: var(--color-intl);
+  --color-gold: var(--color-gold);
+  --color-crypto: var(--color-crypto);
+  --color-other: var(--color-other);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -95,6 +106,19 @@
 
   --sidebar-border: oklch(0.92 0.01 260);
   --sidebar-ring: oklch(0.38 0.12 260);
+
+  /* Assets */
+  --color-cash: oklch(0.75 0.15 140); /* Verde claro */
+  --color-fixed: oklch(0.65 0.12 240); /* Azul claro */
+  --color-variable: oklch(0.58 0.18 280); /* Roxo */
+  --color-pension: oklch(0.68 0.14 50); /* Laranja suave */
+  --color-property: oklch(0.55 0.12 40); /* Marrom/terra */
+  --color-share: oklch(0.58 0.16 160); /* Verde médio */
+  --color-reit: oklch(0.6 0.14 220); /* Azul médio */
+  --color-intl: oklch(0.7 0.16 200); /* Ciano */
+  --color-gold: oklch(0.75 0.18 90); /* Dourado */
+  --color-crypto: oklch(0.65 0.2 30); /* Laranja vibrante */
+  --color-other: oklch(0.6 0.05 260); /* Cinza neutro */
 }
 
 .dark {
@@ -143,6 +167,19 @@
 
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.55 0.14 260);
+
+  /* Assets */
+  --color-cash: oklch(0.7 0.16 140); /* Verde claro ajustado */
+  --color-fixed: oklch(0.65 0.14 240); /* Azul claro */
+  --color-variable: oklch(0.62 0.18 280); /* Roxo */
+  --color-pension: oklch(0.68 0.16 50); /* Laranja suave */
+  --color-property: oklch(0.6 0.14 40); /* Marrom/terra */
+  --color-share: oklch(0.62 0.17 160); /* Verde médio */
+  --color-reit: oklch(0.63 0.15 220); /* Azul médio */
+  --color-intl: oklch(0.68 0.16 200); /* Ciano */
+  --color-gold: oklch(0.72 0.18 90); /* Dourado */
+  --color-crypto: oklch(0.67 0.2 30); /* Laranja vibrante */
+  --color-other: oklch(0.65 0.06 260); /* Cinza neutro */
 }
 
 @layer base {

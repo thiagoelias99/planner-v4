@@ -9,16 +9,16 @@ export enum ETickerType {
 
 interface ETickerTypeMapperType {
   label: string,
-  variant: "default" | "secondary" | "destructive" | "outline"
+  fill: string
 }
 
 export const eTickerTypeMapper: Record<ETickerType, ETickerTypeMapperType> = {
-  [ETickerType.STOCK]: { label: "Ação", variant: "default" },
-  [ETickerType.ETF]: { label: "ETF", variant: "secondary" },
-  [ETickerType.REIT]: { label: "FII", variant: "outline" },
-  [ETickerType.GOLD]: { label: "Ouro", variant: "default" },
-  [ETickerType.CRYPTO]: { label: "Cripto", variant: "destructive" },
-  [ETickerType.INTERNATIONAL]: { label: "Internacional", variant: "secondary" },
+  [ETickerType.STOCK]: { label: "Ação", fill: "var(--color-share)" },
+  [ETickerType.ETF]: { label: "ETF", fill: "var(--color-variable)" },
+  [ETickerType.REIT]: { label: "FII", fill: "var(--color-reit)" },
+  [ETickerType.GOLD]: { label: "Ouro", fill: "var(--color-gold)" },
+  [ETickerType.CRYPTO]: { label: "Cripto", fill: "var(--color-crypto)" },
+  [ETickerType.INTERNATIONAL]: { label: "Internacional", fill: "var(--color-intl)" },
 }
 
 export interface ITicker {
