@@ -33,13 +33,12 @@ export async function getUpdatedTicker(ticker: ITickerView): Promise<ITickerView
       return null
     }
 
-    console.log(`Parsed data for ${ticker.symbol}: price=${response.data["Global Quote"]["05. price"]}, change=${response.data["Global Quote"]["09. change"]}, changePercent=${response.data["Global Quote"]["10. change percent"]}`)
-
     return ({
       ...ticker,
       price: parseFloat(response.data["Global Quote"]["05. price"]),
       change: parseFloat(response.data["Global Quote"]["09. change"]),
-      changePercent: parseFloat(response.data["Global Quote"]["10. change percent"].replace("%", "")) / 100,
+      // changePercent: parseFloat(response.data["Global Quote"]["10. change percent"].replace("%", "")) / 100,
+      changePercent: parseFloat(response.data["Global Quote"]["10. change percent"].replace("%", "")),
     })
 
   } catch (error) {

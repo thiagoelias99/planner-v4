@@ -103,8 +103,6 @@ export class TickersService {
       try {
         const updatedTicker = await getUpdatedTicker(prismaTickerToTickerView(ticker))
 
-        console.log(`Updated ticker data for ${ticker.symbol}:`, updatedTicker)
-
         if (updatedTicker) {
           await this.prisma.ticker.update({
             where: { id: ticker.id },

@@ -17,6 +17,45 @@ export interface ITickerHolding {
   profitLossPercent: number
 }
 
+export interface IPortfolioHistoryItem {
+  id: string
+  portfolioHistoryId: string
+  fixedIncomeId: string | null
+  otherAssetId: string | null
+  type: string
+  description: string
+  agency: string | null
+  note: string | null
+  value: number
+  dueDate: Date | null
+  fixedRate: number | null
+  posFixedIndex: string | null
+  createdAt: Date
+}
+
+export interface IPortfolioHistory {
+  id: string
+  userId: string
+  snapshotDate: Date
+  variableIncomeTotalInvested: number
+  variableIncomeTotalBalance: number
+  shareTotalBalance: number
+  reitTotalBalance: number
+  internationalTotalBalance: number
+  goldTotalBalance: number
+  cryptoTotalBalance: number
+  genericVariableIncomeTotalBalance: number
+  cashTotalBalance: number
+  pensionTotalBalance: number
+  fixedIncomeTotalBalance: number
+  propertyTotalBalance: number
+  otherTotalBalance: number
+  totalBalance: number
+  assetBalanceStrategySnapshot: string | null
+  createdAt: Date
+  items: IPortfolioHistoryItem[]
+}
+
 export interface IDashboardSummary {
   variableIncomeTotalInvested: number
   variableIncomeTotalBalance: number
@@ -34,6 +73,7 @@ export interface IDashboardSummary {
   totalBalance: number
   assetBalanceStrategy: IAssetBalanceStrategy | null
   tickersHoldings: ITickerHolding[]
+  history: IPortfolioHistory[]
 }
 
 export const useDashboard = () => {

@@ -28,6 +28,7 @@ model User {
   FixedIncomes         FixedIncome[]
   otherAssets          OtherAsset[]
   assetBalanceStrategy AssetBalanceStrategy?
+  portfolioHistories   PortfolioHistory[]
 
   @@unique([email])
   @@map("user")
@@ -165,7 +166,8 @@ model FixedIncome {
   retrievedAt       DateTime? @map("retrieved_at")
   updatedAt         DateTime  @updatedAt @map("updated_at")
 
-  User User @relation(fields: [userId], references: [id])
+  User                  User                   @relation(fields: [userId], references: [id])
+  PortfolioHistoryItems PortfolioHistoryItem[]
 
   @@map("fixed_incomes")
 }
@@ -181,7 +183,8 @@ model OtherAsset {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  User User @relation(fields: [userId], references: [id])
+  User                  User                   @relation(fields: [userId], references: [id])
+  PortfolioHistoryItems PortfolioHistoryItem[]
 
   @@map("other_assets")
 }
@@ -207,4 +210,55 @@ model AssetBalanceStrategy {
   User User @relation(fields: [userId], references: [id])
 
   @@map("asset_balance_strategies")
+}
+
+model PortfolioHistory {
+  id                                String   @id @default(cuid())
+  userId                            String   @map("user_id")
+  snapshotDate                      DateTime @map("snapshot_date")
+  variableIncomeTotalInvested       Decimal  @default(0) @map("variable_income_total_invested") @db.Decimal(12, 2)
+  variableIncomeTotalBalance        Decimal  @default(0) @map("variable_income_total_balance") @db.Decimal(12, 2)
+  shareTotalBalance                 Decimal  @default(0) @map("share_total_balance") @db.Decimal(12, 2)
+  reitTotalBalance                  Decimal  @default(0) @map("reit_total_balance") @db.Decimal(12, 2)
+  internationalTotalBalance         Decimal  @default(0) @map("international_total_balance") @db.Decimal(12, 2)
+  goldTotalBalance                  Decimal  @default(0) @map("gold_total_balance") @db.Decimal(12, 2)
+  cryptoTotalBalance                Decimal  @default(0) @map("crypto_total_balance") @db.Decimal(12, 2)
+  genericVariableIncomeTotalBalance Decimal  @default(0) @map("generic_variable_income_total_balance") @db.Decimal(12, 2)
+  cashTotalBalance                  Decimal  @default(0) @map("cash_total_balance") @db.Decimal(12, 2)
+  pensionTotalBalance               Decimal  @default(0) @map("pension_total_balance") @db.Decimal(12, 2)
+  fixedIncomeTotalBalance           Decimal  @default(0) @map("fixed_income_total_balance") @db.Decimal(12, 2)
+  propertyTotalBalance              Decimal  @default(0) @map("property_total_balance") @db.Decimal(12, 2)
+  otherTotalBalance                 Decimal  @default(0) @map("other_total_balance") @db.Decimal(12, 2)
+  totalBalance                      Decimal  @default(0) @map("total_balance") @db.Decimal(12, 2)
+  assetBalanceStrategySnapshot      String?  @map("asset_balance_strategy_snapshot")
+  createdAt                         DateTime @default(now()) @map("created_at")
+
+  User                  User                   @relation(fields: [userId], references: [id])
+  PortfolioHistoryItems PortfolioHistoryItem[]
+
+  @@index([userId, snapshotDate])
+  @@map("portfolio_histories")
+}
+
+model PortfolioHistoryItem {
+  id                 String    @id @default(cuid())
+  portfolioHistoryId String    @map("portfolio_history_id")
+  fixedIncomeId      String?   @map("fixed_income_id")
+  otherAssetId       String?   @map("other_asset_id")
+  type               String
+  description        String
+  agency             String?
+  note               String?
+  value              Decimal   @db.Decimal(12, 2)
+  dueDate            DateTime? @map("due_date")
+  fixedRate          Decimal?  @map("fixed_rate") @db.Decimal(10, 2)
+  posFixedIndex      String?   @map("pos_fixed_index")
+  createdAt          DateTime  @default(now()) @map("created_at")
+
+  PortfolioHistory PortfolioHistory @relation(fields: [portfolioHistoryId], references: [id], onDelete: Cascade)
+  FixedIncome      FixedIncome?     @relation(fields: [fixedIncomeId], references: [id])
+  OtherAsset       OtherAsset?      @relation(fields: [otherAssetId], references: [id])
+
+  @@index([portfolioHistoryId])
+  @@map("portfolio_history_items")
 }
