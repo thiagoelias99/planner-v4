@@ -21,17 +21,16 @@ export default function DashboardPage() {
 
   // Data for actual balance distribution
   const distributionData = [
-    { key: "Caixa", value: Number(dashboard.cashTotalBalance), fill: "var(--color-cash)" },
-    { key: "Renda Fixa", value: Number(dashboard.fixedIncomeTotalBalance), fill: "var(--color-fixed)" },
-    { key: "Renda Variável", value: Number(dashboard.genericVariableIncomeTotalBalance), fill: "var(--color-variable)" },
-    { key: "Previdência", value: Number(dashboard.pensionTotalBalance), fill: "var(--color-pension)" },
-    { key: "Imóveis", value: Number(dashboard.propertyTotalBalance), fill: "var(--color-property)" },
-    { key: "Ações M.", value: Number(dashboard.shareTotalBalance), fill: "var(--color-share)" },
-    { key: "FIIs", value: Number(dashboard.reitTotalBalance), fill: "var(--color-reit)" },
-    { key: "Internacional", value: Number(dashboard.internationalTotalBalance), fill: "var(--color-intl)" },
-    { key: "Ouro", value: Number(dashboard.goldTotalBalance), fill: "var(--color-gold)" },
-    { key: "Cripto", value: Number(dashboard.cryptoTotalBalance), fill: "var(--color-crypto)" },
-    { key: "Outros", value: Number(dashboard.otherTotalBalance), fill: "var(--color-other)" },
+    { key: "Caixa", value: Number(dashboard.assetCurrentBalance?.cashBox), fill: "var(--color-cash)" },
+    { key: "Renda Fixa", value: Number(dashboard.assetCurrentBalance?.fixedIncome), fill: "var(--color-fixed)" },
+    { key: "Previdência", value: Number(dashboard.assetCurrentBalance?.pension), fill: "var(--color-pension)" },
+    { key: "Imóveis", value: Number(dashboard.assetCurrentBalance?.property), fill: "var(--color-property)" },
+    { key: "Ações M.", value: Number(dashboard.assetCurrentBalance?.share), fill: "var(--color-share)" },
+    { key: "FIIs", value: Number(dashboard.assetCurrentBalance?.reit), fill: "var(--color-reit)" },
+    { key: "Internacional", value: Number(dashboard.assetCurrentBalance?.international), fill: "var(--color-intl)" },
+    { key: "Ouro", value: Number(dashboard.assetCurrentBalance?.gold), fill: "var(--color-gold)" },
+    { key: "Cripto", value: Number(dashboard.assetCurrentBalance?.crypto), fill: "var(--color-crypto)" },
+    { key: "Outros", value: Number(dashboard.assetCurrentBalance?.other), fill: "var(--color-other)" },
   ].filter(item => item.value > 0)
 
   // Data for strategy

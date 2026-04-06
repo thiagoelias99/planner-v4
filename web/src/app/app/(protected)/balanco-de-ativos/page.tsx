@@ -13,6 +13,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress"
 import { Loader2Icon } from "lucide-react"
 import { AxiosError } from "axios"
+import { useDashboard } from "@/hooks/query/use-dashboard"
+import { formatPercentage } from "@/lib/utils"
 
 const formSchema = z.object({
   cashBox: z.string().superRefine((val, ctx) => {
@@ -64,6 +66,7 @@ const formSchema = z.object({
 
 export default function AssetBalanceStrategyPage() {
   const { data: strategy, isLoading, updateAssetBalanceStrategy } = useAssetBalanceStrategy()
+  const { data: dashboardData } = useDashboard()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -87,17 +90,17 @@ export default function AssetBalanceStrategyPage() {
   useEffect(() => {
     if (strategy) {
       form.reset({
-        cashBox: strategy.cashBox.toString().replace(".", ","),
-        fixedIncome: strategy.fixedIncome.toString().replace(".", ","),
-        // variableIncome: strategy.variableIncome.toString().replace(".", ","),
-        pension: strategy.pension.toString().replace(".", ","),
-        property: strategy.property.toString().replace(".", ","),
-        share: strategy.share.toString().replace(".", ","),
-        reit: strategy.reit.toString().replace(".", ","),
-        international: strategy.international.toString().replace(".", ","),
-        gold: strategy.gold.toString().replace(".", ","),
-        crypto: strategy.crypto.toString().replace(".", ","),
-        other: strategy.other.toString().replace(".", ","),
+        cashBox: strategy.cashBox.toString(),
+        fixedIncome: strategy.fixedIncome.toString(),
+        // variableIncome: strategy.variableIncome.toString(),
+        pension: strategy.pension.toString(),
+        property: strategy.property.toString(),
+        share: strategy.share.toString(),
+        reit: strategy.reit.toString(),
+        international: strategy.international.toString(),
+        gold: strategy.gold.toString(),
+        crypto: strategy.crypto.toString(),
+        other: strategy.other.toString(),
         notes: strategy.notes || "",
       })
     }
@@ -198,18 +201,18 @@ export default function AssetBalanceStrategyPage() {
           </div>
 
           <FormBody onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
-              <FormPercentageInput control={form.control} name="cashBox" label="Caixinha" />
-              <FormPercentageInput control={form.control} name="fixedIncome" label="Renda Fixa" />
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
+              <FormPercentageInput control={form.control} name="cashBox" label="Caixinha" description={`Atual: ${formatPercentage(dashboardData?.assetCurrentBalance?.cashBox, { divideBy: 100 })}`} />
+              <FormPercentageInput control={form.control} name="fixedIncome" label="Renda Fixa" description={`Atual: ${formatPercentage(dashboardData?.assetCurrentBalance?.fixedIncome, { divideBy: 100 })}`} />
               {/* <FormPercentageInput control={form.control} name="variableIncome" label="Renda Variável" /> */}
-              <FormPercentageInput control={form.control} name="pension" label="Previdência" />
-              <FormPercentageInput control={form.control} name="property" label="Imóveis" />
-              <FormPercentageInput control={form.control} name="share" label="Ações" />
-              <FormPercentageInput control={form.control} name="reit" label="Fundos Imobiliários" />
-              <FormPercentageInput control={form.control} name="international" label="Internacional" />
-              <FormPercentageInput control={form.control} name="gold" label="Ouro" />
-              <FormPercentageInput control={form.control} name="crypto" label="Criptomoedas" />
-              <FormPercentageInput control={form.control} name="other" label="Outros" />
+              <FormPercentageInput control={form.control} name="pension" label="Previdência" description={`Atual: ${formatPercentage(dashboardData?.assetCurrentBalance?.pension, { divideBy: 100 })}`} />
+              <FormPercentageInput control={form.control} name="property" label="Imóveis" description={`Atual: ${formatPercentage(dashboardData?.assetCurrentBalance?.property, { divideBy: 100 })}`} />
+              <FormPercentageInput control={form.control} name="share" label="Ações" description={`Atual: ${formatPercentage(dashboardData?.assetCurrentBalance?.share, { divideBy: 100 })}`} />
+              <FormPercentageInput control={form.control} name="reit" label="Fundos Imobiliários" description={`Atual: ${formatPercentage(dashboardData?.assetCurrentBalance?.reit, { divideBy: 100 })}`} />
+              <FormPercentageInput control={form.control} name="international" label="Internacional" description={`Atual: ${formatPercentage(dashboardData?.assetCurrentBalance?.international, { divideBy: 100 })}`} />
+              <FormPercentageInput control={form.control} name="gold" label="Ouro" description={`Atual: ${formatPercentage(dashboardData?.assetCurrentBalance?.gold, { divideBy: 100 })}`} />
+              <FormPercentageInput control={form.control} name="crypto" label="Criptomoedas" description={`Atual: ${formatPercentage(dashboardData?.assetCurrentBalance?.crypto, { divideBy: 100 })}`} />
+              <FormPercentageInput control={form.control} name="other" label="Outros" description={`Atual: ${formatPercentage(dashboardData?.assetCurrentBalance?.other, { divideBy: 100 })}`} />
             </div>
 
             <div className="pt-4 border-t w-full">

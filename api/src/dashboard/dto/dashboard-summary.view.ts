@@ -49,6 +49,9 @@ export class DashboardSummaryView {
   @ApiProperty({ type: AssetBalanceStrategyView, description: 'Asset balance strategy', nullable: true })
   assetBalanceStrategy: AssetBalanceStrategyView | null
 
+  @ApiProperty({ type: AssetBalanceStrategyView, description: 'Current asset balance distribution in percentages' })
+  assetCurrentBalance: AssetBalanceStrategyView
+
   @ApiProperty({ type: [TickerHoldingView], description: 'List of ticker holdings' })
   tickersHoldings: TickerHoldingView[]
 

@@ -192,7 +192,27 @@ export class DashboardService {
       profitLossPercent: ((Number(order.price) - Number(order.new_mean_price)) / Number(order.new_mean_price)) * 100
     }))
 
-    // 9. Get portfolio history (last 24 snapshots)
+    // 9. Calculate current asset balance distribution in percentages
+    const assetCurrentBalance = {
+      id: 'current',
+      userId,
+      notes: null,
+      cashBox: totalBalance > 0 ? (cashTotalBalance / totalBalance) * 100 : 0,
+      fixedIncome: totalBalance > 0 ? (fixedIncomeTotalBalance / totalBalance) * 100 : 0,
+      variableIncome: totalBalance > 0 ? (variableIncomeTotalBalance / totalBalance) * 100 : 0,
+      pension: totalBalance > 0 ? (pensionTotalBalance / totalBalance) * 100 : 0,
+      property: totalBalance > 0 ? (propertyTotalBalance / totalBalance) * 100 : 0,
+      share: totalBalance > 0 ? (shareTotalBalance / totalBalance) * 100 : 0,
+      reit: totalBalance > 0 ? (reitTotalBalance / totalBalance) * 100 : 0,
+      international: totalBalance > 0 ? (internationalTotalBalance / totalBalance) * 100 : 0,
+      gold: totalBalance > 0 ? (goldTotalBalance / totalBalance) * 100 : 0,
+      crypto: totalBalance > 0 ? (cryptoTotalBalance / totalBalance) * 100 : 0,
+      other: totalBalance > 0 ? (otherTotalBalance / totalBalance) * 100 : 0,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
+
+    // 10. Get portfolio history (last 24 snapshots)
     const history = await this.getHistory(userId, 24)
 
     return {
@@ -211,6 +231,7 @@ export class DashboardService {
       otherTotalBalance,
       totalBalance,
       assetBalanceStrategy,
+      assetCurrentBalance,
       tickersHoldings,
       history
     }

@@ -72,6 +72,7 @@ export interface IDashboardSummary {
   otherTotalBalance: number
   totalBalance: number
   assetBalanceStrategy: IAssetBalanceStrategy | null
+  assetCurrentBalance: IAssetBalanceStrategy | null
   tickersHoldings: ITickerHolding[]
   history: IPortfolioHistory[]
 }
