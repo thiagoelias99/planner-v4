@@ -16,6 +16,35 @@ import { AxiosError } from "axios"
 import { useDashboard } from "@/hooks/query/use-dashboard"
 import { formatPercentage } from "@/lib/utils"
 
+// Local component to display current allocation and correction amount
+interface AssetBalanceInfoProps {
+  fieldName: string
+  currentPercent: number
+  correction: number
+}
+
+function AssetBalanceInfo({ currentPercent, correction }: AssetBalanceInfoProps) {
+  const currentPercentage = formatPercentage(currentPercent, { divideBy: 100 })
+  const sign = correction >= 0 ? "+" : ""
+  const formatted = new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  }).format(Math.abs(correction))
+
+  const correctionColor = correction >= 0
+    ? "text-green-600 dark:text-green-400"
+    : "text-red-600 dark:text-red-400"
+
+  return (
+    <div className="text-xs text-muted-foreground mt-1 space-y-0.5">
+      <div>Atual: {currentPercentage}</div>
+      <div className={`font-medium ${correctionColor}`}>
+        Correção: {sign} {formatted}
+      </div>
+    </div>
+  )
+}
+
 const formSchema = z.object({
   cashBox: z.string().superRefine((val, ctx) => {
     const num = parseFloat(val.replace(",", "."))
@@ -130,6 +159,18 @@ export default function AssetBalanceStrategyPage() {
   const currentSum = Math.round(calculateSum() * 100) / 100
   const isSumValid = currentSum === 100.0
 
+  // Calculate correction needed in R$ for each asset type
+  const calculateCorrection = (fieldName: keyof typeof formValues): number => {
+    if (!dashboardData?.assetCurrentBalance || !dashboardData?.totalBalance) return 0
+
+    const plannedPercent = parseFloat(String(formValues[fieldName] || "0").replace(",", "."))
+    const currentPercent = Number(dashboardData.assetCurrentBalance[fieldName] || 0)
+    const totalBalance = Number(dashboardData.totalBalance || 0)
+
+    // Correction = (planned% - current%) / 100 * totalBalance
+    return ((plannedPercent - currentPercent) / 100) * totalBalance
+  }
+
   async function onSubmit(data: z.infer<typeof formSchema>) {
     if (!isSumValid) return
 
@@ -202,17 +243,87 @@ export default function AssetBalanceStrategyPage() {
 
           <FormBody onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
-              <FormPercentageInput control={form.control} name="cashBox" label="Caixinha" description={`Atual: ${formatPercentage(dashboardData?.assetCurrentBalance?.cashBox, { divideBy: 100 })}`} />
-              <FormPercentageInput control={form.control} name="fixedIncome" label="Renda Fixa" description={`Atual: ${formatPercentage(dashboardData?.assetCurrentBalance?.fixedIncome, { divideBy: 100 })}`} />
+              <div>
+                <FormPercentageInput control={form.control} name="cashBox" label="Caixinha" />
+                <AssetBalanceInfo
+                  fieldName="cashBox"
+                  currentPercent={Number(dashboardData?.assetCurrentBalance?.cashBox || 0)}
+                  correction={calculateCorrection("cashBox")}
+                />
+              </div>
+              <div>
+                <FormPercentageInput control={form.control} name="fixedIncome" label="Renda Fixa" />
+                <AssetBalanceInfo
+                  fieldName="fixedIncome"
+                  currentPercent={Number(dashboardData?.assetCurrentBalance?.fixedIncome || 0)}
+                  correction={calculateCorrection("fixedIncome")}
+                />
+              </div>
               {/* <FormPercentageInput control={form.control} name="variableIncome" label="Renda Variável" /> */}
-              <FormPercentageInput control={form.control} name="pension" label="Previdência" description={`Atual: ${formatPercentage(dashboardData?.assetCurrentBalance?.pension, { divideBy: 100 })}`} />
-              <FormPercentageInput control={form.control} name="property" label="Imóveis" description={`Atual: ${formatPercentage(dashboardData?.assetCurrentBalance?.property, { divideBy: 100 })}`} />
-              <FormPercentageInput control={form.control} name="share" label="Ações" description={`Atual: ${formatPercentage(dashboardData?.assetCurrentBalance?.share, { divideBy: 100 })}`} />
-              <FormPercentageInput control={form.control} name="reit" label="Fundos Imobiliários" description={`Atual: ${formatPercentage(dashboardData?.assetCurrentBalance?.reit, { divideBy: 100 })}`} />
-              <FormPercentageInput control={form.control} name="international" label="Internacional" description={`Atual: ${formatPercentage(dashboardData?.assetCurrentBalance?.international, { divideBy: 100 })}`} />
-              <FormPercentageInput control={form.control} name="gold" label="Ouro" description={`Atual: ${formatPercentage(dashboardData?.assetCurrentBalance?.gold, { divideBy: 100 })}`} />
-              <FormPercentageInput control={form.control} name="crypto" label="Criptomoedas" description={`Atual: ${formatPercentage(dashboardData?.assetCurrentBalance?.crypto, { divideBy: 100 })}`} />
-              <FormPercentageInput control={form.control} name="other" label="Outros" description={`Atual: ${formatPercentage(dashboardData?.assetCurrentBalance?.other, { divideBy: 100 })}`} />
+              <div>
+                <FormPercentageInput control={form.control} name="pension" label="Previdência" />
+                <AssetBalanceInfo
+                  fieldName="pension"
+                  currentPercent={Number(dashboardData?.assetCurrentBalance?.pension || 0)}
+                  correction={calculateCorrection("pension")}
+                />
+              </div>
+              <div>
+                <FormPercentageInput control={form.control} name="property" label="Imóveis" />
+                <AssetBalanceInfo
+                  fieldName="property"
+                  currentPercent={Number(dashboardData?.assetCurrentBalance?.property || 0)}
+                  correction={calculateCorrection("property")}
+                />
+              </div>
+              <div>
+                <FormPercentageInput control={form.control} name="share" label="Ações" />
+                <AssetBalanceInfo
+                  fieldName="share"
+                  currentPercent={Number(dashboardData?.assetCurrentBalance?.share || 0)}
+                  correction={calculateCorrection("share")}
+                />
+              </div>
+              <div>
+                <FormPercentageInput control={form.control} name="reit" label="Fundos Imobiliários" />
+                <AssetBalanceInfo
+                  fieldName="reit"
+                  currentPercent={Number(dashboardData?.assetCurrentBalance?.reit || 0)}
+                  correction={calculateCorrection("reit")}
+                />
+              </div>
+              <div>
+                <FormPercentageInput control={form.control} name="international" label="Internacional" />
+                <AssetBalanceInfo
+                  fieldName="international"
+                  currentPercent={Number(dashboardData?.assetCurrentBalance?.international || 0)}
+                  correction={calculateCorrection("international")}
+                />
+              </div>
+              <div>
+                <FormPercentageInput control={form.control} name="gold" label="Ouro" />
+                <AssetBalanceInfo
+                  fieldName="gold"
+                  currentPercent={Number(dashboardData?.assetCurrentBalance?.gold || 0)}
+                  correction={calculateCorrection("gold")}
+                />
+              </div>
+              <div>
+                <FormPercentageInput control={form.control} name="crypto" label="Criptomoedas" />
+                <AssetBalanceInfo
+                  fieldName="crypto"
+                  currentPercent={Number(dashboardData?.assetCurrentBalance?.crypto || 0)}
+                  correction={calculateCorrection("crypto")}
+                />
+              </div>
+              <div>
+                <FormPercentageInput control={form.control} name="other" label="Outros" />
+                <AssetBalanceInfo
+                  fieldName="other"
+                  currentPercent={Number(dashboardData?.assetCurrentBalance?.other || 0)}
+                  correction={calculateCorrection("other")}
+                />
+              </div>
             </div>
 
             <div className="pt-4 border-t w-full">
