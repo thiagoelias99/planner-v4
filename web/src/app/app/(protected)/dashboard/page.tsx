@@ -7,9 +7,12 @@ import LoadingIndicator from "@/components/ui/loading-indicator"
 import DashboardNumericIndicator from "@/components/dashboard/dashboard-numeric-indicator"
 import AssetsPieChart from "./_components/assets-pie-chart"
 import DistributionPieChart from "./_components/distribution-pie-chart"
+import { BalanceHistoryChart } from "./_components/balance-history-chart"
 
 export default function DashboardPage() {
   const { data: dashboard, isLoading } = useDashboard()
+
+  console.log("Dashboard data:", dashboard)
 
   if (isLoading) {
     return <div className="flex justify-center items-center h-full p-8"><LoadingIndicator size="2xl" /></div>
@@ -91,6 +94,9 @@ export default function DashboardPage() {
           <AssetsPieChart data={distributionData} />
           <DistributionPieChart data={strategyData} />
         </div>
+
+        <BalanceHistoryChart history={dashboard.history} currentBalance={dashboard.totalBalance} />
+
         <TickersHoldingsTable holdings={dashboard.tickersHoldings} />
       </div>
     </Container>
