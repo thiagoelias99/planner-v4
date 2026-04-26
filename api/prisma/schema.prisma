@@ -116,6 +116,7 @@ model Apikey {
 model Ticker {
   id            String   @id @default(cuid())
   symbol        String   @unique
+  cnpj          String?
   name          String
   type          String
   price         Decimal  @db.Decimal(10, 2)

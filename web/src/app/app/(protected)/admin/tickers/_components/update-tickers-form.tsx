@@ -15,6 +15,7 @@ const formSchema = z.object({
     .min(2, "O nome deve conter pelo menos 2 caracteres.")
     .max(100, "O nome deve conter no máximo 100 caracteres.")
     .optional(),
+  cnpj: z.string().optional(),
   type: z.enum(ETickerType, {
     message: "Selecione um tipo válido.",
   }).optional(),
@@ -39,6 +40,7 @@ export default function UpdateTickersForm({ ticker, onSuccess }: UpdateTickersFo
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: ticker.name,
+      cnpj: ticker.cnpj || "",
       type: ticker.type,
       price: ticker.price?.toString().replace(".", ","),
       autoUpdate: ticker.autoUpdate,
@@ -48,8 +50,9 @@ export default function UpdateTickersForm({ ticker, onSuccess }: UpdateTickersFo
   async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
       // Convert price string to number if provided
-      const submitData: { name?: string; type?: ETickerType; price?: number; autoUpdate?: boolean } = {
+      const submitData: { name?: string; cnpj?: string; type?: ETickerType; price?: number; autoUpdate?: boolean } = {
         name: data.name,
+        cnpj: data.cnpj && data.cnpj !== "" ? data.cnpj : undefined,
         type: data.type,
         price: data.price && data.price !== "" ? parseFloat(data.price.replace(",", ".")) : undefined,
         autoUpdate: data.autoUpdate,
@@ -85,6 +88,12 @@ export default function UpdateTickersForm({ ticker, onSuccess }: UpdateTickersFo
         name="name"
         label="Nome"
         placeholder="Ex: Petrobras"
+      />
+      <FormInput
+        control={form.control}
+        name="cnpj"
+        label="CNPJ (opcional)"
+        placeholder="Ex: 00.000.000/0001-00"
       />
       <FormSelect
         control={form.control}

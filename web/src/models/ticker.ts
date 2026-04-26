@@ -26,6 +26,7 @@ export interface ITicker {
   id: string
   name: string
   symbol: string
+  cnpj?: string
   type: ETickerType
   price: number
   change?: number

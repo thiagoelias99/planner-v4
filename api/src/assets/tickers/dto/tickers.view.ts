@@ -13,6 +13,7 @@ export interface ITickerView {
   id: string
   name: string
   symbol: string
+  cnpj?: string
   type: ETickerType
   price: number
   change?: number
@@ -36,6 +37,9 @@ export class TickerView implements ITickerView {
 
   @ApiProperty({ example: 'PETR4' })
   symbol: string
+
+  @ApiPropertyOptional({ example: '12.345.678/0001-90' })
+  cnpj?: string
 
   @ApiProperty({ example: ETickerType.STOCK, enum: ETickerType })
   type: ETickerType

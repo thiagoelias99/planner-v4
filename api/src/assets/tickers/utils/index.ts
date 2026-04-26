@@ -5,6 +5,7 @@ export function prismaTickerToTickerView(ticker: Ticker): TickerView {
   return new TickerView({
     id: ticker.id,
     symbol: ticker.symbol,
+    cnpj: ticker.cnpj || undefined,
     name: ticker.name,
     type: ticker.type as ETickerType,
     price: Number(ticker.price),

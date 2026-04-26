@@ -14,6 +14,11 @@ export class CreateTickerInput {
   @IsString()
   name: string
 
+  @ApiPropertyOptional({ example: '00.000.000/0001-00', description: 'CNPJ' })
+  @IsString()
+  @IsOptional()
+  cnpj?: string
+
   @ApiProperty({ example: ETickerType.STOCK, enum: ETickerType, description: 'Ticker type' })
   @IsEnum(ETickerType)
   type: ETickerType

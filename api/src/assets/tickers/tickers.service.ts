@@ -76,6 +76,8 @@ export class TickersService {
   }
 
   async update(id: string, data: UpdateTickerInput): Promise<Ticker> {
+    console.log("Updating ticker with id:", id, "and data:", data)
+
     try {
       return await this.prisma.ticker.update({
         where: { id },

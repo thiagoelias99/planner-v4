@@ -18,6 +18,7 @@ const formSchema = z.object({
   name: z.string()
     .min(2, "O nome deve conter pelo menos 2 caracteres.")
     .max(100, "O nome deve conter no máximo 100 caracteres."),
+  cnpj: z.string().optional(),
   type: z.enum(ETickerType, {
     message: "Selecione um tipo válido.",
   }),
@@ -41,6 +42,7 @@ export default function CreateTickersForm({ onSuccess }: CreateTickersFormProps)
     defaultValues: {
       symbol: "",
       name: "",
+      cnpj: "",
       type: ETickerType.STOCK,
       price: undefined,
     },
@@ -49,9 +51,10 @@ export default function CreateTickersForm({ onSuccess }: CreateTickersFormProps)
   async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
       // Convert price string to number if provided
-      const submitData: { symbol: string; name: string; type: ETickerType; price?: number } = {
+      const submitData: { symbol: string; name: string; cnpj?: string; type: ETickerType; price?: number } = {
         symbol: data.symbol,
         name: data.name,
+        cnpj: data.cnpj && data.cnpj !== "" ? data.cnpj : undefined,
         type: data.type,
         price: data.price && data.price !== "" ? parseFloat(data.price.replace(",", ".")) : undefined,
       }
@@ -101,6 +104,12 @@ export default function CreateTickersForm({ onSuccess }: CreateTickersFormProps)
         name="name"
         label="Nome"
         placeholder="Ex: Petrobras"
+      />
+      <FormInput
+        control={form.control}
+        name="cnpj"
+        label="CNPJ (opcional)"
+        placeholder="Ex: 00.000.000/0001-00"
       />
       <FormSelect
         control={form.control}
