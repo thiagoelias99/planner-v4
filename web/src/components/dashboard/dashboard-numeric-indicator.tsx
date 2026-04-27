@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../ui/card"
 import NumberCountUp from "../ui/number-count-up"
 import { ClassNameValue } from "tailwind-merge"
 import { cn } from "@/lib/utils"
@@ -11,6 +11,7 @@ import LoadingIndicator from "../ui/loading-indicator"
 interface Props {
   label?: string
   subLabel?: string
+  footer?: React.ReactNode
   amount?: number
   isLoading?: boolean
   tooltipContent?: string
@@ -22,9 +23,9 @@ interface Props {
   emphasis?: boolean
 }
 
-export default function DashboardNumericIndicator({ label, subLabel, amount, isLoading, className, tooltipContent, prefix, suffix, decimals, link, emphasis }: Props) {
+export default function DashboardNumericIndicator({ label, subLabel, footer, amount, isLoading, className, tooltipContent, prefix, suffix, decimals, link, emphasis }: Props) {
   return (
-    <Card className={cn("gap-2", { "bg-zinc-800": emphasis }, className)}>
+    <Card className={cn("gap-2", { "bg-zinc-800": emphasis }, { "pb-2": footer }, className)}>
       <CardHeader className="relative flex flex-row justify-between items-start">
         <div className="flex flex-row justify-start items-start gap-1">
           <div>
@@ -63,6 +64,11 @@ export default function DashboardNumericIndicator({ label, subLabel, amount, isL
           decimals={decimals}
         />
       </CardContent>
+      {footer && (
+        <CardFooter className="">
+          {footer}
+        </CardFooter>
+      )}
     </Card>
   )
 }

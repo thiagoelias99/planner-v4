@@ -16,6 +16,8 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart"
+import { ClassNameValue } from "tailwind-merge"
+import { cn } from "@/lib/utils"
 
 interface ChartDataPoint {
   date: string | Date
@@ -31,6 +33,7 @@ interface ChartLineTrendingProps {
   valueFormatter?: (value: number) => string
   chartColor?: string
   dateFormatter?: (date: string | Date) => string
+  className?: ClassNameValue
 }
 
 const defaultValueFormatter = (value: number) =>
@@ -64,6 +67,7 @@ export default function ChartLineTrending({
   valueFormatter = defaultValueFormatter,
   chartColor = "var(--chart-1)",
   dateFormatter = defaultDateFormatter,
+  className,
 }: ChartLineTrendingProps) {
   const chartConfig = {
     value: {
@@ -105,13 +109,13 @@ export default function ChartLineTrending({
   }
 
   return (
-    <Card>
+    <Card className="w-full">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         {description && <CardDescription>{description}</CardDescription>}
       </CardHeader>
-      <CardContent>
-        <ChartContainer config={chartConfig}>
+      <CardContent className={cn("w-full", className)}>
+        <ChartContainer config={chartConfig} className="h-full w-full">
           <LineChart
             accessibilityLayer
             data={chartData}

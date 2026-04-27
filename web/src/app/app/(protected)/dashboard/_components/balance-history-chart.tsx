@@ -2,13 +2,15 @@
 
 import { IPortfolioHistory } from "@/hooks/query/use-dashboard"
 import ChartLineTrending from "@/components/dashboard/chart-line-trending"
+import { ClassNameValue } from "tailwind-merge"
 
 interface BalanceHistoryChartProps {
   history: IPortfolioHistory[]
   currentBalance: number
+  className?: ClassNameValue
 }
 
-export function BalanceHistoryChart({ history, currentBalance }: BalanceHistoryChartProps) {
+export function BalanceHistoryChart({ history, currentBalance, className }: BalanceHistoryChartProps) {
   // Sort history by date and prepare data
   const historicalData = [...history]
     .sort((a, b) => new Date(a.snapshotDate).getTime() - new Date(b.snapshotDate).getTime())
@@ -38,6 +40,7 @@ export function BalanceHistoryChart({ history, currentBalance }: BalanceHistoryC
       title="Evolução do Patrimônio"
       description={`${firstDate} - ${lastDate}`}
       footerDescription="Mostrando a evolução do saldo total ao longo do tempo"
+      className={className}
     />
   )
 }
