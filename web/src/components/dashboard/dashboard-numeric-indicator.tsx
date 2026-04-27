@@ -25,7 +25,7 @@ interface Props {
 
 export default function DashboardNumericIndicator({ label, subLabel, footer, amount, isLoading, className, tooltipContent, prefix, suffix, decimals, link, emphasis }: Props) {
   return (
-    <Card className={cn("gap-2", { "bg-zinc-800": emphasis }, { "pb-2": footer }, className)}>
+    <Card className={cn("gap-2", { "bg-zinc-100 dark:bg-zinc-800": emphasis }, { "pb-2": footer }, className)}>
       <CardHeader className="relative flex flex-row justify-between items-start">
         <div className="flex flex-row justify-start items-start gap-1">
           <div>

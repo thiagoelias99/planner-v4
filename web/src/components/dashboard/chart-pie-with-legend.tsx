@@ -122,7 +122,7 @@ export function ChartPieWithLegend({ data, total, hideLabels, showInPercentage, 
                 y={y}
                 textAnchor="middle"
                 dominantBaseline="central"
-                fill="#ffffff"
+                fill="var(--muted-foreground)"
                 fontSize={12}
                 fontWeight={700}
               >
