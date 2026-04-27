@@ -24,11 +24,14 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
-  TickerOrders         TickerOrder[]
-  FixedIncomes         FixedIncome[]
-  otherAssets          OtherAsset[]
-  assetBalanceStrategy AssetBalanceStrategy?
-  portfolioHistories   PortfolioHistory[]
+  TickerOrders          TickerOrder[]
+  FixedIncomes          FixedIncome[]
+  otherAssets           OtherAsset[]
+  assetBalanceStrategy  AssetBalanceStrategy?
+  portfolioHistories    PortfolioHistory[]
+  transactionCategories TransactionCategory[]
+  transactions          Transaction[]
+  transactionItems      TransactionItem[]
 
   @@unique([email])
   @@map("user")
@@ -262,4 +265,59 @@ model PortfolioHistoryItem {
 
   @@index([portfolioHistoryId])
   @@map("portfolio_history_items")
+}
+
+model TransactionCategory {
+  id          String  @id
+  userId      String  @map("user_id")
+  description String
+  slug        String
+  type        String
+  icon        String?
+  color       String?
+
+  User         User          @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  Transactions Transaction[]
+
+  @@map("transaction_categories")
+}
+
+model Transaction {
+  id             String    @id
+  userId         String    @map("user_id")
+  description    String
+  referenceValue Decimal   @map("reference_value") @db.Decimal(10, 2)
+  paymentMethod  String    @map("payment_method")
+  categoryId     String    @map("category_id")
+  freq           String    @map("freq")
+  interval       Int?
+  count          Int?
+  startDate      DateTime  @map("start_date")
+  until          DateTime?
+  byDay          Int?      @map("by_day")
+  byMonthDay     Int?      @map("by_month_day")
+  byMonth        Int?      @map("by_month")
+  active         Boolean   @default(true)
+  imageUrl       String?   @map("image_url")
+
+  User                User                @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  TransactionCategory TransactionCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  TransactionItems    TransactionItem[]
+
+  @@map("transactions")
+}
+
+model TransactionItem {
+  id            String   @id
+  userId        String   @map("user_id")
+  transactionId String   @map("transaction_id")
+  paymentMethod String   @map("payment_method")
+  date          DateTime
+  value         Decimal  @db.Decimal(10, 2)
+  active        Boolean  @default(true)
+
+  User        User        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  Transaction Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("transaction_items")
 }
