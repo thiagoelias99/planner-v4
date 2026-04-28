@@ -20,6 +20,7 @@ import { FixedIncomesModule } from './assets/fixed-incomes/fixed-incomes.module'
 import { OtherAssetsModule } from './assets/other-assets/other-assets.module'
 import { AssetBalanceStrategyModule } from './assets/asset-balance-strategy/asset-balance-strategy.module'
 import { DashboardModule } from './dashboard/dashboard.module'
+import { BudgetsModule } from "./budgets/budgets.module"
 
 @Module({
   imports: [
@@ -69,7 +70,8 @@ import { DashboardModule } from './dashboard/dashboard.module'
     FixedIncomesModule,
     OtherAssetsModule,
     AssetBalanceStrategyModule,
-    DashboardModule
+    DashboardModule,
+    BudgetsModule
   ],
   controllers: [AppController, AppApiKeyController],
   providers: [

@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@better-auth/api-key": "^1.6.9",
+    "@faker-js/faker": "^10.4.0",
     "@nestjs/bullmq": "^11.0.4",
     "@nestjs/common": "^11.1.19",
     "@nestjs/config": "^4.0.4",
@@ -53,7 +54,8 @@
     "newrelic": "^13.19.2",
     "reflect-metadata": "^0.2.2",
     "resend": "^6.12.2",
-    "rxjs": "^7.8.2"
+    "rxjs": "^7.8.2",
+    "slugify": "^1.6.9"
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.21",
