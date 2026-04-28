@@ -7,7 +7,7 @@ import { ETransactionFrequency } from "../entities/transaction-frequency.enum"
 
 export class CreateBudgetTransactionInput {
   @ApiProperty({ example: randomUUID() })
-  @IsUUID()
+  @IsString()
   @IsOptional()
   id?: string
 
@@ -24,7 +24,7 @@ export class CreateBudgetTransactionInput {
   paymentMethod: EPaymentMethod
 
   @ApiProperty({ example: randomUUID() })
-  @IsUUID()
+  @IsString()
   categoryId: string
 
   @ApiProperty({ enum: ETransactionFrequency })

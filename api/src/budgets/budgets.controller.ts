@@ -223,8 +223,6 @@ export class BudgetsController {
     }
     const userId = session.user.id as string
 
-    console.log("body", body)
-
     return this.budgetsService.createTransactionFromForm(body, userId)
   }
 

@@ -17,6 +17,7 @@ import { endOfMonth, startOfMonth } from "date-fns"
 import { CreateTransactionFormInput } from "./dto/create-transaction-form.input"
 import { TransactionCategoryTableView } from "./dto/category-table.view"
 import { ETransactionFrequency } from "./entities/transaction-frequency.enum"
+import { createId } from "@paralleldrive/cuid2"
 
 
 @Injectable()
@@ -28,7 +29,7 @@ export class BudgetsService {
   // Categories
   async createCategory(data: CreateBudgetCategoryInput, userId: string): Promise<TransactionCategory> {
     const slug = slugify(data.description, { lower: true, strict: true })
-    const id = data.id || randomUUID()
+    const id = data.id || createId()
 
     return this.budgetsRepository.createCategory({ ...data, id }, userId, slug)
   }
@@ -54,7 +55,7 @@ export class BudgetsService {
 
   // Transactions
   async createTransaction(data: CreateBudgetTransactionInput, userId: string): Promise<Transaction> {
-    const id = data.id || randomUUID()
+    const id = data.id || createId()
     return this.budgetsRepository.createTransaction({ ...data, id }, userId)
   }
 
@@ -76,7 +77,7 @@ export class BudgetsService {
 
   // Transaction - Items
   async createTransactionItem(data: CreateBudgetTransactionItemInput, userId: string): Promise<BudgetTransactionItem> {
-    const id = data.id || randomUUID()
+    const id = data.id || createId()
 
     return this.budgetsRepository.createTransactionItem({ ...data, id }, userId)
   }
@@ -117,7 +118,7 @@ export class BudgetsService {
   }
 
   async getOrCreateCategoryByDescription(userId: string, input: CreateBudgetCategoryInput): Promise<TransactionCategory> {
-    const id = input.id || randomUUID()
+    const id = input.id || createId()
 
     return this.budgetsRepository.getOrCreateCategoryByDescription(userId, {
       ...input, id
@@ -125,7 +126,7 @@ export class BudgetsService {
   }
 
   async getOrCreateTransactionByDescription(userId: string, input: CreateBudgetTransactionInput): Promise<Transaction> {
-    const id = input.id || randomUUID()
+    const id = input.id || createId()
 
     return this.budgetsRepository.getOrCreateTransactionByDescription(userId, { ...input, id })
   }

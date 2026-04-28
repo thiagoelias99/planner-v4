@@ -71,9 +71,6 @@ export function SignInForm({
   }
 
   async function onSubmit(formData: LoginFormValues) {
-    console.log("Better Auth URL:", process.env.NEXT_PUBLIC_BETTER_AUTH_URL)
-    console.log("Callback URL:", `${process.env.NEXT_PUBLIC_URL}${EPages.DASHBOARD}`)
-
     await authClient.signIn.email({
       email: formData.email,
       password: formData.password,

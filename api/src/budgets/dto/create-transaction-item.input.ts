@@ -1,17 +1,17 @@
 /* eslint-disable indent */
 import { ApiProperty } from "@nestjs/swagger"
-import { IsUUID, IsOptional, IsDateString, IsNumber, IsEnum, IsBoolean } from "class-validator"
+import { IsOptional, IsDateString, IsNumber, IsEnum, IsBoolean, IsString } from "class-validator"
 import { randomUUID } from "crypto"
 import { EPaymentMethod } from "../entities/payment-method.enum"
 
 export class CreateBudgetTransactionItemInput {
   @ApiProperty({ example: randomUUID() })
-  @IsUUID()
+  @IsString()
   @IsOptional()
   id?: string
 
   @ApiProperty({ example: randomUUID() })
-  @IsUUID()
+  @IsString()
   transactionId: string
 
   @ApiProperty({ type: Date })

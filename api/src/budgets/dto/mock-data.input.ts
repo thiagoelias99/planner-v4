@@ -1,9 +1,9 @@
 /* eslint-disable indent */
 import { ApiProperty } from "@nestjs/swagger"
-import { IsUUID } from "class-validator"
+import { IsString } from "class-validator"
 
 export class MockDataInput {
   @ApiProperty()
-  @IsUUID()
+  @IsString()
   userId: string
 }

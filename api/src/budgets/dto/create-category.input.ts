@@ -7,7 +7,7 @@ import { AvailableIcons } from "../../utils/icons"
 
 export class CreateBudgetCategoryInput {
   @ApiProperty({ example: randomUUID() })
-  @IsUUID()
+  @IsString()
   @IsOptional()
   id?: string
 

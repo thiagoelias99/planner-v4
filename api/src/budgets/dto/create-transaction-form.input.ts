@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { IsBoolean, IsDateString, IsEnum, IsInt, IsNumber, IsOptional, IsString, IsUUID, Max, Min } from "class-validator"
+import { IsBoolean, IsDateString, IsEnum, IsInt, IsNumber, IsOptional, IsString, Max, Min } from "class-validator"
 import { randomUUID } from "crypto"
 import { EPaymentMethod } from "../entities/payment-method.enum"
 import { ETransactionCategoryType } from "../entities/transaction-category.entity"
@@ -16,7 +16,7 @@ export class CreateTransactionFormInput {
   to?: Date
 
   @ApiProperty({ example: randomUUID() })
-  @IsUUID()
+  @IsString()
   id: string
 
   @ApiProperty({ type: Date })
@@ -29,7 +29,7 @@ export class CreateTransactionFormInput {
 
   //Category Data
   @ApiProperty({ example: randomUUID() })
-  @IsUUID()
+  @IsString()
   categoryId: string
 
   @ApiProperty({ example: "Salary" })
@@ -42,7 +42,7 @@ export class CreateTransactionFormInput {
 
   // Transaction Data
   @ApiProperty({ example: randomUUID() })
-  @IsUUID()
+  @IsString()
   transactionId: string
 
   @ApiProperty({ example: "My Salary" })
