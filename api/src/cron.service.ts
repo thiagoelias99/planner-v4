@@ -1,15 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common'
-import { Cron, CronExpression } from '@nestjs/schedule'
-import { NotificationsService } from "./notifications/notifications.service"
+import { Cron } from '@nestjs/schedule'
 import { DashboardService } from "./dashboard/dashboard.service"
+import { BudgetsService } from "./budgets/budgets.service"
+import { UsersService } from "./users/users.service"
 
 @Injectable()
 export class CronService {
   private readonly logger = new Logger(CronService.name);
 
   constructor(
-    private readonly dashboardService: DashboardService
-    // private readonly notificationsService: NotificationsService
+    private readonly dashboardService: DashboardService,
+    private readonly budgetsService: BudgetsService,
+    private readonly usersService: UsersService,
   ) { }
 
   @Cron('0 2 1 * *', {
@@ -39,6 +41,26 @@ export class CronService {
     } catch (error) {
       const err = error as Error
       this.logger.error(`Portfolio snapshot failed: ${err.message}`, err.stack)
+    }
+  }
+
+  @Cron('2 2 1 * *', {
+    name: 'portfolio-snapshot-first-day',
+    timeZone: 'America/Sao_Paulo'
+  })
+  async createMonthlyTransactions() {
+    this.logger.log('Running monthly transactions creation for the 1st of the month')
+    try {
+      const users = await this.usersService.users()
+      for (const user of users.users) {
+        await this.budgetsService.createMissingMonthlyTransactionItemsForCurrentMonth(user.id)
+        this.logger.log(`Monthly transactions created for user ${user.email} (${user.id})`)
+      }
+
+      this.logger.log('Monthly transactions creation completed successfully')
+    } catch (error) {
+      const err = error as Error
+      this.logger.error(`Monthly transactions creation failed: ${err.message}`, err.stack)
     }
   }
 }

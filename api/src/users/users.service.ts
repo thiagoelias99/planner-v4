@@ -45,7 +45,7 @@ export class UsersService {
   }
 
   async users(query?: QueryUserInput): Promise<{ users: Prisma.UserGetPayload<{ include: { accounts: true } }>[], total: number }> {
-    const { page = 1, limit = 10, orderBy = 'symbol', order = 'asc', search, role } = query || {}
+    const { page = 1, limit = 10, orderBy = 'name', order = 'asc', search, role } = query || {}
 
     const skip = (page - 1) * limit
 
