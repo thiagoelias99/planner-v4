@@ -13,6 +13,15 @@ export const auth = betterAuth({
     provider: "postgresql",
   }),
   trustedOrigins: process.env.ALLOWED_ORIGINS?.split(';').filter(origin => origin.trim()) || ["http://localhost:3000"],
+  session: {
+    expiresIn: 60 * 60 * 24 * 90, // 90 days
+    updateAge: 60 * 60 * 24 // 1 day (every 1 day the session expiration is updated)
+  },
+  rateLimit: {
+    enabled: true,
+    window: 60, // time window in seconds
+    max: 100, // max requests in the window
+  },
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: false,
