@@ -28,6 +28,7 @@
   "dependencies": {
     "@better-auth/api-key": "^1.6.9",
     "@faker-js/faker": "^10.4.0",
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "@nestjs/bullmq": "^11.0.4",
     "@nestjs/common": "^11.1.19",
     "@nestjs/config": "^4.0.4",
@@ -41,6 +42,7 @@
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^6.19.3",
     "@react-email/components": "^1.0.12",
+    "@rekog/mcp-nest": "^1.9.9",
     "@thallesp/nestjs-better-auth": "^2.6.0",
     "argon2": "^0.44.0",
     "axios": "^1.15.2",

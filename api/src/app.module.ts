@@ -21,6 +21,8 @@ import { OtherAssetsModule } from './assets/other-assets/other-assets.module'
 import { AssetBalanceStrategyModule } from './assets/asset-balance-strategy/asset-balance-strategy.module'
 import { DashboardModule } from './dashboard/dashboard.module'
 import { BudgetsModule } from "./budgets/budgets.module"
+import { McpModule } from "@rekog/mcp-nest"
+import { McpGuard } from "./guards/mcp-auth.guard"
 
 @Module({
   imports: [
@@ -60,6 +62,11 @@ import { BudgetsModule } from "./budgets/budgets.module"
     //   },
     //   prefix: 'plannerv4'
     // }),
+    McpModule.forRoot({
+      name: "planner-mcp-server",
+      version: "1.0.0",
+      guards: [McpGuard],
+    }),
     PrismaModule,
     UsersModule,
     HealthModule,
