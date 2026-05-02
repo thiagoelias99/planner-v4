@@ -2,7 +2,7 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
-  ForbiddenException,
+  UnauthorizedException,
 } from "@nestjs/common"
 import { ConfigService } from "@nestjs/config"
 
@@ -12,18 +12,26 @@ export class McpGuard implements CanActivate {
 
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest()
-    const authHeader = request.headers["mcp_token"] as string | undefined
+    const authHeader = request.headers.authorization
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      throw new ForbiddenException("Missing or invalid Authorization header")
+    if (!authHeader) {
+      throw new UnauthorizedException("Missing Authorization header")
     }
 
-    const token = authHeader.replace("Bearer ", "").trim()
+    const [type, token] = authHeader.split(" ")
+
+    if (type !== "Bearer" || !token) {
+      throw new UnauthorizedException("Invalid Authorization header format. Expected: Bearer <token>")
+    }
+
     const validToken = this.config.get<string>("MCP_ACCESS_TOKEN")
+    console.log("Received token:", token)
+    console.log("Expected token:", validToken)
 
-    if (token !== validToken) {
-      throw new ForbiddenException("Invalid MCP token provided")
+    if (token.trim() !== validToken) {
+      throw new UnauthorizedException("Invalid access token")
     }
+
     return true
   }
 }
