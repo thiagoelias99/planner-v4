@@ -84,6 +84,7 @@ import { McpGuard } from "./guards/mcp-auth.guard"
   providers: [
     AppService,
     CronService,
+    McpGuard, // Necessário para injeção de dependências
     {
       provide: APP_GUARD,
       useClass: ApiKeyGuard
