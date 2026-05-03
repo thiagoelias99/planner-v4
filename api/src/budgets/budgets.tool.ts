@@ -121,11 +121,11 @@ export class BudgetTool {
     })
 
     const inputSchema = z.object({
-      userId: z.string().uuid(),
-      transactionId: z.string().uuid(),
+      userId: z.string(),
+      transactionId: z.string(),
       date: z.string().transform((val) => new Date(new Date(val).setHours(12))),
       value: z.string().transform((val) => parseFloat(val)),
-      paymentMethod: z.nativeEnum(EPaymentMethod),
+      paymentMethod: z.enum(EPaymentMethod),
     })
 
     const parsedData = inputSchema.safeParse({
