@@ -17,6 +17,9 @@ export const auth = betterAuth({
     origin: process.env.ALLOWED_ORIGINS?.split(';').filter(origin => origin.trim()) || ["http://localhost:3000"],
     credentials: true
   },
+  disabledPaths: [
+    "/hello"
+  ],
   session: {
     expiresIn: 60 * 60 * 24 * 90, // 90 days
     updateAge: 60 * 60 * 24 // 1 day (every 1 day the session expiration is updated)

@@ -9,7 +9,7 @@ import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler"
 import { ScheduleModule } from "@nestjs/schedule"
 import { APP_GUARD } from "@nestjs/core"
 import { auth } from "./utils/auth"
-import { AuthModule } from "@thallesp/nestjs-better-auth"
+import { AllowAnonymous, AuthModule } from "@thallesp/nestjs-better-auth"
 import { AuthModule as AppAuthModule } from './auth/auth.module'
 import { CronService } from "./cron.service"
 import { AppApiKeyController } from "./app.api.controller"
@@ -66,6 +66,7 @@ import { McpGuard } from "./guards/mcp-auth.guard"
       name: "planner-mcp-server",
       version: "1.0.0",
       guards: [McpGuard],
+      decorators: [AllowAnonymous()]
     }),
     PrismaModule,
     UsersModule,

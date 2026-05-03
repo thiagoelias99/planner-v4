@@ -23,7 +23,8 @@
     "db:studio": "prisma studio",
     "db:generate": "prisma generate",
     "db:deploy": "prisma migrate deploy",
-    "db:status": "prisma migrate status"
+    "db:status": "prisma migrate status",
+    "test:mcp": "node mcp-client-test.mjs"
   },
   "dependencies": {
     "@better-auth/api-key": "^1.6.9",

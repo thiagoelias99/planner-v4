@@ -8,8 +8,10 @@ import z from "zod"
 import { EPaymentMethod } from "./entities/payment-method.enum"
 import { TextContent } from "@modelcontextprotocol/sdk/types"
 import { format } from "date-fns"
+import { AllowAnonymous } from "@thallesp/nestjs-better-auth"
 
 @Injectable()
+@AllowAnonymous()
 export class BudgetTool {
   constructor(
     private readonly budgetService: BudgetsService
