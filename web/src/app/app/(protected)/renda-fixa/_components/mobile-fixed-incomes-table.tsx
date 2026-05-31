@@ -1,13 +1,18 @@
-"use client"
+"use client";
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
-import { ePosFixedIndexMapper, IFixedIncome } from "@/models/fixed-income"
-import { Edit2Icon, Trash2Icon } from "lucide-react"
-import { format } from "date-fns"
-import { ptBR } from "date-fns/locale"
-import { SheetTrigger } from "@/components/ui/sheet"
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import { ePosFixedIndexMapper, IFixedIncome } from "@/models/fixed-income";
+import { Edit2Icon, Trash2Icon } from "lucide-react";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { SheetTrigger } from "@/components/ui/sheet";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,26 +23,26 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import { useFixedIncome } from "@/hooks/query/use-fixed-income"
-import { toast } from "sonner"
-import { usePrivacy } from "@/context/privacy-context"
-import { formatCurrency, formatPercentage } from "@/lib/utils"
+} from "@/components/ui/alert-dialog";
+import { useFixedIncome } from "@/hooks/query/use-fixed-income";
+import { toast } from "sonner";
+import { usePrivacy } from "@/context/privacy-context";
+import { formatCurrency, formatPercentage } from "@/lib/utils";
 
 interface Props {
-  data?: IFixedIncome[]
-  isLoading?: boolean
-  emptyMessage?: string
-  onEdit: (fixedIncome: IFixedIncome) => void
+  data?: IFixedIncome[];
+  isLoading?: boolean;
+  emptyMessage?: string;
+  onEdit: (fixedIncome: IFixedIncome) => void;
 }
 
 export default function MobileFixedIncomesTable({
   data = [],
   isLoading = false,
   emptyMessage = "Nenhuma renda fixa encontrada",
-  onEdit
+  onEdit,
 }: Props) {
-  const { isPrivacyMode } = usePrivacy()
+  const { isPrivacyMode } = usePrivacy();
 
   if (isLoading) {
     return (
@@ -50,7 +55,7 @@ export default function MobileFixedIncomesTable({
           </Card>
         ))}
       </div>
-    )
+    );
   }
 
   if (data.length === 0) {
@@ -58,25 +63,29 @@ export default function MobileFixedIncomesTable({
       <div className="text-center py-8 text-muted-foreground">
         {emptyMessage}
       </div>
-    )
+    );
   }
 
   return (
     <div className="space-y-3">
       {data.map((fixedIncome) => {
-        const indexInfo = ePosFixedIndexMapper[fixedIncome.posFixedIndex]
-        const isPositive = fixedIncome.profitPercentage >= 0
-        const today = new Date()
-        const dueDate = new Date(fixedIncome.dueDate)
-        const isExpired = dueDate < today
+        const indexInfo = ePosFixedIndexMapper[fixedIncome.posFixedIndex];
+        const isPositive = fixedIncome.profitPercentage >= 0;
+        const today = new Date();
+        const dueDate = new Date(fixedIncome.dueDate);
+        const isExpired = dueDate < today;
 
         return (
           <Card key={fixedIncome.id} className="gap-1.5">
             <CardHeader className="flex items-start justify-between">
               <div className="flex-1 min-w-0">
-                <h3 className="font-bold truncate">{fixedIncome.description}</h3>
+                <h3 className="font-bold truncate">
+                  {fixedIncome.description}
+                </h3>
                 {fixedIncome.agency && (
-                  <p className="text-xs text-muted-foreground truncate">{fixedIncome.agency}</p>
+                  <p className="text-xs text-muted-foreground truncate">
+                    {fixedIncome.agency}
+                  </p>
                 )}
               </div>
               <div className="flex gap-1 shrink-0 ml-2">
@@ -95,14 +104,17 @@ export default function MobileFixedIncomesTable({
 
             <CardContent className="space-y-3">
               <div className="flex items-center gap-2 flex-wrap">
-                <Badge variant={indexInfo.variant}>
-                  {indexInfo.label}
-                </Badge>
+                <Badge variant={indexInfo.variant}>{indexInfo.label}</Badge>
                 <Badge variant="outline">
-                  {isPrivacyMode ? '•••%' : `${fixedIncome.fixedRate.toFixed(2)}%`}
+                  {isPrivacyMode
+                    ? "•••%"
+                    : `${fixedIncome.fixedRate.toFixed(2)}%`}
                 </Badge>
                 <Badge variant={isPositive ? "default" : "destructive"}>
-                  {!isPrivacyMode && (isPositive ? "+" : "")}{formatPercentage(fixedIncome.profitPercentage / 100, { isPrivate: isPrivacyMode })}
+                  {!isPrivacyMode && (isPositive ? "+" : "")}
+                  {formatPercentage(fixedIncome.profitPercentage / 100, {
+                    isPrivate: isPrivacyMode,
+                  })}
                 </Badge>
               </div>
 
@@ -110,13 +122,17 @@ export default function MobileFixedIncomesTable({
                 <div>
                   <p className="text-muted-foreground">Investimento</p>
                   <p className="font-medium">
-                    {formatCurrency(fixedIncome.initialInvestment, { isPrivate: isPrivacyMode })}
+                    {formatCurrency(fixedIncome.initialInvestment, {
+                      isPrivate: isPrivacyMode,
+                    })}
                   </p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Valor Atual</p>
                   <p className="font-bold">
-                    {formatCurrency(fixedIncome.currentValue, { isPrivate: isPrivacyMode })}
+                    {formatCurrency(fixedIncome.currentValue, {
+                      isPrivate: isPrivacyMode,
+                    })}
                   </p>
                 </div>
               </div>
@@ -128,10 +144,16 @@ export default function MobileFixedIncomesTable({
                 <p className={`text-sm font-medium`}>
                   {format(dueDate, "dd/MM/yyyy", { locale: ptBR })}
                   {fixedIncome.retrievedAt ? (
-                    <Badge variant="secondary" className="ml-1">Resgatado</Badge>
+                    <Badge variant="secondary" className="ml-1">
+                      Resgatado
+                    </Badge>
                   ) : (
                     <span className="text-xs text-muted-foreground ml-1">
-                      ({isExpired ? "Vencido" : `${fixedIncome.remainingDays} dias`})
+                      (
+                      {isExpired
+                        ? "Vencido"
+                        : `${fixedIncome.remainingDays} dias`}
+                      )
                     </span>
                   )}
                 </p>
@@ -140,27 +162,33 @@ export default function MobileFixedIncomesTable({
                 <div className="text-right">
                   <p className="text-muted-foreground text-xs">Resgatado</p>
                   <p className="text-sm">
-                    {format(new Date(fixedIncome.retrievedAt), "dd/MM/yyyy", { locale: ptBR })}
+                    {format(new Date(fixedIncome.retrievedAt), "dd/MM/yyyy", {
+                      locale: ptBR,
+                    })}
                   </p>
                 </div>
               )}
             </CardFooter>
           </Card>
-        )
+        );
       })}
     </div>
-  )
+  );
 }
 
-function DeleteFixedIncomeButton({ fixedIncome }: { fixedIncome: IFixedIncome }) {
-  const { deleteFixedIncome } = useFixedIncome(fixedIncome.id)
+function DeleteFixedIncomeButton({
+  fixedIncome,
+}: {
+  fixedIncome: IFixedIncome;
+}) {
+  const { deleteFixedIncome } = useFixedIncome(fixedIncome.id);
 
   async function handleDelete() {
     try {
-      await deleteFixedIncome.mutateAsync()
-      toast.success("Renda fixa excluída com sucesso!")
+      await deleteFixedIncome.mutateAsync();
+      toast.success("Renda fixa excluída com sucesso!");
     } catch {
-      toast.error("Erro ao excluir renda fixa")
+      toast.error("Erro ao excluir renda fixa");
     }
   }
 
@@ -175,16 +203,21 @@ function DeleteFixedIncomeButton({ fixedIncome }: { fixedIncome: IFixedIncome })
         <AlertDialogHeader>
           <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
           <AlertDialogDescription>
-            Tem certeza que deseja excluir a renda fixa <strong>{fixedIncome.description}</strong>? Esta ação não pode ser desfeita.
+            Tem certeza que deseja excluir a renda fixa{" "}
+            <strong>{fixedIncome.description}</strong>? Esta ação não pode ser
+            desfeita.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
-          <AlertDialogAction onClick={handleDelete} className="bg-red-500 hover:bg-red-600">
+          <AlertDialogAction
+            onClick={handleDelete}
+            className="bg-red-500 hover:bg-red-600"
+          >
             Excluir
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  )
+  );
 }

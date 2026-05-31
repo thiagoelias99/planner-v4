@@ -1,30 +1,35 @@
-"use client"
+"use client";
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
-import { eOtherAssetTypeMapper, IOtherAsset } from "@/models/other-asset"
-import { Edit2Icon } from "lucide-react"
-import { format } from "date-fns"
-import { ptBR } from "date-fns/locale"
-import { SheetTrigger } from "@/components/ui/sheet"
-import { usePrivacy } from "@/context/privacy-context"
-import { formatCurrency } from "@/lib/utils"
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import { eOtherAssetTypeMapper, IOtherAsset } from "@/models/other-asset";
+import { Edit2Icon } from "lucide-react";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { SheetTrigger } from "@/components/ui/sheet";
+import { usePrivacy } from "@/context/privacy-context";
+import { formatCurrency } from "@/lib/utils";
 
 interface Props {
-  data?: IOtherAsset[]
-  isLoading?: boolean
-  emptyMessage?: string
-  onEdit: (asset: IOtherAsset) => void
+  data?: IOtherAsset[];
+  isLoading?: boolean;
+  emptyMessage?: string;
+  onEdit: (asset: IOtherAsset) => void;
 }
 
 export default function MobileOtherAssetsTable({
   data = [],
   isLoading = false,
   emptyMessage = "Nenhum ativo encontrado",
-  onEdit
+  onEdit,
 }: Props) {
-  const { isPrivacyMode } = usePrivacy()
+  const { isPrivacyMode } = usePrivacy();
 
   if (isLoading) {
     return (
@@ -37,7 +42,7 @@ export default function MobileOtherAssetsTable({
           </Card>
         ))}
       </div>
-    )
+    );
   }
 
   if (data.length === 0) {
@@ -45,13 +50,13 @@ export default function MobileOtherAssetsTable({
       <div className="text-center py-8 text-muted-foreground">
         {emptyMessage}
       </div>
-    )
+    );
   }
 
   return (
     <div className="space-y-3 mt-4">
       {data.map((asset) => {
-        const typeInfo = eOtherAssetTypeMapper[asset.type]
+        const typeInfo = eOtherAssetTypeMapper[asset.type];
 
         return (
           <Card key={asset.id} className="gap-1.5">
@@ -88,12 +93,15 @@ export default function MobileOtherAssetsTable({
                 {typeInfo.label}
               </Badge>
               <p className="text-xs text-muted-foreground">
-                Atualizado em: {format(new Date(asset.updatedAt), "dd/MM/yy HH:mm", { locale: ptBR })}
+                Atualizado em:{" "}
+                {format(new Date(asset.updatedAt), "dd/MM/yy HH:mm", {
+                  locale: ptBR,
+                })}
               </p>
             </CardFooter>
           </Card>
-        )
+        );
       })}
     </div>
-  )
+  );
 }

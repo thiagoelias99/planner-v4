@@ -1,36 +1,62 @@
-"use client"
+"use client";
 
-import React from 'react'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../ui/card"
-import NumberCountUp from "../ui/number-count-up"
-import { ClassNameValue } from "tailwind-merge"
-import { cn } from "@/lib/utils"
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
-import { ExternalLinkIcon, InfoIcon } from "lucide-react"
-import Link from "next/link"
-import LoadingIndicator from "../ui/loading-indicator"
-import { usePrivacy } from "@/context/privacy-context"
+import React from "react";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
+import NumberCountUp from "../ui/number-count-up";
+import { ClassNameValue } from "tailwind-merge";
+import { cn } from "@/lib/utils";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { ExternalLinkIcon, InfoIcon } from "lucide-react";
+import Link from "next/link";
+import LoadingIndicator from "../ui/loading-indicator";
+import { usePrivacy } from "@/context/privacy-context";
 
 interface Props {
-  label?: string
-  subLabel?: string
-  footer?: React.ReactNode
-  amount?: number
-  isLoading?: boolean
-  tooltipContent?: string
-  className?: ClassNameValue
-  prefix?: string
-  suffix?: string
-  decimals?: number
-  link?: string
-  emphasis?: boolean
+  label?: string;
+  subLabel?: string;
+  footer?: React.ReactNode;
+  amount?: number;
+  isLoading?: boolean;
+  tooltipContent?: string;
+  className?: ClassNameValue;
+  prefix?: string;
+  suffix?: string;
+  decimals?: number;
+  link?: string;
+  emphasis?: boolean;
 }
 
-export default function DashboardNumericIndicator({ label, subLabel, footer, amount, isLoading, className, tooltipContent, prefix, suffix, decimals, link, emphasis }: Props) {
-  const { isPrivacyMode } = usePrivacy()
+export default function DashboardNumericIndicator({
+  label,
+  subLabel,
+  footer,
+  amount,
+  isLoading,
+  className,
+  tooltipContent,
+  prefix,
+  suffix,
+  decimals,
+  link,
+  emphasis,
+}: Props) {
+  const { isPrivacyMode } = usePrivacy();
 
   return (
-    <Card className={cn("gap-2", { "bg-zinc-100 dark:bg-zinc-800": emphasis }, { "pb-2": footer }, className)}>
+    <Card
+      className={cn(
+        "gap-2",
+        { "bg-zinc-100 dark:bg-zinc-800": emphasis },
+        { "pb-2": footer },
+        className,
+      )}
+    >
       <CardHeader className="relative flex flex-row justify-between items-start">
         <div className="flex flex-row justify-start items-start gap-1">
           <div>
@@ -39,7 +65,9 @@ export default function DashboardNumericIndicator({ label, subLabel, footer, amo
             >
               {label}
             </CardTitle>
-            <span className="text-sm text-muted-foreground italic">{subLabel}</span>
+            <span className="text-sm text-muted-foreground italic">
+              {subLabel}
+            </span>
           </div>
           {tooltipContent && (
             <Tooltip>
@@ -53,7 +81,10 @@ export default function DashboardNumericIndicator({ label, subLabel, footer, amo
           )}
         </div>
         {isLoading && (
-          <LoadingIndicator size="default" className="absolute -top-4 right-4" />
+          <LoadingIndicator
+            size="default"
+            className="absolute -top-4 right-4"
+          />
         )}
         {link && (
           <Link href={link}>
@@ -70,11 +101,7 @@ export default function DashboardNumericIndicator({ label, subLabel, footer, amo
           isPrivate={isPrivacyMode}
         />
       </CardContent>
-      {footer && (
-        <CardFooter className="">
-          {footer}
-        </CardFooter>
-      )}
+      {footer && <CardFooter className="">{footer}</CardFooter>}
     </Card>
-  )
+  );
 }

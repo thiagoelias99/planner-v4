@@ -1,30 +1,35 @@
-"use client"
+"use client";
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
-import { eTickerOrderTypeMapper, ITickerOrder } from "@/models/ticker-order"
-import { Edit2Icon } from "lucide-react"
-import { format } from "date-fns"
-import { ptBR } from "date-fns/locale"
-import { SheetTrigger } from "@/components/ui/sheet"
-import { usePrivacy } from "@/context/privacy-context"
-import { formatCurrency } from "@/lib/utils"
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import { eTickerOrderTypeMapper, ITickerOrder } from "@/models/ticker-order";
+import { Edit2Icon } from "lucide-react";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { SheetTrigger } from "@/components/ui/sheet";
+import { usePrivacy } from "@/context/privacy-context";
+import { formatCurrency } from "@/lib/utils";
 
 interface Props {
-  data?: ITickerOrder[]
-  isLoading?: boolean
-  emptyMessage?: string
-  onEdit: (tickerOrder: ITickerOrder) => void
+  data?: ITickerOrder[];
+  isLoading?: boolean;
+  emptyMessage?: string;
+  onEdit: (tickerOrder: ITickerOrder) => void;
 }
 
 export default function MobileTickerOrdersTable({
   data = [],
   isLoading = false,
   emptyMessage = "Nenhuma ordem encontrada",
-  onEdit
+  onEdit,
 }: Props) {
-  const { isPrivacyMode } = usePrivacy()
+  const { isPrivacyMode } = usePrivacy();
 
   if (isLoading) {
     return (
@@ -37,7 +42,7 @@ export default function MobileTickerOrdersTable({
           </Card>
         ))}
       </div>
-    )
+    );
   }
 
   if (data.length === 0) {
@@ -45,24 +50,22 @@ export default function MobileTickerOrdersTable({
       <div className="text-center py-8 text-muted-foreground">
         {emptyMessage}
       </div>
-    )
+    );
   }
 
   return (
     <div className="space-y-3">
       {data.map((tickerOrder) => {
-        const typeInfo = eTickerOrderTypeMapper[tickerOrder.type]
-        const total = tickerOrder.quantity * tickerOrder.price
-        const isPositive = tickerOrder.gainLoss >= 0
+        const typeInfo = eTickerOrderTypeMapper[tickerOrder.type];
+        const total = tickerOrder.quantity * tickerOrder.price;
+        const isPositive = tickerOrder.gainLoss >= 0;
 
         return (
           <Card key={tickerOrder.id} className="gap-1.5">
             <CardHeader className="flex items-start justify-between">
               <div className="flex items-center gap-2 flex-1">
                 <h3 className="text-lg font-bold">{tickerOrder.ticker}</h3>
-                <Badge variant={typeInfo.variant}>
-                  {typeInfo.label}
-                </Badge>
+                <Badge variant={typeInfo.variant}>{typeInfo.label}</Badge>
               </div>
               <SheetTrigger asChild>
                 <Button
@@ -78,12 +81,16 @@ export default function MobileTickerOrdersTable({
             <CardContent className="grid grid-cols-2 gap-2 text-sm">
               <div>
                 <p className="text-muted-foreground">Quantidade</p>
-                <p className="font-medium">{isPrivacyMode ? '•••' : tickerOrder.quantity}</p>
+                <p className="font-medium">
+                  {isPrivacyMode ? "•••" : tickerOrder.quantity}
+                </p>
               </div>
               <div>
                 <p className="text-muted-foreground">Preço</p>
                 <p className="font-medium">
-                  {formatCurrency(tickerOrder.price, { isPrivate: isPrivacyMode })}
+                  {formatCurrency(tickerOrder.price, {
+                    isPrivate: isPrivacyMode,
+                  })}
                 </p>
               </div>
               <div>
@@ -94,30 +101,43 @@ export default function MobileTickerOrdersTable({
               </div>
               <div>
                 <p className="text-muted-foreground">Ganho/Perda</p>
-                <p className={`font-medium ${isPositive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                  {formatCurrency(tickerOrder.gainLoss, { isPrivate: isPrivacyMode })}
+                <p
+                  className={`font-medium ${isPositive ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
+                >
+                  {formatCurrency(tickerOrder.gainLoss, {
+                    isPrivate: isPrivacyMode,
+                  })}
                 </p>
               </div>
               <div>
                 <p className="text-muted-foreground">Novo PM</p>
                 <p className="font-medium">
-                  {formatCurrency(tickerOrder.newMeanPrice, { isPrivate: isPrivacyMode })}
+                  {formatCurrency(tickerOrder.newMeanPrice, {
+                    isPrivate: isPrivacyMode,
+                  })}
                 </p>
               </div>
               <div>
                 <p className="text-muted-foreground">Nova Qtd</p>
-                <p className="font-medium">{isPrivacyMode ? '•••' : tickerOrder.newTotalQuantity}</p>
+                <p className="font-medium">
+                  {isPrivacyMode ? "•••" : tickerOrder.newTotalQuantity}
+                </p>
               </div>
             </CardContent>
 
             <CardFooter className="flex items-center justify-between border-t pt-2">
               <p className="text-xs text-muted-foreground">
-                Criado em {format(new Date(tickerOrder.createdAt), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+                Criado em{" "}
+                {format(
+                  new Date(tickerOrder.createdAt),
+                  "dd/MM/yyyy 'às' HH:mm",
+                  { locale: ptBR },
+                )}
               </p>
             </CardFooter>
           </Card>
-        )
+        );
       })}
     </div>
-  )
+  );
 }

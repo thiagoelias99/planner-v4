@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import { AppSidebar } from "@/components/app-sidebar"
-import { SiteHeader } from "@/components/site-header"
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
-import { PrivacyProvider } from "@/context/privacy-context"
-import { authClient } from "@/lib/auth-client"
-import { EPages } from "@/lib/routes"
-import { redirect } from "next/navigation"
-import { PropsWithChildren } from 'react'
+import { AppSidebar } from "@/components/app-sidebar";
+import { SiteHeader } from "@/components/site-header";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { PrivacyProvider } from "@/context/privacy-context";
+import { authClient } from "@/lib/auth-client";
+import { EPages } from "@/lib/routes";
+import { redirect } from "next/navigation";
+import { PropsWithChildren } from "react";
 
 export default function ProtectedLayout({ children }: PropsWithChildren) {
-  const session = authClient.useSession()
+  const session = authClient.useSession();
 
   if (session.isPending) {
     return (
@@ -20,11 +20,11 @@ export default function ProtectedLayout({ children }: PropsWithChildren) {
           <p className="text-muted-foreground">Carregando...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (!session.data?.session) {
-    redirect(EPages.HOME)
+    redirect(EPages.HOME);
   }
 
   return (
@@ -44,7 +44,6 @@ export default function ProtectedLayout({ children }: PropsWithChildren) {
             ...session.data?.user,
             image: session.data?.user?.image || undefined,
           }}
-
         />
         <SidebarInset>
           <SiteHeader />
@@ -56,5 +55,5 @@ export default function ProtectedLayout({ children }: PropsWithChildren) {
         </SidebarInset>
       </SidebarProvider>
     </PrivacyProvider>
-  )
+  );
 }

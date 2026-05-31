@@ -1,55 +1,64 @@
-"use client"
+"use client";
 
-import { cn } from "@/lib/utils"
-import { ComponentProps, useEffect, useState } from 'react'
-import CountUp from "react-countup"
-import { ClassNameValue } from "tailwind-merge"
-
+import { cn } from "@/lib/utils";
+import { ComponentProps, useEffect, useState } from "react";
+import CountUp from "react-countup";
+import { ClassNameValue } from "tailwind-merge";
 
 interface Props extends ComponentProps<"p"> {
-  amount?: number | undefined
-  amountTextClassName?: ClassNameValue
-  decimals?: number
-  prefix?: string
-  suffix?: string
-  isPrivate?: boolean
+  amount?: number | undefined;
+  amountTextClassName?: ClassNameValue;
+  decimals?: number;
+  prefix?: string;
+  suffix?: string;
+  isPrivate?: boolean;
 }
 
-export default function NumberCountUp({ amount = 0, amountTextClassName, className, decimals = 0, prefix, suffix, isPrivate = false, ...rest }: Props) {
+export default function NumberCountUp({
+  amount = 0,
+  amountTextClassName,
+  className,
+  decimals = 0,
+  prefix,
+  suffix,
+  isPrivate = false,
+  ...rest
+}: Props) {
   const [progress, setProgress] = useState({
     previous: 0,
-    current: amount
-  })
+    current: amount,
+  });
 
-  useEffect(() => {
-    setProgress({
-      previous: progress.current,
-      current: amount
-    })
-  }
+  useEffect(
+    () => {
+      setProgress({
+        previous: progress.current,
+        current: amount,
+      });
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    , [amount])
+    [amount],
+  );
 
   if (isPrivate) {
     return (
-      <p
-        className={cn('text-sm text-muted-foreground', className)}
-        {...rest}
-      >
+      <p className={cn("text-sm text-muted-foreground", className)} {...rest}>
         {prefix ? `${prefix} ` : ""}
-        <span className={cn("text-foreground font-semibold text-3xl sm:text-xl", amountTextClassName)}>
+        <span
+          className={cn(
+            "text-foreground font-semibold text-3xl sm:text-xl",
+            amountTextClassName,
+          )}
+        >
           •••
         </span>
         {suffix ? ` ${suffix}` : ""}
       </p>
-    )
+    );
   }
 
   return (
-    <p
-      className={cn('text-sm text-muted-foreground', className)}
-      {...rest}
-    >
+    <p className={cn("text-sm text-muted-foreground", className)} {...rest}>
       {prefix ? `${prefix} ` : ""}
       <CountUp
         start={progress.previous}
@@ -58,9 +67,12 @@ export default function NumberCountUp({ amount = 0, amountTextClassName, classNa
         decimals={decimals}
         separator="."
         decimal=","
-        className={cn("text-foreground font-semibold text-3xl sm:text-xl", amountTextClassName)}
+        className={cn(
+          "text-foreground font-semibold text-3xl sm:text-xl",
+          amountTextClassName,
+        )}
       />
       {suffix ? ` ${suffix}` : ""}
     </p>
-  )
+  );
 }

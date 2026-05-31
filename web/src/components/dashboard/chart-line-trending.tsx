@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { TrendingUp, TrendingDown } from "lucide-react"
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts"
+import { TrendingUp, TrendingDown } from "lucide-react";
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import {
   Card,
   CardContent,
@@ -9,55 +9,55 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
-} from "@/components/ui/chart"
-import { ClassNameValue } from "tailwind-merge"
-import { cn } from "@/lib/utils"
-import { usePrivacy } from "@/context/privacy-context"
+} from "@/components/ui/chart";
+import { ClassNameValue } from "tailwind-merge";
+import { cn } from "@/lib/utils";
+import { usePrivacy } from "@/context/privacy-context";
 
 interface ChartDataPoint {
-  date: string | Date
-  value: number
+  date: string | Date;
+  value: number;
 }
 
 interface ChartLineTrendingProps {
-  data: ChartDataPoint[]
-  scaleOffset?: number
-  title: string
-  description?: string
-  footerDescription?: string
-  valueFormatter?: (value: number) => string
-  chartColor?: string
-  dateFormatter?: (date: string | Date) => string
-  className?: ClassNameValue
+  data: ChartDataPoint[];
+  scaleOffset?: number;
+  title: string;
+  description?: string;
+  footerDescription?: string;
+  valueFormatter?: (value: number) => string;
+  chartColor?: string;
+  dateFormatter?: (date: string | Date) => string;
+  className?: ClassNameValue;
 }
 
 const defaultValueFormatter = (value: number) =>
-  new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-  }).format(value)
+  new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(value);
 
 const defaultCompactFormatter = (value: number) =>
-  new Intl.NumberFormat('pt-BR', {
-    notation: 'compact',
-    compactDisplay: 'short',
-    style: 'currency',
-    currency: 'BRL',
-  }).format(value)
+  new Intl.NumberFormat("pt-BR", {
+    notation: "compact",
+    compactDisplay: "short",
+    style: "currency",
+    currency: "BRL",
+  }).format(value);
 
 const defaultDateFormatter = (date: string | Date) => {
-  const dateObj = typeof date === 'string' ? new Date(date) : date
-  return dateObj.toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: 'short'
-  })
-}
+  const dateObj = typeof date === "string" ? new Date(date) : date;
+  return dateObj.toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "short",
+  });
+};
 
 export default function ChartLineTrending({
   data,
@@ -70,35 +70,34 @@ export default function ChartLineTrending({
   dateFormatter = defaultDateFormatter,
   className,
 }: ChartLineTrendingProps) {
-  const { isPrivacyMode } = usePrivacy()
+  const { isPrivacyMode } = usePrivacy();
 
   const chartConfig = {
     value: {
       label: title,
       color: chartColor,
     },
-  } satisfies ChartConfig
+  } satisfies ChartConfig;
 
   // Format chart data
-  const chartData = data.map(item => ({
+  const chartData = data.map((item) => ({
     date: dateFormatter(item.date),
     value: Number(item.value),
-  }))
+  }));
 
   // Calculate min and max values for Y axis domain
-  const values = chartData.map(d => d.value)
-  const minValue = Math.min(...values)
-  const maxValue = Math.max(...values)
-  const yAxisMin = Math.max(0, minValue - scaleOffset)
-  const yAxisMax = maxValue + scaleOffset
+  const values = chartData.map((d) => d.value);
+  const minValue = Math.min(...values);
+  const maxValue = Math.max(...values);
+  const yAxisMin = Math.max(0, minValue - scaleOffset);
+  const yAxisMax = maxValue + scaleOffset;
 
   // Calculate trend
-  const firstValue = chartData[0]?.value || 0
-  const lastValue = chartData[chartData.length - 1]?.value || 0
-  const percentChange = firstValue > 0
-    ? ((lastValue - firstValue) / firstValue) * 100
-    : 0
-  const isPositive = percentChange >= 0
+  const firstValue = chartData[0]?.value || 0;
+  const lastValue = chartData[chartData.length - 1]?.value || 0;
+  const percentChange =
+    firstValue > 0 ? ((lastValue - firstValue) / firstValue) * 100 : 0;
+  const isPositive = percentChange >= 0;
 
   if (chartData.length === 0) {
     return (
@@ -108,7 +107,7 @@ export default function ChartLineTrending({
           <CardDescription>Nenhum dado disponível</CardDescription>
         </CardHeader>
       </Card>
-    )
+    );
   }
 
   return (
@@ -139,7 +138,9 @@ export default function ChartLineTrending({
               axisLine={false}
               tickMargin={8}
               domain={[yAxisMin, yAxisMax]}
-              tickFormatter={(value) => isPrivacyMode ? '' : defaultCompactFormatter(value)}
+              tickFormatter={(value) =>
+                isPrivacyMode ? "" : defaultCompactFormatter(value)
+              }
               tick={isPrivacyMode ? false : undefined}
             />
             <ChartTooltip
@@ -147,7 +148,9 @@ export default function ChartLineTrending({
               content={
                 <ChartTooltipContent
                   hideLabel
-                  formatter={(value) => isPrivacyMode ? 'R$ •••' : valueFormatter(value as number)}
+                  formatter={(value) =>
+                    isPrivacyMode ? "R$ •••" : valueFormatter(value as number)
+                  }
                 />
               }
             />
@@ -187,5 +190,5 @@ export default function ChartLineTrending({
         )}
       </CardFooter>
     </Card>
-  )
+  );
 }

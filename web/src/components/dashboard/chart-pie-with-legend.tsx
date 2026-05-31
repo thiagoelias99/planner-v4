@@ -1,29 +1,35 @@
 /* eslint-disable react-hooks/purity */
-"use client"
+"use client";
 
-import { Label, Pie, PieChart } from "recharts"
+import { Label, Pie, PieChart } from "recharts";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
-import { cn } from "@/lib/utils"
-import { ClassNameValue } from "tailwind-merge"
-import { usePrivacy } from "@/context/privacy-context"
+} from "@/components/ui/chart";
+import { cn } from "@/lib/utils";
+import { ClassNameValue } from "tailwind-merge";
+import { usePrivacy } from "@/context/privacy-context";
 
-type ChartInput = { key: string; value: number; fill?: string }[]
+type ChartInput = { key: string; value: number; fill?: string }[];
 
 interface ChartPieDonutActiveProps {
-  data: ChartInput
-  total?: string
-  hideLabels?: boolean
-  showInPercentage?: boolean
-  className?: ClassNameValue
+  data: ChartInput;
+  total?: string;
+  hideLabels?: boolean;
+  showInPercentage?: boolean;
+  className?: ClassNameValue;
 }
 
-export function ChartPieWithLegend({ data, total, hideLabels, showInPercentage, className }: ChartPieDonutActiveProps) {
-  const { isPrivacyMode } = usePrivacy()
+export function ChartPieWithLegend({
+  data,
+  total,
+  hideLabels,
+  showInPercentage,
+  className,
+}: ChartPieDonutActiveProps) {
+  const { isPrivacyMode } = usePrivacy();
 
   // 🎨 5 cores fixas
   const baseColors = [
@@ -32,24 +38,22 @@ export function ChartPieWithLegend({ data, total, hideLabels, showInPercentage, 
     "var(--chart-3)",
     "var(--chart-4)",
     "var(--chart-5)",
-  ]
+  ];
 
   // 🔮 Função para gerar cor aleatória em HSL (mantendo tom agradável)
   const randomColor = () => {
-    const hue = Math.floor(Math.random() * 360)
-    const saturation = 70 + Math.random() * 20 // 70–90%
-    const lightness = 45 + Math.random() * 10 // 45–55%
-    return `hsl(${hue}, ${saturation}%, ${lightness}%)`
-  }
+    const hue = Math.floor(Math.random() * 360);
+    const saturation = 70 + Math.random() * 20; // 70–90%
+    const lightness = 45 + Math.random() * 10; // 45–55%
+    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+  };
 
   // ⚙️ Monta o chartConfig dinamicamente
   const chartConfig: ChartConfig = data.reduce(
     (acc, item, index) => {
       const color =
         item.fill || // Usa o fill se já existir
-        (index < baseColors.length
-          ? baseColors[index]
-          : randomColor())
+        (index < baseColors.length ? baseColors[index] : randomColor());
 
       return {
         ...acc,
@@ -57,25 +61,26 @@ export function ChartPieWithLegend({ data, total, hideLabels, showInPercentage, 
           label: item.key.charAt(0).toUpperCase() + item.key.slice(1),
           color,
         },
-      }
+      };
     },
-    { value: { label: "Valor" } }
-  )
+    { value: { label: "Valor" } },
+  );
 
   // 📊 Adiciona cores no chartData
   const chartData = data.map((item, index) => ({
     ...item,
     fill:
       item.fill || // Usa o fill se já existir
-      (index < baseColors.length
-        ? baseColors[index]
-        : randomColor()),
-  }))
+      (index < baseColors.length ? baseColors[index] : randomColor()),
+  }));
 
   return (
     <ChartContainer
       config={chartConfig}
-      className={cn("mx-auto aspect-square h-[250px] min-h-[250px] min-w-0 w-full", className)}
+      className={cn(
+        "mx-auto aspect-square h-[250px] min-h-[250px] min-w-0 w-full",
+        className,
+      )}
     >
       <PieChart>
         <ChartTooltip
@@ -114,10 +119,10 @@ export function ChartPieWithLegend({ data, total, hideLabels, showInPercentage, 
         /> */}
         <Pie
           label={({ name, value, percent, x, y }) => {
-            if (hideLabels || isPrivacyMode) return null
+            if (hideLabels || isPrivacyMode) return null;
 
             // Esconde rótulos menores que 8%
-            if (percent < 0.08) return null
+            if (percent < 0.08) return null;
 
             return (
               <text
@@ -133,14 +138,14 @@ export function ChartPieWithLegend({ data, total, hideLabels, showInPercentage, 
                   const formattedName =
                     String(name).length > 20
                       ? `${String(name).substring(0, 20)}...`
-                      : String(name)
+                      : String(name);
 
                   return showInPercentage
                     ? `${formattedName}: ${(percent * 100).toFixed(1)}%`
-                    : `${formattedName}: ${Math.round(value)}`
+                    : `${formattedName}: ${Math.round(value)}`;
                 })()}
               </text>
-            )
+            );
           }}
           labelLine={false}
           data={chartData}
@@ -167,12 +172,12 @@ export function ChartPieWithLegend({ data, total, hideLabels, showInPercentage, 
                       {total}
                     </tspan>
                   </text>
-                )
+                );
               }
             }}
           />
         </Pie>
       </PieChart>
     </ChartContainer>
-  )
+  );
 }

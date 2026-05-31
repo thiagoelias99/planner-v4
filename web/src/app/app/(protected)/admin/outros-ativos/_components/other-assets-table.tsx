@@ -1,34 +1,48 @@
-"use client"
+"use client";
 
-import { type ColumnDef } from "@tanstack/react-table"
-import { DataTable } from "@/components/tables/template/data-table"
-import { ptBR } from "date-fns/locale"
-import { format } from "date-fns"
-import { Button } from "@/components/ui/button"
-import { Edit2Icon } from "lucide-react"
-import { useState } from "react"
-import { Sheet, SheetBody, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
-import { Badge } from "@/components/ui/badge"
-import UpdateOtherAssetsForm from "./update-other-assets-form"
-import { EOtherAssetType, eOtherAssetTypeMapper, IOtherAsset } from "@/models/other-asset"
-import MobileOtherAssetsTable from "./mobile-other-assets-table"
-import { usePrivacy } from "@/context/privacy-context"
-import { formatCurrency } from "@/lib/utils"
+import { type ColumnDef } from "@tanstack/react-table";
+import { DataTable } from "@/components/tables/template/data-table";
+import { ptBR } from "date-fns/locale";
+import { format } from "date-fns";
+import { Button } from "@/components/ui/button";
+import { Edit2Icon } from "lucide-react";
+import { useState } from "react";
+import {
+  Sheet,
+  SheetBody,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Badge } from "@/components/ui/badge";
+import UpdateOtherAssetsForm from "./update-other-assets-form";
+import {
+  EOtherAssetType,
+  eOtherAssetTypeMapper,
+  IOtherAsset,
+} from "@/models/other-asset";
+import MobileOtherAssetsTable from "./mobile-other-assets-table";
+import { usePrivacy } from "@/context/privacy-context";
+import { formatCurrency } from "@/lib/utils";
 
 interface Props {
-  data?: IOtherAsset[]
-  isLoading?: boolean
-  emptyMessage?: string
+  data?: IOtherAsset[];
+  isLoading?: boolean;
+  emptyMessage?: string;
 }
 
 export default function OtherAssetsTable({
   data = [],
   isLoading = false,
-  emptyMessage = "Nenhum ativo encontrado"
+  emptyMessage = "Nenhum ativo encontrado",
 }: Props) {
-  const { isPrivacyMode } = usePrivacy()
-  const [isSheetOpen, setIsSheetOpen] = useState(false)
-  const [selectedAsset, setSelectedAsset] = useState<IOtherAsset | null>(null)
+  const { isPrivacyMode } = usePrivacy();
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [selectedAsset, setSelectedAsset] = useState<IOtherAsset | null>(null);
 
   function getColumns(): ColumnDef<IOtherAsset>[] {
     return [
@@ -36,15 +50,19 @@ export default function OtherAssetsTable({
         accessorKey: "description",
         header: () => <p className="text-start">Descrição</p>,
         cell: (row) => {
-          const description = row.getValue() as string
-          const asset = row.row.original
+          const description = row.getValue() as string;
+          const asset = row.row.original;
 
           return (
             <div className="flex flex-col">
               <p className="text-start font-bold">{description}</p>
-              {asset.agency && <p className="text-start text-xs text-muted-foreground">{asset.agency}</p>}
+              {asset.agency && (
+                <p className="text-start text-xs text-muted-foreground">
+                  {asset.agency}
+                </p>
+              )}
             </div>
-          )
+          );
         },
         size: 250,
       },
@@ -52,15 +70,15 @@ export default function OtherAssetsTable({
         accessorKey: "type",
         header: () => <p className="text-center">Tipo</p>,
         cell: (row) => {
-          const type = row.getValue() as EOtherAssetType
-          const typeInfo = eOtherAssetTypeMapper[type]
+          const type = row.getValue() as EOtherAssetType;
+          const typeInfo = eOtherAssetTypeMapper[type];
           return (
             <div className="flex justify-center">
               <Badge variant={typeInfo.variant || "default"}>
                 {typeInfo.label}
               </Badge>
             </div>
-          )
+          );
         },
         size: 150,
       },
@@ -68,12 +86,12 @@ export default function OtherAssetsTable({
         accessorKey: "value",
         header: () => <p className="text-center">Valor</p>,
         cell: (row) => {
-          const value = row.getValue() as number
+          const value = row.getValue() as number;
           return (
             <p className="text-center font-semibold">
               {formatCurrency(value, { isPrivate: isPrivacyMode })}
             </p>
-          )
+          );
         },
         size: 150,
       },
@@ -81,12 +99,12 @@ export default function OtherAssetsTable({
         accessorKey: "updatedAt",
         header: () => <p className="text-center">Atualizado em</p>,
         cell: (row) => {
-          const date = row.getValue() as string
+          const date = row.getValue() as string;
           return (
             <p className="text-center text-sm text-muted-foreground">
               {format(new Date(date), "dd/MM/yyyy HH:mm", { locale: ptBR })}
             </p>
-          )
+          );
         },
         size: 150,
       },
@@ -94,7 +112,7 @@ export default function OtherAssetsTable({
         id: "actions",
         header: () => <p className="text-center">Ações</p>,
         cell: (row) => {
-          const asset = row.row.original
+          const asset = row.row.original;
 
           return (
             <div className="flex justify-center items-center gap-1">
@@ -103,19 +121,19 @@ export default function OtherAssetsTable({
                   variant="outline"
                   size="icon"
                   onClick={() => {
-                    setSelectedAsset(asset)
-                    setIsSheetOpen(true)
+                    setSelectedAsset(asset);
+                    setIsSheetOpen(true);
                   }}
                 >
                   <Edit2Icon className="h-4 w-4" />
                 </Button>
               </SheetTrigger>
             </div>
-          )
+          );
         },
         size: 100,
-      }
-    ]
+      },
+    ];
   }
 
   return (
@@ -136,8 +154,8 @@ export default function OtherAssetsTable({
               isLoading={isLoading}
               emptyMessage={emptyMessage}
               onEdit={(asset) => {
-                setSelectedAsset(asset)
-                setIsSheetOpen(true)
+                setSelectedAsset(asset);
+                setIsSheetOpen(true);
               }}
             />
           </div>
@@ -161,10 +179,12 @@ export default function OtherAssetsTable({
         </SheetBody>
         <SheetFooter className="mt-auto border-t pt-4">
           <SheetClose asChild>
-            <Button variant="outline" className="w-full">Fechar</Button>
+            <Button variant="outline" className="w-full">
+              Fechar
+            </Button>
           </SheetClose>
         </SheetFooter>
       </SheetContent>
     </Sheet>
-  )
+  );
 }
