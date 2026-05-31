@@ -25,6 +25,8 @@ import {
 } from "@/components/ui/alert-dialog"
 import { useFixedIncome } from "@/hooks/query/use-fixed-income"
 import { toast } from "sonner"
+import { usePrivacy } from "@/context/privacy-context"
+import { formatCurrency, formatPercentage } from "@/lib/utils"
 
 interface Props {
   data?: IFixedIncome[]
@@ -37,7 +39,7 @@ export default function FixedIncomesTable({
   isLoading = false,
   emptyMessage = "Nenhuma renda fixa encontrada"
 }: Props) {
-
+  const { isPrivacyMode } = usePrivacy()
   const [isSheetOpen, setIsSheetOpen] = useState(false)
   const [selectedFixedIncome, setSelectedFixedIncome] = useState<IFixedIncome | null>(null)
 
@@ -89,7 +91,7 @@ export default function FixedIncomesTable({
           const value = row.getValue() as number
           return (
             <p className="text-end">
-              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value)}
+              {formatCurrency(value, { isPrivate: isPrivacyMode })}
             </p>
           )
         },
@@ -102,7 +104,7 @@ export default function FixedIncomesTable({
           const value = row.getValue() as number
           return (
             <p className="text-end font-semibold">
-              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value)}
+              {formatCurrency(value, { isPrivate: isPrivacyMode })}
             </p>
           )
         },
@@ -117,7 +119,7 @@ export default function FixedIncomesTable({
           return (
             <div className="flex justify-center">
               <Badge variant={isPositive ? "default" : "destructive"}>
-                {isPositive ? "+" : ""}{profitPercentage.toFixed(2)}%
+                {!isPrivacyMode && (isPositive ? "+" : "")}{formatPercentage(profitPercentage / 100, { isPrivate: isPrivacyMode })}
               </Badge>
             </div>
           )

@@ -3,6 +3,7 @@
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
+import { PrivacyProvider } from "@/context/privacy-context"
 import { authClient } from "@/lib/auth-client"
 import { EPages } from "@/lib/routes"
 import { redirect } from "next/navigation"
@@ -27,31 +28,33 @@ export default function ProtectedLayout({ children }: PropsWithChildren) {
   }
 
   return (
-    <SidebarProvider
-      style={
-        {
-          "--sidebar-width": "calc(var(--spacing) * 72)",
-          "--header-height": "calc(var(--spacing) * 12)",
-        } as React.CSSProperties
-      }
-    >
-      <AppSidebar
-        variant="inset"
-        // @ts-expect-error Plugin role is enabled
-        sessionUser={{
-          ...session.data?.user,
-          image: session.data?.user?.image || undefined,
-        }}
+    <PrivacyProvider>
+      <SidebarProvider
+        style={
+          {
+            "--sidebar-width": "calc(var(--spacing) * 72)",
+            "--header-height": "calc(var(--spacing) * 12)",
+          } as React.CSSProperties
+        }
+      >
+        <AppSidebar
+          variant="inset"
+          // @ts-expect-error Plugin role is enabled
+          sessionUser={{
+            ...session.data?.user,
+            image: session.data?.user?.image || undefined,
+          }}
 
-      />
-      <SidebarInset>
-        <SiteHeader />
-        <div className="flex flex-1 flex-col">
-          <div className="@container/main flex flex-1 flex-col gap-2">
-            {children}
+        />
+        <SidebarInset>
+          <SiteHeader />
+          <div className="flex flex-1 flex-col">
+            <div className="@container/main flex flex-1 flex-col gap-2">
+              {children}
+            </div>
           </div>
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
+        </SidebarInset>
+      </SidebarProvider>
+    </PrivacyProvider>
   )
 }

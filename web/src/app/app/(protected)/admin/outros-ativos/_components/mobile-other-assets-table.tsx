@@ -8,6 +8,8 @@ import { Edit2Icon } from "lucide-react"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { SheetTrigger } from "@/components/ui/sheet"
+import { usePrivacy } from "@/context/privacy-context"
+import { formatCurrency } from "@/lib/utils"
 
 interface Props {
   data?: IOtherAsset[]
@@ -22,6 +24,7 @@ export default function MobileOtherAssetsTable({
   emptyMessage = "Nenhum ativo encontrado",
   onEdit
 }: Props) {
+  const { isPrivacyMode } = usePrivacy()
 
   if (isLoading) {
     return (
@@ -75,10 +78,7 @@ export default function MobileOtherAssetsTable({
               <div className="text-right">
                 <p className="text-muted-foreground">Valor Atual</p>
                 <p className="font-bold">
-                  {new Intl.NumberFormat('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL',
-                  }).format(asset.value)}
+                  {formatCurrency(asset.value, { isPrivate: isPrivacyMode })}
                 </p>
               </div>
             </CardContent>

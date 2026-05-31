@@ -8,12 +8,15 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ChevronsUpDownIcon } from "lucide-react"
+import { usePrivacy } from "@/context/privacy-context"
+import { formatCurrency, formatPercentage } from "@/lib/utils"
 
 interface ITickersHoldingsTableProps {
   holdings: ITickerHolding[]
 }
 
 export function TickersHoldingsTable({ holdings }: ITickersHoldingsTableProps) {
+  const { isPrivacyMode } = usePrivacy()
   const [expandedTypes, setExpandedTypes] = useState<Record<string, boolean>>({})
   if (!holdings || holdings.length === 0) {
     return (
@@ -76,12 +79,12 @@ export function TickersHoldingsTable({ holdings }: ITickersHoldingsTableProps) {
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-medium">
-                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalValue)}
+                    {formatCurrency(totalValue, { isPrivate: isPrivacyMode })}
                   </p>
                   <p className={`text-xs ${totalProfitLoss >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                    {totalProfitLoss >= 0 ? '+' : ''}
-                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalProfitLoss)}
-                    {' '}({totalProfitLossPercent.toFixed(2)}%)
+                    {!isPrivacyMode && (totalProfitLoss >= 0 ? '+' : '')}
+                    {formatCurrency(totalProfitLoss, { isPrivate: isPrivacyMode })}
+                    {' '}({formatPercentage(totalProfitLossPercent / 100, { isPrivate: isPrivacyMode })})
                   </p>
                 </div>
               </div>
@@ -122,27 +125,27 @@ export function TickersHoldingsTable({ holdings }: ITickersHoldingsTableProps) {
                               <p className="text-xs text-muted-foreground">{holding.name}</p>
                             </div>
                           </TableCell>
-                          <TableCell className="text-right">{holding.quantity}</TableCell>
+                          <TableCell className="text-right">{isPrivacyMode ? '•••' : holding.quantity}</TableCell>
                           <TableCell className="text-right">
-                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(holding.avgPrice)}
+                            {formatCurrency(holding.avgPrice, { isPrivate: isPrivacyMode })}
                           </TableCell>
                           <TableCell className="text-right">
-                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(holding.currentPrice)}
+                            {formatCurrency(holding.currentPrice, { isPrivate: isPrivacyMode })}
                           </TableCell>
                           <TableCell className="text-right">
-                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(holding.invested)}
+                            {formatCurrency(holding.invested, { isPrivate: isPrivacyMode })}
                           </TableCell>
                           <TableCell className="text-right font-medium">
-                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(holding.totalValue)}
+                            {formatCurrency(holding.totalValue, { isPrivate: isPrivacyMode })}
                           </TableCell>
                           <TableCell className="text-right">
                             <div className={holding.profitLoss >= 0 ? ' text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}>
                               <p className="font-medium">
-                                {holding.profitLoss >= 0 ? '+' : ''}
-                                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(holding.profitLoss)}
+                                {!isPrivacyMode && (holding.profitLoss >= 0 ? '+' : '')}
+                                {formatCurrency(holding.profitLoss, { isPrivate: isPrivacyMode })}
                               </p>
                               <p className="text-xs">
-                                ({holding.profitLossPercent.toFixed(2)}%)
+                                ({formatPercentage(holding.profitLossPercent / 100, { isPrivate: isPrivacyMode })})
                               </p>
                             </div>
                           </TableCell>
@@ -163,35 +166,35 @@ export function TickersHoldingsTable({ holdings }: ITickersHoldingsTableProps) {
                         </div>
                         <div className="text-right">
                           <p className="font-medium text-sm">
-                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(holding.totalValue)}
+                            {formatCurrency(holding.totalValue, { isPrivate: isPrivacyMode })}
                           </p>
                           <p className={`text-xs ${holding.profitLoss >= 0 ? 'text-green-600 dark:text-green-600' : 'text-red-600 dark:text-red-400'}`}>
-                            {holding.profitLoss >= 0 ? '+' : ''}
-                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(holding.profitLoss)}
+                            {!isPrivacyMode && (holding.profitLoss >= 0 ? '+' : '')}
+                            {formatCurrency(holding.profitLoss, { isPrivate: isPrivacyMode })}
                           </p>
                         </div>
                       </div>
                       <div className="grid grid-cols-2 gap-2 text-xs">
                         <div>
                           <p className="text-muted-foreground">Quantidade</p>
-                          <p className="font-medium">{holding.quantity}</p>
+                          <p className="font-medium">{isPrivacyMode ? '•••' : holding.quantity}</p>
                         </div>
                         <div>
                           <p className="text-muted-foreground">P.M.</p>
                           <p className="font-medium">
-                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(holding.avgPrice)}
+                            {formatCurrency(holding.avgPrice, { isPrivate: isPrivacyMode })}
                           </p>
                         </div>
                         <div>
                           <p className="text-muted-foreground">Cotação</p>
                           <p className="font-medium">
-                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(holding.currentPrice)}
+                            {formatCurrency(holding.currentPrice, { isPrivate: isPrivacyMode })}
                           </p>
                         </div>
                         <div>
                           <p className="text-muted-foreground">Rentabilidade</p>
                           <p className={`font-medium ${holding.profitLoss >= 0 ? 'text-green-600 dark:text-green-600' : 'text-red-600 dark:text-red-400'}`}>
-                            {holding.profitLossPercent.toFixed(2)}%
+                            {formatPercentage(holding.profitLossPercent / 100, { isPrivate: isPrivacyMode })}
                           </p>
                         </div>
                       </div>

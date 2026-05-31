@@ -12,6 +12,8 @@ import { Badge } from "@/components/ui/badge"
 import UpdateTickerOrdersForm from "./update-ticker-orders-form"
 import { ETickerOrderType, eTickerOrderTypeMapper, ITickerOrder } from "@/models/ticker-order"
 import MobileTickerOrdersTable from "./mobile-ticker-orders-table"
+import { usePrivacy } from "@/context/privacy-context"
+import { formatCurrency } from "@/lib/utils"
 
 interface Props {
   data?: ITickerOrder[]
@@ -24,7 +26,7 @@ export default function TickerOrdersTable({
   isLoading = false,
   emptyMessage = "Nenhuma ordem encontrada"
 }: Props) {
-
+  const { isPrivacyMode } = usePrivacy()
   const [isSheetOpen, setIsSheetOpen] = useState(false)
   const [selectedTickerOrder, setSelectedTickerOrder] = useState<ITickerOrder | null>(null)
 
@@ -57,7 +59,7 @@ export default function TickerOrdersTable({
         header: () => <p className="text-center">Quantidade</p>,
         cell: (row) => {
           const quantity = row.getValue() as number
-          return <p className="text-center font-medium">{quantity}</p>
+          return <p className="text-center font-medium">{isPrivacyMode ? '•••' : quantity}</p>
         },
         size: 120,
       },
@@ -68,10 +70,7 @@ export default function TickerOrdersTable({
           const price = row.getValue() as number
           return (
             <p className="text-center font-medium">
-              {new Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: 'BRL',
-              }).format(price)}
+              {formatCurrency(price, { isPrivate: isPrivacyMode })}
             </p>
           )
         },
@@ -85,10 +84,7 @@ export default function TickerOrdersTable({
           const total = tickerOrder.quantity * tickerOrder.price
           return (
             <p className="text-center font-bold">
-              {new Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: 'BRL',
-              }).format(total)}
+              {formatCurrency(total, { isPrivate: isPrivacyMode })}
             </p>
           )
         },
@@ -101,10 +97,7 @@ export default function TickerOrdersTable({
           const price = row.getValue() as number
           return (
             <p className="text-center text-sm text-muted-foreground">
-              {new Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: 'BRL',
-              }).format(price)}
+              {formatCurrency(price, { isPrivate: isPrivacyMode })}
             </p>
           )
         },
@@ -115,7 +108,7 @@ export default function TickerOrdersTable({
         header: () => <p className="text-center">Qtd Anterior</p>,
         cell: (row) => {
           const quantity = row.getValue() as number
-          return <p className="text-center text-sm text-muted-foreground">{quantity}</p>
+          return <p className="text-center text-sm text-muted-foreground">{isPrivacyMode ? '•••' : quantity}</p>
         },
         size: 120,
       },
@@ -127,11 +120,7 @@ export default function TickerOrdersTable({
           const isPositive = gainLoss >= 0
           return (
             <p className={`text-center font-medium ${isPositive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-              {new Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: 'BRL',
-                signDisplay: 'always'
-              }).format(gainLoss)}
+              {formatCurrency(gainLoss, { isPrivate: isPrivacyMode })}
             </p>
           )
         },
@@ -144,10 +133,7 @@ export default function TickerOrdersTable({
           const price = row.getValue() as number
           return (
             <p className="text-center font-medium">
-              {new Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: 'BRL',
-              }).format(price)}
+              {formatCurrency(price, { isPrivate: isPrivacyMode })}
             </p>
           )
         },
@@ -158,7 +144,7 @@ export default function TickerOrdersTable({
         header: () => <p className="text-center">Nova Qtd</p>,
         cell: (row) => {
           const quantity = row.getValue() as number
-          return <p className="text-center font-medium">{quantity}</p>
+          return <p className="text-center font-medium">{isPrivacyMode ? '•••' : quantity}</p>
         },
         size: 120,
       },

@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/chart"
 import { ClassNameValue } from "tailwind-merge"
 import { cn } from "@/lib/utils"
+import { usePrivacy } from "@/context/privacy-context"
 
 interface ChartDataPoint {
   date: string | Date
@@ -69,6 +70,8 @@ export default function ChartLineTrending({
   dateFormatter = defaultDateFormatter,
   className,
 }: ChartLineTrendingProps) {
+  const { isPrivacyMode } = usePrivacy()
+
   const chartConfig = {
     value: {
       label: title,
@@ -136,14 +139,15 @@ export default function ChartLineTrending({
               axisLine={false}
               tickMargin={8}
               domain={[yAxisMin, yAxisMax]}
-              tickFormatter={(value) => defaultCompactFormatter(value)}
+              tickFormatter={(value) => isPrivacyMode ? '' : defaultCompactFormatter(value)}
+              tick={isPrivacyMode ? false : undefined}
             />
             <ChartTooltip
               cursor={false}
               content={
                 <ChartTooltipContent
                   hideLabel
-                  formatter={(value) => valueFormatter(value as number)}
+                  formatter={(value) => isPrivacyMode ? 'R$ •••' : valueFormatter(value as number)}
                 />
               }
             />

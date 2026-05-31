@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 
-type keyValues = "acceptedCookies"
+type keyValues = "acceptedCookies" | "privacyMode"
 
 export function useLocalStorage<T>(key: keyValues, initialValue: T) {
   const [storedValue, setStoredValue] = useState<T>(() => {

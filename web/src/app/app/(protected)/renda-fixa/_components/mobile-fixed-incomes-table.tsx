@@ -21,6 +21,8 @@ import {
 } from "@/components/ui/alert-dialog"
 import { useFixedIncome } from "@/hooks/query/use-fixed-income"
 import { toast } from "sonner"
+import { usePrivacy } from "@/context/privacy-context"
+import { formatCurrency, formatPercentage } from "@/lib/utils"
 
 interface Props {
   data?: IFixedIncome[]
@@ -35,6 +37,7 @@ export default function MobileFixedIncomesTable({
   emptyMessage = "Nenhuma renda fixa encontrada",
   onEdit
 }: Props) {
+  const { isPrivacyMode } = usePrivacy()
 
   if (isLoading) {
     return (
@@ -96,10 +99,10 @@ export default function MobileFixedIncomesTable({
                   {indexInfo.label}
                 </Badge>
                 <Badge variant="outline">
-                  {fixedIncome.fixedRate.toFixed(2)}%
+                  {isPrivacyMode ? '•••%' : `${fixedIncome.fixedRate.toFixed(2)}%`}
                 </Badge>
                 <Badge variant={isPositive ? "default" : "destructive"}>
-                  {isPositive ? "+" : ""}{fixedIncome.profitPercentage.toFixed(2)}%
+                  {!isPrivacyMode && (isPositive ? "+" : "")}{formatPercentage(fixedIncome.profitPercentage / 100, { isPrivate: isPrivacyMode })}
                 </Badge>
               </div>
 
@@ -107,19 +110,13 @@ export default function MobileFixedIncomesTable({
                 <div>
                   <p className="text-muted-foreground">Investimento</p>
                   <p className="font-medium">
-                    {new Intl.NumberFormat('pt-BR', {
-                      style: 'currency',
-                      currency: 'BRL',
-                    }).format(fixedIncome.initialInvestment)}
+                    {formatCurrency(fixedIncome.initialInvestment, { isPrivate: isPrivacyMode })}
                   </p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Valor Atual</p>
                   <p className="font-bold">
-                    {new Intl.NumberFormat('pt-BR', {
-                      style: 'currency',
-                      currency: 'BRL',
-                    }).format(fixedIncome.currentValue)}
+                    {formatCurrency(fixedIncome.currentValue, { isPrivate: isPrivacyMode })}
                   </p>
                 </div>
               </div>

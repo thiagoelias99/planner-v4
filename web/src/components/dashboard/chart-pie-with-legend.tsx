@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/chart"
 import { cn } from "@/lib/utils"
 import { ClassNameValue } from "tailwind-merge"
+import { usePrivacy } from "@/context/privacy-context"
 
 type ChartInput = { key: string; value: number; fill?: string }[]
 
@@ -22,6 +23,8 @@ interface ChartPieDonutActiveProps {
 }
 
 export function ChartPieWithLegend({ data, total, hideLabels, showInPercentage, className }: ChartPieDonutActiveProps) {
+  const { isPrivacyMode } = usePrivacy()
+
   // 🎨 5 cores fixas
   const baseColors = [
     "var(--chart-1)",
@@ -111,7 +114,7 @@ export function ChartPieWithLegend({ data, total, hideLabels, showInPercentage, 
         /> */}
         <Pie
           label={({ name, value, percent, x, y }) => {
-            if (hideLabels) return null
+            if (hideLabels || isPrivacyMode) return null
 
             // Esconde rótulos menores que 8%
             if (percent < 0.08) return null

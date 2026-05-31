@@ -29,9 +29,14 @@ interface FormatPercentageOptions {
   maximumFractionDigits?: number
   appendSignage?: boolean
   divideBy?: number
+  isPrivate?: boolean
 }
 
 export function formatPercentage(value: number = 0, options?: FormatPercentageOptions) {
+  if (options?.isPrivate) {
+    return '•••%'
+  }
+
   const signage = options?.appendSignage ? (value < 0 ? '' : '+') : ''
   const finalValue = options?.divideBy ? value / options.divideBy : value
 
@@ -40,4 +45,20 @@ export function formatPercentage(value: number = 0, options?: FormatPercentageOp
     minimumFractionDigits: options?.minimumFractionDigits || 2,
     maximumFractionDigits: options?.maximumFractionDigits || 2
   }).format(finalValue)}`
+}
+
+interface FormatCurrencyOptions {
+  isPrivate?: boolean
+  hideSymbol?: boolean
+}
+
+export function formatCurrency(value: number = 0, options?: FormatCurrencyOptions) {
+  if (options?.isPrivate) {
+    return options?.hideSymbol ? '•••' : 'R$ •••'
+  }
+
+  return Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL'
+  }).format(value)
 }

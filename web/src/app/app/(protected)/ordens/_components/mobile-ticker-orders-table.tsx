@@ -8,6 +8,8 @@ import { Edit2Icon } from "lucide-react"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { SheetTrigger } from "@/components/ui/sheet"
+import { usePrivacy } from "@/context/privacy-context"
+import { formatCurrency } from "@/lib/utils"
 
 interface Props {
   data?: ITickerOrder[]
@@ -22,6 +24,7 @@ export default function MobileTickerOrdersTable({
   emptyMessage = "Nenhuma ordem encontrada",
   onEdit
 }: Props) {
+  const { isPrivacyMode } = usePrivacy()
 
   if (isLoading) {
     return (
@@ -75,48 +78,35 @@ export default function MobileTickerOrdersTable({
             <CardContent className="grid grid-cols-2 gap-2 text-sm">
               <div>
                 <p className="text-muted-foreground">Quantidade</p>
-                <p className="font-medium">{tickerOrder.quantity}</p>
+                <p className="font-medium">{isPrivacyMode ? '•••' : tickerOrder.quantity}</p>
               </div>
               <div>
                 <p className="text-muted-foreground">Preço</p>
                 <p className="font-medium">
-                  {new Intl.NumberFormat('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL',
-                  }).format(tickerOrder.price)}
+                  {formatCurrency(tickerOrder.price, { isPrivate: isPrivacyMode })}
                 </p>
               </div>
               <div>
                 <p className="text-muted-foreground">Total</p>
                 <p className="font-bold">
-                  {new Intl.NumberFormat('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL',
-                  }).format(total)}
+                  {formatCurrency(total, { isPrivate: isPrivacyMode })}
                 </p>
               </div>
               <div>
                 <p className="text-muted-foreground">Ganho/Perda</p>
                 <p className={`font-medium ${isPositive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                  {new Intl.NumberFormat('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL',
-                    signDisplay: 'always'
-                  }).format(tickerOrder.gainLoss)}
+                  {formatCurrency(tickerOrder.gainLoss, { isPrivate: isPrivacyMode })}
                 </p>
               </div>
               <div>
                 <p className="text-muted-foreground">Novo PM</p>
                 <p className="font-medium">
-                  {new Intl.NumberFormat('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL',
-                  }).format(tickerOrder.newMeanPrice)}
+                  {formatCurrency(tickerOrder.newMeanPrice, { isPrivate: isPrivacyMode })}
                 </p>
               </div>
               <div>
                 <p className="text-muted-foreground">Nova Qtd</p>
-                <p className="font-medium">{tickerOrder.newTotalQuantity}</p>
+                <p className="font-medium">{isPrivacyMode ? '•••' : tickerOrder.newTotalQuantity}</p>
               </div>
             </CardContent>
 

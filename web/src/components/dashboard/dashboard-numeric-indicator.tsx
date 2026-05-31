@@ -1,3 +1,5 @@
+"use client"
+
 import React from 'react'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../ui/card"
 import NumberCountUp from "../ui/number-count-up"
@@ -7,6 +9,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
 import { ExternalLinkIcon, InfoIcon } from "lucide-react"
 import Link from "next/link"
 import LoadingIndicator from "../ui/loading-indicator"
+import { usePrivacy } from "@/context/privacy-context"
 
 interface Props {
   label?: string
@@ -24,6 +27,8 @@ interface Props {
 }
 
 export default function DashboardNumericIndicator({ label, subLabel, footer, amount, isLoading, className, tooltipContent, prefix, suffix, decimals, link, emphasis }: Props) {
+  const { isPrivacyMode } = usePrivacy()
+
   return (
     <Card className={cn("gap-2", { "bg-zinc-100 dark:bg-zinc-800": emphasis }, { "pb-2": footer }, className)}>
       <CardHeader className="relative flex flex-row justify-between items-start">
@@ -62,6 +67,7 @@ export default function DashboardNumericIndicator({ label, subLabel, footer, amo
           prefix={prefix}
           suffix={suffix}
           decimals={decimals}
+          isPrivate={isPrivacyMode}
         />
       </CardContent>
       {footer && (

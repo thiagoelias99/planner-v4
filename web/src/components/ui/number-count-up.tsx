@@ -12,9 +12,10 @@ interface Props extends ComponentProps<"p"> {
   decimals?: number
   prefix?: string
   suffix?: string
+  isPrivate?: boolean
 }
 
-export default function NumberCountUp({ amount = 0, amountTextClassName, className, decimals = 0, prefix, suffix, ...rest }: Props) {
+export default function NumberCountUp({ amount = 0, amountTextClassName, className, decimals = 0, prefix, suffix, isPrivate = false, ...rest }: Props) {
   const [progress, setProgress] = useState({
     previous: 0,
     current: amount
@@ -28,6 +29,21 @@ export default function NumberCountUp({ amount = 0, amountTextClassName, classNa
   }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     , [amount])
+
+  if (isPrivate) {
+    return (
+      <p
+        className={cn('text-sm text-muted-foreground', className)}
+        {...rest}
+      >
+        {prefix ? `${prefix} ` : ""}
+        <span className={cn("text-foreground font-semibold text-3xl sm:text-xl", amountTextClassName)}>
+          •••
+        </span>
+        {suffix ? ` ${suffix}` : ""}
+      </p>
+    )
+  }
 
   return (
     <p

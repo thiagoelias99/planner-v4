@@ -12,6 +12,8 @@ import { Badge } from "@/components/ui/badge"
 import UpdateOtherAssetsForm from "./update-other-assets-form"
 import { EOtherAssetType, eOtherAssetTypeMapper, IOtherAsset } from "@/models/other-asset"
 import MobileOtherAssetsTable from "./mobile-other-assets-table"
+import { usePrivacy } from "@/context/privacy-context"
+import { formatCurrency } from "@/lib/utils"
 
 interface Props {
   data?: IOtherAsset[]
@@ -24,7 +26,7 @@ export default function OtherAssetsTable({
   isLoading = false,
   emptyMessage = "Nenhum ativo encontrado"
 }: Props) {
-
+  const { isPrivacyMode } = usePrivacy()
   const [isSheetOpen, setIsSheetOpen] = useState(false)
   const [selectedAsset, setSelectedAsset] = useState<IOtherAsset | null>(null)
 
@@ -69,7 +71,7 @@ export default function OtherAssetsTable({
           const value = row.getValue() as number
           return (
             <p className="text-center font-semibold">
-              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value)}
+              {formatCurrency(value, { isPrivate: isPrivacyMode })}
             </p>
           )
         },
