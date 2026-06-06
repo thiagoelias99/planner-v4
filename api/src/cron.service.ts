@@ -14,7 +14,7 @@ export class CronService {
     private readonly usersService: UsersService,
   ) { }
 
-  @Cron('0 2 1 * *', {
+  @Cron('1 2 1 * *', {
     name: 'portfolio-snapshot-first-day',
     timeZone: 'America/Sao_Paulo'
   })
@@ -29,12 +29,12 @@ export class CronService {
     }
   }
 
-  @Cron('0 2 15 * *', {
-    name: 'portfolio-snapshot-fifteenth-day',
+  @Cron('0 2 16 * *', {
+    name: 'portfolio-snapshot-sixteenth-day',
     timeZone: 'America/Sao_Paulo'
   })
-  async handlePortfolioSnapshotFifteenthDay() {
-    this.logger.log('Running portfolio snapshot for the 15th of the month')
+  async handlePortfolioSnapshotSixteenthDay() {
+    this.logger.log('Running portfolio snapshot for the 16th of the month')
     try {
       const result = await this.dashboardService.createAllUsersSnapshot()
       this.logger.log(`Portfolio snapshot completed: ${result.successful} successful, ${result.failed} failed`)
@@ -44,8 +44,8 @@ export class CronService {
     }
   }
 
-  @Cron('2 2 1 * *', {
-    name: 'portfolio-snapshot-first-day',
+  @Cron('0 2 1 * *', {
+    name: 'recurrent-transaction-first-day',
     timeZone: 'America/Sao_Paulo'
   })
   async createMonthlyTransactions() {
