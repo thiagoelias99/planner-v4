@@ -1,7 +1,7 @@
-import { Injectable } from "@nestjs/common"
+import { Injectable, InternalServerErrorException } from "@nestjs/common"
 import { BudgetsRepository } from "./budgets.repository"
 import { CreateBudgetCategoryInput } from "./dto/create-category.input"
-import { TransactionCategory } from "./entities/transaction-category.entity"
+import { ETransactionCategoryType, TransactionCategory } from "./entities/transaction-category.entity"
 import { randomUUID } from "crypto"
 import slugify from "slugify"
 import { UpdateBudgetCategoryInput } from "./dto/update-category.input"
@@ -13,11 +13,12 @@ import { BudgetTransactionItem } from "./entities/transaction-item.entity"
 import { UpdateBudgetTransactionItemInput } from "./dto/update-transaction-item.input"
 import { QueryTransactionInput } from "./dto/query-transaction.input"
 import { BudgetView } from "./dto/budget.view"
-import { endOfMonth, startOfMonth } from "date-fns"
+import { addHours, addMonths, endOfMonth, setHours, startOfMonth, subMonths } from "date-fns"
 import { CreateTransactionFormInput } from "./dto/create-transaction-form.input"
 import { TransactionCategoryTableView } from "./dto/category-table.view"
 import { ETransactionFrequency } from "./entities/transaction-frequency.enum"
 import { createId } from "@paralleldrive/cuid2"
+import { EPaymentMethod } from "./entities/payment-method.enum"
 
 
 @Injectable()
@@ -135,6 +136,96 @@ export class BudgetsService {
     const currentDate = new Date()
     const currentMonthStart = startOfMonth(currentDate)
     const currentMonthEnd = endOfMonth(currentDate)
+    // Mês anterior
+    const startDate = startOfMonth(subMonths(currentDate, 1))
+    const endDate = endOfMonth(subMonths(currentDate, 1))
+
+    // Criar repasse entre os meses
+    const lastMonthBalanceDefaultCategory: CreateBudgetCategoryInput = {
+      description: "Transferencia próximo mês",
+      type: ETransactionCategoryType.INVESTMENT
+    }
+
+    const nextMonthBalanceDefaultCategory: CreateBudgetCategoryInput = {
+      description: "Saldo mês anterior",
+      type: ETransactionCategoryType.REDEMPTION
+    }
+
+    const lastMonthBalanceDefaultTransaction: CreateBudgetTransactionInput = {
+      description: "Transferência próximo mês",
+      referenceValue: 0,
+      paymentMethod: EPaymentMethod.TRANSFER,
+      categoryId: "",
+      freq: ETransactionFrequency.CASUAL,
+      startDate
+    }
+
+    const nextMonthBalanceDefaultTransaction: CreateBudgetTransactionInput = {
+      description: "Saldo mês anterior",
+      referenceValue: 0,
+      paymentMethod: EPaymentMethod.TRANSFER,
+      categoryId: "",
+      freq: ETransactionFrequency.CASUAL,
+      startDate
+    }
+
+    // Orçamento do mês anterior
+    const previousMonthBudget = await this.getBudgetBetweenDates({
+      from: startDate,
+      to: endDate,
+      userId,
+    })
+
+    // Verificar balanço do mês anterior e criar as transações de repasse para o próximo mês
+    if (previousMonthBudget.balance === 0) {
+      // Balance is 0, do not create a transaction
+    } else {
+      // Get the user category for the last month balance
+      const lastMonthCategory = await this.getOrCreateCategoryByDescription(userId, lastMonthBalanceDefaultCategory)
+      if (!lastMonthCategory) throw new InternalServerErrorException("Error creating last month category")
+
+      // Get the user transaction for the last month balance
+      const lastMonthTransaction = await this.getOrCreateTransactionByDescription(userId, {
+        ...lastMonthBalanceDefaultTransaction,
+        categoryId: lastMonthCategory.id,
+      })
+      if (!lastMonthTransaction) throw new InternalServerErrorException("Error creating last month transaction")
+
+      // Get the user category for the next month balance
+      const nextMonthCategory = await this.getOrCreateCategoryByDescription(userId, nextMonthBalanceDefaultCategory)
+      if (!nextMonthCategory) throw new InternalServerErrorException("Error creating next month category")
+
+      // Get the user transaction for the next month balance
+      const nextMonthTransaction = await this.getOrCreateTransactionByDescription(userId, {
+        ...nextMonthBalanceDefaultTransaction,
+        categoryId: nextMonthCategory.id,
+      })
+      if (!nextMonthTransaction) throw new InternalServerErrorException("Error creating next month transaction")
+
+      // Create the transaction item for the last month balance
+      const lastMonthTransactionItem = await this.createTransactionItem(
+        {
+          date: setHours(endDate, 22),
+          transactionId: lastMonthTransaction.id,
+          value: previousMonthBudget.balance,
+          paymentMethod: EPaymentMethod.TRANSFER,
+        },
+        userId
+      )
+      if (!lastMonthTransactionItem) throw new InternalServerErrorException("Error creating last month transaction item")
+
+      // Create the transaction item for the next month balance
+      const nextMonthTransactionItem = await this.createTransactionItem(
+        {
+          date: setHours(addMonths(startDate, 1), 6),
+          transactionId: nextMonthTransaction.id,
+          value: previousMonthBudget.balance,
+          paymentMethod: EPaymentMethod.TRANSFER,
+        },
+        userId
+      )
+      if (!nextMonthTransactionItem) throw new InternalServerErrorException("Error creating next month transaction item")
+    }
 
     // Get all monthly transactions that should be active in the current month
     const monthlyTransactions = (await this.getTransactions(userId)).filter(
@@ -158,7 +249,7 @@ export class BudgetsService {
 
     // Create missing monthly transaction items for the current month
     for (const monthlyTransaction of missingMonthlyTransactions) {
-      const transactionDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), monthlyTransaction.byMonthDay)
+      const transactionDate = addHours(new Date(currentDate.getFullYear(), currentDate.getMonth(), monthlyTransaction.byMonthDay), 12)
 
       // Only create if the date is valid and falls within the current month
       if (transactionDate >= currentMonthStart && transactionDate <= currentMonthEnd) {
