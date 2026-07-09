@@ -29,20 +29,20 @@ export class CronService {
     }
   }
 
-  @Cron('0 2 16 * *', {
-    name: 'portfolio-snapshot-sixteenth-day',
-    timeZone: 'America/Sao_Paulo'
-  })
-  async handlePortfolioSnapshotSixteenthDay() {
-    this.logger.log('Running portfolio snapshot for the 16th of the month')
-    try {
-      const result = await this.dashboardService.createAllUsersSnapshot()
-      this.logger.log(`Portfolio snapshot completed: ${result.successful} successful, ${result.failed} failed`)
-    } catch (error) {
-      const err = error as Error
-      this.logger.error(`Portfolio snapshot failed: ${err.message}`, err.stack)
-    }
-  }
+  // @Cron('0 2 16 * *', {
+  //   name: 'portfolio-snapshot-sixteenth-day',
+  //   timeZone: 'America/Sao_Paulo'
+  // })
+  // async handlePortfolioSnapshotSixteenthDay() {
+  //   this.logger.log('Running portfolio snapshot for the 16th of the month')
+  //   try {
+  //     const result = await this.dashboardService.createAllUsersSnapshot()
+  //     this.logger.log(`Portfolio snapshot completed: ${result.successful} successful, ${result.failed} failed`)
+  //   } catch (error) {
+  //     const err = error as Error
+  //     this.logger.error(`Portfolio snapshot failed: ${err.message}`, err.stack)
+  //   }
+  // }
 
   @Cron('0 2 1 * *', {
     name: 'recurrent-transaction-first-day',
