@@ -16,6 +16,7 @@ export enum EPages {
   FIXED_INCOMES = '/app/renda-fixa',
   OTHER_ASSETS = '/app/admin/outros-ativos',
   ASSET_BALANCE = '/app/balanco-de-ativos',
+  BUDGET = '/app/orcamento',
 
   // Admin Pages
   USERS = '/app/admin/usuarios',

@@ -15,6 +15,8 @@ import { TransactionItemView } from "./dto/transaction-item.view"
 import { UpdateBudgetTransactionInput } from "./dto/update-transaction.input"
 import { TransactionCategoryTableView } from "./dto/category-table.view"
 import { Session, type UserSession } from "@thallesp/nestjs-better-auth"
+import { QueryPaginatedBudgetInput } from "./dto/query-paginated-budget.input"
+import { PaginatedBudgetView } from "./dto/paginated-budget.view"
 
 @ApiTags("Budgets Module")
 @Controller("budgets")
@@ -40,6 +42,38 @@ export class BudgetsController {
       throw new BadRequestException("From date must be before to date")
     }
     return await this.budgetsService.getBudgetBetweenDates({ userId, from, to })
+  }
+
+  @Get("/paginated")
+  @ApiOperation({ summary: "Get paginated budget with optional date range filtering" })
+  @ApiResponse({
+    status: 200,
+    description: "OK",
+    type: PaginatedBudgetView,
+  })
+  async getPaginatedBudget(
+    @Session() session: UserSession,
+    @Query() query: QueryPaginatedBudgetInput,
+  ) {
+    const userId = session.user.id as string
+    const { startDate, endDate, page, limit, orderBy, order } = query
+
+    //Validation - only if both dates are provided
+    if (startDate && endDate && isAfter(startDate, endDate)) {
+      throw new BadRequestException("Start date must be before end date")
+    }
+
+    const { total, budgetView } = await this.budgetsService.getPaginatedBudgetBetweenDates({
+      userId,
+      startDate,
+      endDate,
+      page: page || 1,
+      limit: limit || 16,
+      orderBy,
+      order
+    })
+
+    return new PaginatedBudgetView({ page: page || 1, limit: limit || 16, total, budgetData: budgetView })
   }
 
   @Post("/categories")

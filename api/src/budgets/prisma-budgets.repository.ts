@@ -715,14 +715,17 @@ export class PrismaBudgetsRepository implements BudgetsRepository {
   }
 
   async getAllTransactionItems(userId: string, query?: QueryTransactionInput): Promise<BudgetTransactionItem[]> {
+    const whereClause: any = { userId }
+
+    // Only add date filters if they are provided
+    if (query?.startDate || query?.endDate) {
+      whereClause.date = {}
+      if (query.startDate) whereClause.date.gte = new Date(query.startDate)
+      if (query.endDate) whereClause.date.lte = new Date(query.endDate)
+    }
+
     const transactions = await this.prisma.transactionItem.findMany({
-      where: {
-        userId,
-        date: {
-          lte: query?.endDate,
-          gte: query?.startDate,
-        }
-      },
+      where: whereClause,
       include: {
         Transaction: {
           select: {
@@ -748,6 +751,76 @@ export class PrismaBudgetsRepository implements BudgetsRepository {
     })
 
     return transactions.map(transactionItem => this.prismaTransactionItemDto(transactionItem))
+  }
+
+  async getPaginatedTransactionItems(
+    userId: string,
+    query: { startDate?: Date, endDate?: Date, page: number, limit: number, orderBy?: string, order?: string }
+  ): Promise<{ total: number, data: BudgetTransactionItem[] }> {
+    const where: any = { userId }
+
+    // Only add date filters if they are provided
+    if (query.startDate || query.endDate) {
+      where.date = {}
+      if (query.startDate) where.date.gte = new Date(query.startDate)
+      if (query.endDate) where.date.lte = new Date(query.endDate)
+    }
+
+    // Map orderBy field to Prisma field with correct types
+    let orderByClause: any
+    const sortOrder = (query.order || 'desc') as 'asc' | 'desc'
+
+    switch (query.orderBy) {
+      case 'category':
+        orderByClause = { Transaction: { TransactionCategory: { description: sortOrder } } }
+        break
+      case 'description':
+        orderByClause = { Transaction: { description: sortOrder } }
+        break
+      case 'value':
+        orderByClause = { value: sortOrder }
+        break
+      case 'date':
+      default:
+        orderByClause = { date: sortOrder }
+        break
+    }
+
+    const [total, transactions] = await Promise.all([
+      this.prisma.transactionItem.count({ where }),
+      this.prisma.transactionItem.findMany({
+        where,
+        include: {
+          Transaction: {
+            select: {
+              description: true,
+              freq: true,
+              byDay: true,
+              byMonth: true,
+              byMonthDay: true,
+              imageUrl: true,
+              TransactionCategory: {
+                select: {
+                  id: true,
+                  slug: true,
+                  type: true,
+                  description: true,
+                  icon: true,
+                }
+              }
+            }
+          }
+        },
+        orderBy: orderByClause,
+        skip: (query.page - 1) * query.limit,
+        take: query.limit,
+      })
+    ])
+
+    return {
+      total,
+      data: transactions.map(transactionItem => this.prismaTransactionItemDto(transactionItem))
+    }
   }
 
   async removeTransactionItem(transactionItemId: string, userId: string): Promise<void> {

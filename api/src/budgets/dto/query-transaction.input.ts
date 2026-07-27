@@ -1,4 +1,4 @@
 export class QueryTransactionInput {
-  startDate: Date
-  endDate: Date
+  startDate?: Date
+  endDate?: Date
 }

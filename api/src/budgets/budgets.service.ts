@@ -19,6 +19,7 @@ import { TransactionCategoryTableView } from "./dto/category-table.view"
 import { ETransactionFrequency } from "./entities/transaction-frequency.enum"
 import { createId } from "@paralleldrive/cuid2"
 import { EPaymentMethod } from "./entities/payment-method.enum"
+import { TransactionItemView } from "./dto/transaction-item.view"
 
 
 @Injectable()
@@ -104,6 +105,52 @@ export class BudgetsService {
     const categories = await this.getCategories(data.userId)
 
     return new BudgetView({ transactions, categories, from: data.from, to: data.to })
+  }
+
+  async getPaginatedBudgetBetweenDates(data: {
+    startDate?: Date,
+    endDate?: Date,
+    userId: string,
+    page: number,
+    limit: number,
+    orderBy?: string,
+    order?: string
+  }): Promise<{ total: number, budgetView: BudgetView }> {
+    // Get ALL transactions for summary calculations (without pagination)
+    const allTransactions = await this.getAllTransactionItems(data.userId, {
+      startDate: data.startDate,
+      endDate: data.endDate
+    })
+
+    // Get paginated transactions for the list
+    const { total, data: paginatedTransactions } = await this.budgetsRepository.getPaginatedTransactionItems(
+      data.userId,
+      {
+        startDate: data.startDate,
+        endDate: data.endDate,
+        page: data.page,
+        limit: data.limit,
+        orderBy: data.orderBy,
+        order: data.order
+      }
+    )
+
+    // Get categories
+    const categories = await this.getCategories(data.userId)
+
+    // Create BudgetView with ALL transactions for correct summary calculations
+    // but replace the transactions array with paginated data
+    const budgetView = new BudgetView({
+      transactions: allTransactions,
+      categories,
+      from: data.startDate || new Date(0), // Epoch if no start date
+      to: data.endDate || new Date()
+    })
+
+    // Replace transactions array with paginated data
+    budgetView.transactions = paginatedTransactions.map(t => new TransactionItemView(t))
+
+    return { total, budgetView }
   }
 
   async createTransactionFromForm(data: CreateTransactionFormInput, userId: string): Promise<BudgetView> {

@@ -33,6 +33,7 @@ export abstract class BudgetsRepository {
   abstract updateTransactionItem(data: UpdateBudgetTransactionItemInput, id: string, userId: string): Promise<BudgetTransactionItem>
   abstract getTransactionItems(transactionId: string, userId: string): Promise<BudgetTransactionItem[]>
   abstract getAllTransactionItems(userId: string, query?: QueryTransactionInput): Promise<BudgetTransactionItem[]>
+  abstract getPaginatedTransactionItems(userId: string, query: { startDate?: Date, endDate?: Date, page: number, limit: number, orderBy?: string, order?: string }): Promise<{ total: number, data: BudgetTransactionItem[] }>
   abstract removeTransactionItem(transactionItemId: string, userId: string): Promise<void>
 
   // Forms

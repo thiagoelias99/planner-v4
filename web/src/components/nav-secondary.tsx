@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   SidebarGroup,
@@ -6,9 +6,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
-import { EPages } from "@/lib/routes"
-import { LandmarkIcon, ScaleIcon, TicketsIcon, UserIcon } from "lucide-react"
+} from "@/components/ui/sidebar";
+import { EPages } from "@/lib/routes";
+import { LandmarkIcon, ScaleIcon, TicketsIcon, UserIcon } from "lucide-react";
 
 const items = [
   {
@@ -32,11 +32,16 @@ const items = [
     icon: ScaleIcon,
   },
   {
+    title: "Orçamento ",
+    url: EPages.BUDGET,
+    icon: TicketsIcon,
+  },
+  {
     title: "Minha Conta",
     url: EPages.USER_ACCOUNT,
     icon: UserIcon,
-  }
-]
+  },
+];
 
 export function NavSecondary() {
   return (
@@ -56,5 +61,5 @@ export function NavSecondary() {
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>
-  )
+  );
 }
