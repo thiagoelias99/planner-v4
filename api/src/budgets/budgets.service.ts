@@ -103,8 +103,9 @@ export class BudgetsService {
   async getBudgetBetweenDates(data: { from: Date, to: Date, userId: string }): Promise<BudgetView> {
     const transactions = await this.getAllTransactionItems(data.userId, { startDate: data.from, endDate: data.to })
     const categories = await this.getCategories(data.userId)
+    const historicalBalance = await this.calculateHistoricalBalance(data.userId)
 
-    return new BudgetView({ transactions, categories, from: data.from, to: data.to })
+    return new BudgetView({ transactions, categories, from: data.from, to: data.to, historicalBalance })
   }
 
   async getPaginatedBudgetBetweenDates(data: {
@@ -138,13 +139,17 @@ export class BudgetsService {
     // Get categories
     const categories = await this.getCategories(data.userId)
 
+    // Calculate historical balance
+    const historicalBalance = await this.calculateHistoricalBalance(data.userId)
+
     // Create BudgetView with ALL transactions for correct summary calculations
     // but replace the transactions array with paginated data
     const budgetView = new BudgetView({
       transactions: allTransactions,
       categories,
       from: data.startDate || new Date(0), // Epoch if no start date
-      to: data.endDate || new Date()
+      to: data.endDate || new Date(),
+      historicalBalance
     })
 
     // Replace transactions array with paginated data
@@ -177,6 +182,32 @@ export class BudgetsService {
     const id = input.id || createId()
 
     return this.budgetsRepository.getOrCreateTransactionByDescription(userId, { ...input, id })
+  }
+
+  async calculateHistoricalBalance(userId: string): Promise<number> {
+    // Get ALL transactions regardless of date
+    const allTransactions = await this.getAllTransactionItems(userId)
+    const activeTransactions = allTransactions.filter(t => t.active)
+
+    // Calculate totals using the same logic as BudgetView
+    const totalIncomes = activeTransactions
+      .filter(t => t.type === ETransactionCategoryType.INCOME)
+      .reduce((acc, t) => acc + t.value, 0)
+
+    const totalRedemptions = activeTransactions
+      .filter(t => t.type === ETransactionCategoryType.REDEMPTION)
+      .reduce((acc, t) => acc + t.value, 0)
+
+    const totalExpenses = activeTransactions
+      .filter(t => ((t.type === ETransactionCategoryType.EXPENSE || t.type === ETransactionCategoryType.CREDIT_CARD_BILL) && t.paymentMethod !== EPaymentMethod.CREDIT))
+      .reduce((acc, t) => acc + t.value, 0)
+
+    const totalInvestments = activeTransactions
+      .filter(t => t.type === ETransactionCategoryType.INVESTMENT)
+      .reduce((acc, t) => acc + t.value, 0)
+
+    // Historical balance = incomes + redemptions - expenses - investments
+    return totalIncomes + totalRedemptions - totalExpenses - totalInvestments
   }
 
   async createMissingMonthlyTransactionItemsForCurrentMonth(userId: string) {

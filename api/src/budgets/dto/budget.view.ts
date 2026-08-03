@@ -47,6 +47,9 @@ export class BudgetView {
   balance: number
 
   @ApiProperty()
+  historicalBalance: number
+
+  @ApiProperty()
   predictedBalance: number
 
   @ApiProperty({ type: BudgetIncomeView })
@@ -86,6 +89,7 @@ export class BudgetView {
   categories: TransactionCategoryView[]
 
   constructor(data: {
+    historicalBalance: number,
     transactions: BudgetTransactionItem[],
     categories: TransactionCategory[],
     from: Date,
@@ -110,6 +114,7 @@ export class BudgetView {
 
     this.from = new Date(data.from)
     this.to = new Date(data.to)
+    this.historicalBalance = data.historicalBalance
     this.balance = currentBalance
     this.predictedBalance = predictedBalance
     this.incomes = { amount: totalIncomesAmount }
