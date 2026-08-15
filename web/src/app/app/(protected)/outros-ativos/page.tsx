@@ -1,19 +1,30 @@
-"use client"
+/* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
 
-import { DataTablePagination } from "@/components/tables/template/data-table-pagination"
-import OtherAssetsTable from "@/app/app/(protected)/admin/outros-ativos/_components/other-assets-table"
-import OtherAssetsSearch from "@/app/app/(protected)/admin/outros-ativos/_components/other-assets-search"
-import Container from "@/components/ui/container"
-import { useOtherAssets } from "@/hooks/query/use-other-assets"
-import { parseAsInteger, parseAsString, useQueryStates } from "nuqs"
-import { Sheet, SheetBody, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
-import { Button } from "@/components/ui/button"
-import CreateOtherAssetsForm from "./_components/create-other-assets-form"
-import { useState } from "react"
-import { PlusIcon } from "lucide-react"
+import { DataTablePagination } from "@/components/tables/template/data-table-pagination";
+import Container from "@/components/ui/container";
+import { useOtherAssets } from "@/hooks/query/use-other-assets";
+import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
+import {
+  Sheet,
+  SheetBody,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import CreateOtherAssetsForm from "./_components/create-other-assets-form";
+import { useState } from "react";
+import { PlusIcon } from "lucide-react";
+import OtherAssetsSearch from "./_components/other-assets-search";
+import OtherAssetsTable from "./_components/other-assets-table";
 
 export default function OtherAssetsPage() {
-  const [isSheetOpen, setIsSheetOpen] = useState(false)
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [params, setParams] = useQueryStates({
     page: parseAsInteger.withDefault(1),
     limit: parseAsInteger.withDefault(16),
@@ -21,8 +32,8 @@ export default function OtherAssetsPage() {
     agency: parseAsString.withDefault(""),
     type: parseAsString.withDefault("all"),
     orderBy: parseAsString.withDefault("createdAt"),
-    order: parseAsString.withDefault("desc")
-  })
+    order: parseAsString.withDefault("desc"),
+  });
 
   const { data: otherAssets, isLoading } = useOtherAssets({
     page: params.page,
@@ -31,8 +42,8 @@ export default function OtherAssetsPage() {
     agency: params.agency || undefined,
     type: params.type !== "all" ? (params.type as any) : undefined,
     orderBy: params.orderBy as any,
-    order: params.order as any
-  })
+    order: params.order as any,
+  });
 
   // Safe fallback if data is still loading to not break UI pagination structure
   const paginatedData = otherAssets || {
@@ -41,7 +52,7 @@ export default function OtherAssetsPage() {
     total: 0,
     totalPages: 0,
     data: [],
-  }
+  };
 
   const handleClearFilters = () => {
     setParams({
@@ -50,18 +61,25 @@ export default function OtherAssetsPage() {
       type: "all",
       orderBy: "createdAt",
       order: "desc",
-      page: 1
-    })
-  }
+      page: 1,
+    });
+  };
 
-  const hasActiveFilters = !!params.search || !!params.agency || (params.type !== "all") || (params.orderBy !== "createdAt") || (params.order !== "desc")
+  const hasActiveFilters =
+    !!params.search ||
+    !!params.agency ||
+    params.type !== "all" ||
+    params.orderBy !== "createdAt" ||
+    params.order !== "desc";
 
   return (
     <Container>
       <div className="flex gap-2 w-fit self-end mb-2 mt-4">
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetTrigger asChild>
-            <Button className="w-fit"><PlusIcon className="w-4 h-4 mr-2" /> Novo Ativo</Button>
+            <Button className="w-fit">
+              <PlusIcon className="w-4 h-4 mr-2" /> Novo Ativo
+            </Button>
           </SheetTrigger>
           <SheetContent className="w-full sm:max-w-md flex flex-col h-full">
             <SheetHeader>
@@ -75,7 +93,9 @@ export default function OtherAssetsPage() {
             </SheetBody>
             <SheetFooter className="mt-auto border-t pt-4">
               <SheetClose asChild>
-                <Button variant="outline" className="w-full">Fechar</Button>
+                <Button variant="outline" className="w-full">
+                  Fechar
+                </Button>
               </SheetClose>
             </SheetFooter>
           </SheetContent>
@@ -108,9 +128,12 @@ export default function OtherAssetsPage() {
           total={paginatedData.total}
           totalPages={paginatedData.totalPages}
           onPageChange={(page) => setParams((prev) => ({ ...prev, page }))}
-          onLimitChange={(limit) => setParams((prev) => ({ ...prev, limit, page: 1 }))}
+          onLimitChange={(limit) =>
+            setParams((prev) => ({ ...prev, limit, page: 1 }))
+          }
         />
       </div>
     </Container>
-  )
+  );
 }
+

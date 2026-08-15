@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import Image from "next/image"
-import { NavAdmin } from "@/components/nav-admin"
-import { NavMain } from "@/components/nav-main"
-import { NavSecondary } from "@/components/nav-secondary"
-import { NavUser } from "@/components/nav-user"
+import * as React from "react";
+import Image from "next/image";
+import { NavAdmin } from "@/components/nav-admin";
+import { NavMain } from "@/components/nav-main";
+import { NavSecondary } from "@/components/nav-secondary";
+import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -14,11 +14,11 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
-import { EUserRole, IUser } from "@/models/user"
+} from "@/components/ui/sidebar";
+import { EUserRole, IUser } from "@/models/user";
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
-  sessionUser: IUser
+  sessionUser: IUser;
 }
 
 export function AppSidebar({ sessionUser, ...props }: AppSidebarProps) {
@@ -48,13 +48,12 @@ export function AppSidebar({ sessionUser, ...props }: AppSidebarProps) {
       <SidebarContent>
         <NavMain />
         <NavSecondary />
-        {
-          sessionUser.role === EUserRole.ADMIN && <NavAdmin />
-        }
+        {sessionUser.role === EUserRole.ADMIN && <NavAdmin />}
       </SidebarContent>
       <SidebarFooter>
         <NavUser sessionUser={sessionUser} />
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }
+

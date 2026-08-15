@@ -117,6 +117,72 @@ export class DashboardService {
       }
     }
 
+    // 1.1 Other Assets -> REITS
+    const reitsResult = await this.prisma.otherAsset.aggregate({
+      where: { userId, type: 'REITS' },
+      _sum: { value: true }
+    })
+    const reitsTotalOtherAssetsBalance = Number(reitsResult._sum.value || 0)
+
+    variableIncomeTotalInvested += reitsTotalOtherAssetsBalance
+    variableIncomeTotalBalance += reitsTotalOtherAssetsBalance
+    reitTotalBalance += reitsTotalOtherAssetsBalance
+
+    // 1.2 Other Assets -> STOCK
+    const stockResult = await this.prisma.otherAsset.aggregate({
+      where: { userId, type: 'STOCK' },
+      _sum: { value: true }
+    })
+    const stockTotalOtherAssetsBalance = Number(stockResult._sum.value || 0)
+
+    variableIncomeTotalInvested += stockTotalOtherAssetsBalance
+    variableIncomeTotalBalance += stockTotalOtherAssetsBalance
+    shareTotalBalance += stockTotalOtherAssetsBalance
+
+    // 1.3 Other Assets -> INTERNATIONAL
+    const internationalResult = await this.prisma.otherAsset.aggregate({
+      where: { userId, type: 'INTERNATIONAL' },
+      _sum: { value: true }
+    })
+    const internationalTotalOtherAssetsBalance = Number(internationalResult._sum.value || 0)
+
+    variableIncomeTotalInvested += internationalTotalOtherAssetsBalance
+    variableIncomeTotalBalance += internationalTotalOtherAssetsBalance
+    internationalTotalBalance += internationalTotalOtherAssetsBalance
+
+    // 1.4 Other Assets -> GOLD
+    const goldResult = await this.prisma.otherAsset.aggregate({
+      where: { userId, type: 'GOLD' },
+      _sum: { value: true }
+    })
+    const goldTotalOtherAssetsBalance = Number(goldResult._sum.value || 0)
+
+    variableIncomeTotalInvested += goldTotalOtherAssetsBalance
+    variableIncomeTotalBalance += goldTotalOtherAssetsBalance
+    goldTotalBalance += goldTotalOtherAssetsBalance
+
+    // 1.5 Other Assets -> CRYPTO
+    const cryptoResult = await this.prisma.otherAsset.aggregate({
+      where: { userId, type: 'CRYPTO' },
+      _sum: { value: true }
+    })
+    const cryptoTotalOtherAssetsBalance = Number(cryptoResult._sum.value || 0)
+
+    variableIncomeTotalInvested += cryptoTotalOtherAssetsBalance
+    variableIncomeTotalBalance += cryptoTotalOtherAssetsBalance
+    cryptoTotalBalance += cryptoTotalOtherAssetsBalance
+
+    // 1.6 Other Assets -> ETF
+    const etfResult = await this.prisma.otherAsset.aggregate({
+      where: { userId, type: 'ETF' },
+      _sum: { value: true }
+    })
+    const etfTotalOtherAssetsBalance = Number(etfResult._sum.value || 0)
+
+    variableIncomeTotalInvested += etfTotalOtherAssetsBalance
+    variableIncomeTotalBalance += etfTotalOtherAssetsBalance
+    genericVariableIncomeTotalBalance += etfTotalOtherAssetsBalance
+
     // 2. Cash Boxes
     const cashResult = await this.prisma.otherAsset.aggregate({
       where: { userId, type: 'CASH_BOX' },
@@ -152,9 +218,10 @@ export class DashboardService {
     })
     const otherTotalBalance = Number(otherResult._sum.value || 0)
 
+    // Balanço total do portfólio (soma de todos os tipos de ativos)
     const totalBalance = variableIncomeTotalBalance + cashTotalBalance + pensionTotalBalance + fixedIncomeTotalBalance + propertyTotalBalance + otherTotalBalance
 
-    // 7. Asset Balance Strategy
+    // 8. Asset Balance Strategy
     const assetBalanceStrategyRaw = await this.prisma.assetBalanceStrategy.findUnique({
       where: { userId }
     })

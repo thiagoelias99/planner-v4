@@ -1,44 +1,56 @@
-"use client"
+"use client";
 
-import { FormBody, FormCurrencyInput, FormInput, FormSelect, FormTextarea } from "@/components/form"
-import { Button } from "@/components/ui/button"
-import { useOtherAssets } from "@/hooks/query/use-other-assets"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { AxiosError } from "axios"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
-import { toast } from "sonner"
-import { EOtherAssetType } from "@/models/other-asset"
+import {
+  FormBody,
+  FormCurrencyInput,
+  FormInput,
+  FormSelect,
+  FormTextarea,
+} from "@/components/form";
+import { Button } from "@/components/ui/button";
+import { useOtherAssets } from "@/hooks/query/use-other-assets";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosError } from "axios";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { toast } from "sonner";
+import { EOtherAssetType, eOtherAssetTypeMapper } from "@/models/other-asset";
 
 const formSchema = z.object({
-  description: z.string()
+  description: z
+    .string()
     .min(1, "A descrição é obrigatória.")
     .max(255, "A descrição deve conter no máximo 255 caracteres."),
-  agency: z.string()
+  agency: z
+    .string()
     .max(255, "A agência deve conter no máximo 255 caracteres.")
     .optional(),
-  note: z.string()
+  note: z
+    .string()
     .max(500, "A nota deve conter no máximo 500 caracteres.")
     .optional(),
-  type: z.enum([EOtherAssetType.CASH_BOX, EOtherAssetType.PENSION, EOtherAssetType.PROPERTY, EOtherAssetType.OTHER], {
+  type: z.enum(EOtherAssetType, {
     message: "Selecione um tipo válido.",
   }),
-  value: z.string()
+  value: z
+    .string()
     .min(1, "O valor é obrigatório.")
     .refine((value) => {
-      const num = parseFloat(value.replace(",", "."))
-      return !isNaN(num) && num >= 0
+      const num = parseFloat(value.replace(",", "."));
+      return !isNaN(num) && num >= 0;
     }, "O valor deve ser um número positivo."),
-})
+});
 
-export type CreateOtherAssetFormData = z.infer<typeof formSchema>
+export type CreateOtherAssetFormData = z.infer<typeof formSchema>;
 
 interface CreateOtherAssetsFormProps {
-  onSuccess?: (asset: CreateOtherAssetFormData) => void
+  onSuccess?: (asset: CreateOtherAssetFormData) => void;
 }
 
-export default function CreateOtherAssetsForm({ onSuccess }: CreateOtherAssetsFormProps) {
-  const { createOtherAsset } = useOtherAssets()
+export default function CreateOtherAssetsForm({
+  onSuccess,
+}: CreateOtherAssetsFormProps) {
+  const { createOtherAsset } = useOtherAssets();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -48,7 +60,7 @@ export default function CreateOtherAssetsForm({ onSuccess }: CreateOtherAssetsFo
       type: EOtherAssetType.CASH_BOX,
       value: "",
     },
-  })
+  });
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
@@ -58,25 +70,30 @@ export default function CreateOtherAssetsForm({ onSuccess }: CreateOtherAssetsFo
         note: data.note || undefined,
         type: data.type,
         value: parseFloat(data.value.replace(",", ".")),
-      }
-      
-      await createOtherAsset.mutateAsync(submitData)
-      form.reset()
-      toast.success("Ativo criado com sucesso!")
+      };
+
+      await createOtherAsset.mutateAsync(submitData);
+      form.reset();
+      toast.success("Ativo criado com sucesso!");
       if (onSuccess) {
-        onSuccess(data)
+        onSuccess(data);
       }
     } catch (error) {
       if (error instanceof AxiosError) {
-        const messages = error?.response?.data?.message
-        const errorMessages = Array.isArray(messages) ? messages : [messages].filter(Boolean)
-        const errorMessage = errorMessages.length > 0 ? errorMessages.join("\n") : error?.message || "Erro ao criar ativo"
-        toast.error(errorMessage)
-        return
+        const messages = error?.response?.data?.message;
+        const errorMessages = Array.isArray(messages)
+          ? messages
+          : [messages].filter(Boolean);
+        const errorMessage =
+          errorMessages.length > 0
+            ? errorMessages.join("\n")
+            : error?.message || "Erro ao criar ativo";
+        toast.error(errorMessage);
+        return;
       }
-      const err = error as Error
-      const errorMessage = err?.message || "Erro ao criar ativo"
-      toast.error(errorMessage)
+      const err = error as Error;
+      const errorMessage = err?.message || "Erro ao criar ativo";
+      toast.error(errorMessage);
     }
   }
 
@@ -88,7 +105,7 @@ export default function CreateOtherAssetsForm({ onSuccess }: CreateOtherAssetsFo
         label="Descrição"
         placeholder="Ex: Reserva de Emergência"
       />
-      
+
       <FormInput
         control={form.control}
         name="agency"
@@ -101,12 +118,10 @@ export default function CreateOtherAssetsForm({ onSuccess }: CreateOtherAssetsFo
         name="type"
         label="Tipo"
         placeholder="Selecione o tipo"
-        options={[
-          { label: "Caixinha", value: EOtherAssetType.CASH_BOX },
-          { label: "Previdência", value: EOtherAssetType.PENSION },
-          { label: "Imóvel", value: EOtherAssetType.PROPERTY },
-          { label: "Outros", value: EOtherAssetType.OTHER },
-        ]}
+        options={Object.values(EOtherAssetType).map((type) => ({
+          label: eOtherAssetTypeMapper[type].label,
+          value: type,
+        }))}
       />
 
       <FormCurrencyInput
@@ -123,9 +138,14 @@ export default function CreateOtherAssetsForm({ onSuccess }: CreateOtherAssetsFo
         placeholder="Anotações adicionais sobre o ativo..."
       />
 
-      <Button type="submit" className="mt-4 w-full" disabled={createOtherAsset.isPending}>
+      <Button
+        type="submit"
+        className="mt-4 w-full"
+        disabled={createOtherAsset.isPending}
+      >
         {createOtherAsset.isPending ? "Salvando..." : "Salvar"}
       </Button>
     </FormBody>
-  )
+  );
 }
+

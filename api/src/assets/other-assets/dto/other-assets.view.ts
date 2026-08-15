@@ -4,7 +4,13 @@ export enum EOtherAssetType {
   CASH_BOX = 'CASH_BOX',
   PENSION = 'PENSION',
   PROPERTY = 'PROPERTY',
-  OTHER = 'OTHER'
+  OTHER = 'OTHER',
+  STOCK = 'STOCK',
+  REITS = 'REITS',
+  INTERNATIONAL = 'INTERNATIONAL',
+  GOLD = 'GOLD',
+  CRYPTO = 'CRYPTO',
+  ETF = 'ETF',
 }
 
 export interface IOtherAssetView {
