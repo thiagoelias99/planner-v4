@@ -190,6 +190,7 @@ export default function CreateFixedIncomesForm({
           name="fixedRate"
           label="Taxa Fixa (%)"
           placeholder="Ex: 120.00"
+          max={9999}
         />
         <FormSelect
           control={form.control}

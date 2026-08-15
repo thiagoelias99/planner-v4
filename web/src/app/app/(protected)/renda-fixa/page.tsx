@@ -1,20 +1,31 @@
-"use client"
+"use client";
 
-import { DataTablePagination } from "@/components/tables/template/data-table-pagination"
-import FixedIncomesTable from "@/app/app/(protected)/renda-fixa/_components/fixed-incomes-table"
-import FixedIncomesSearch from "@/app/app/(protected)/renda-fixa/_components/fixed-incomes-search"
-import Container from "@/components/ui/container"
-import { useFixedIncomes } from "@/hooks/query/use-fixed-incomes"
-import { parseAsInteger, parseAsString, useQueryStates } from "nuqs"
-import { Sheet, SheetBody, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
-import { Button } from "@/components/ui/button"
-import CreateFixedIncomesForm from "./_components/create-fixed-incomes-form"
-import { useState } from "react"
-import { PlusIcon } from "lucide-react"
-import { EPosFixedIndex } from "@/models/fixed-income"
+import { DataTablePagination } from "@/components/tables/template/data-table-pagination";
+import FixedIncomesTable from "@/app/app/(protected)/renda-fixa/_components/fixed-incomes-table";
+import FixedIncomesSearch from "@/app/app/(protected)/renda-fixa/_components/fixed-incomes-search";
+import Container from "@/components/ui/container";
+import { useFixedIncomes } from "@/hooks/query/use-fixed-incomes";
+import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
+import {
+  Sheet,
+  SheetBody,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import CreateFixedIncomesForm from "./_components/create-fixed-incomes-form";
+import { useState } from "react";
+import { PlusIcon } from "lucide-react";
+import { EPosFixedIndex } from "@/models/fixed-income";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function FixedIncomesPage() {
-  const [isSheetOpen, setIsSheetOpen] = useState(false)
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [params, setParams] = useQueryStates({
     page: parseAsInteger.withDefault(1),
     limit: parseAsInteger.withDefault(16),
@@ -22,18 +33,21 @@ export default function FixedIncomesPage() {
     agency: parseAsString.withDefault(""),
     posFixedIndex: parseAsString.withDefault("all"),
     orderBy: parseAsString.withDefault("date"),
-    order: parseAsString.withDefault("desc")
-  })
+    order: parseAsString.withDefault("desc"),
+  });
 
   const { data: fixedIncomes } = useFixedIncomes({
     page: params.page,
     limit: params.limit,
     description: params.description || undefined,
     agency: params.agency || undefined,
-    posFixedIndex: params.posFixedIndex !== "all" ? (params.posFixedIndex as EPosFixedIndex) : undefined,
+    posFixedIndex:
+      params.posFixedIndex !== "all"
+        ? (params.posFixedIndex as EPosFixedIndex)
+        : undefined,
     orderBy: params.orderBy,
-    order: params.order
-  })
+    order: params.order,
+  });
 
   const paginatedData = fixedIncomes || {
     page: 1,
@@ -41,7 +55,7 @@ export default function FixedIncomesPage() {
     total: 0,
     totalPages: 0,
     data: [],
-  }
+  };
 
   const handleClearFilters = () => {
     setParams({
@@ -50,28 +64,40 @@ export default function FixedIncomesPage() {
       posFixedIndex: "all",
       orderBy: "date",
       order: "desc",
-      page: 1
-    })
-  }
+      page: 1,
+    });
+  };
 
-  const hasActiveFilters = !!params.description || !!params.agency || (params.posFixedIndex !== "all") || (params.orderBy !== "date") || (params.order !== "desc")
+  const hasActiveFilters =
+    !!params.description ||
+    !!params.agency ||
+    params.posFixedIndex !== "all" ||
+    params.orderBy !== "date" ||
+    params.order !== "desc";
 
   return (
     <Container>
       <div className="flex gap-2 w-fit self-end">
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetTrigger asChild>
-            <Button className="w-fit"><PlusIcon /> Nova Renda Fixa</Button>
+            <Button className="w-fit">
+              <PlusIcon /> Nova Renda Fixa
+            </Button>
           </SheetTrigger>
           <SheetContent>
             <SheetHeader>
               <SheetTitle>Nova Renda Fixa</SheetTitle>
               <SheetDescription>
-                Preencha as informações para registrar um novo investimento de renda fixa.
+                Preencha as informações para registrar um novo investimento de
+                renda fixa.
               </SheetDescription>
             </SheetHeader>
             <SheetBody>
-              <CreateFixedIncomesForm onSuccess={() => setIsSheetOpen(false)} />
+              <ScrollArea className="h-[calc(100vh-300px)]">
+                <CreateFixedIncomesForm
+                  onSuccess={() => setIsSheetOpen(false)}
+                />
+              </ScrollArea>
             </SheetBody>
             <SheetFooter>
               <SheetClose asChild>
@@ -88,9 +114,13 @@ export default function FixedIncomesPage() {
         posFixedIndex={params.posFixedIndex}
         orderBy={params.orderBy}
         order={params.order}
-        onDescriptionChange={(value) => setParams({ description: value, page: 1 })}
+        onDescriptionChange={(value) =>
+          setParams({ description: value, page: 1 })
+        }
         onAgencyChange={(value) => setParams({ agency: value, page: 1 })}
-        onPosFixedIndexChange={(value) => setParams({ posFixedIndex: value, page: 1 })}
+        onPosFixedIndexChange={(value) =>
+          setParams({ posFixedIndex: value, page: 1 })
+        }
         onOrderByChange={(value) => setParams({ orderBy: value, page: 1 })}
         onOrderChange={(value) => setParams({ order: value, page: 1 })}
         onClearFilters={handleClearFilters}
@@ -105,9 +135,11 @@ export default function FixedIncomesPage() {
         total={paginatedData.total}
         totalPages={paginatedData.totalPages}
         onPageChange={(page) => setParams((prev) => ({ ...prev, page }))}
-        onLimitChange={(limit) => setParams((prev) => ({ ...prev, limit, page: 1 }))}
+        onLimitChange={(limit) =>
+          setParams((prev) => ({ ...prev, limit, page: 1 }))
+        }
       />
     </Container>
-  )
+  );
 }
 

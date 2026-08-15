@@ -41,6 +41,7 @@ import { useFixedIncome } from "@/hooks/query/use-fixed-income";
 import { toast } from "sonner";
 import { usePrivacy } from "@/context/privacy-context";
 import { formatCurrency, formatPercentage } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface Props {
   data?: IFixedIncome[];
@@ -256,10 +257,12 @@ export default function FixedIncomesTable({
         </SheetHeader>
         <SheetBody>
           {selectedFixedIncome && (
-            <UpdateFixedIncomesForm
-              fixedIncome={selectedFixedIncome}
-              onSuccess={() => setIsSheetOpen(false)}
-            />
+            <ScrollArea className="h-[calc(100vh-300px)]">
+              <UpdateFixedIncomesForm
+                fixedIncome={selectedFixedIncome}
+                onSuccess={() => setIsSheetOpen(false)}
+              />
+            </ScrollArea>
           )}
         </SheetBody>
         <SheetFooter>
@@ -317,3 +320,4 @@ function DeleteFixedIncomeButton({
     </AlertDialog>
   );
 }
+
