@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger"
 import { Type } from "class-transformer"
 import { IsDate, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, MaxLength, Min } from "class-validator"
-import { EPosFixedIndex } from "./fixed-incomes.view"
+import { EFixedIncomeType, EPosFixedIndex } from "./fixed-incomes.view"
 
 export class CreateFixedIncomeInput {
   @ApiProperty({ example: 'CDB Banco XYZ 120% CDI', description: 'Description of the fixed income investment' })
@@ -56,4 +56,8 @@ export class CreateFixedIncomeInput {
   @Type(() => Date)
   @IsDate()
   retrievedAt?: Date
+
+  @ApiProperty({ example: EFixedIncomeType.FIXED_INCOME, enum: EFixedIncomeType, description: 'Type of the asset' })
+  @IsEnum(EFixedIncomeType)
+  type: EFixedIncomeType
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from '../prisma/prisma.service'
 import { CustomLogger } from '../utils/logger'
+import { EFixedIncomeType } from "../assets/fixed-incomes/dto/fixed-incomes.view"
 
 @Injectable()
 export class DashboardService {
@@ -188,35 +189,130 @@ export class DashboardService {
       where: { userId, type: 'CASH_BOX' },
       _sum: { value: true }
     })
-    const cashTotalBalance = Number(cashResult._sum.value || 0)
+    let cashTotalBalance = Number(cashResult._sum.value || 0)
 
     // 3. Pension
     const pensionResult = await this.prisma.otherAsset.aggregate({
       where: { userId, type: 'PENSION' },
       _sum: { value: true }
     })
-    const pensionTotalBalance = Number(pensionResult._sum.value || 0)
+    let pensionTotalBalance = Number(pensionResult._sum.value || 0)
 
     // 4. Fixed Income
     const fixedIncomeResult = await this.prisma.fixedIncome.aggregate({
-      where: { userId, retrievedAt: null },
+      where: { userId, retrievedAt: null, type: EFixedIncomeType.FIXED_INCOME },
       _sum: { currentValue: true }
     })
     const fixedIncomeTotalBalance = Number(fixedIncomeResult._sum.currentValue || 0)
+
+    // 4.1 Fixed Income -> REITS
+    const fixedIncomeREITSResult = await this.prisma.fixedIncome.aggregate({
+      where: { userId, retrievedAt: null, type: EFixedIncomeType.REITS },
+      _sum: { currentValue: true }
+    })
+    const fixedIncomeREITSTotalBalance = Number(fixedIncomeREITSResult._sum.currentValue || 0)
+    variableIncomeTotalInvested += fixedIncomeREITSTotalBalance
+    variableIncomeTotalBalance += fixedIncomeREITSTotalBalance
+    reitTotalBalance += fixedIncomeREITSTotalBalance
+
+    // 4.2 Fixed Income -> STOCK
+    const fixedIncomeSTOCKResult = await this.prisma.fixedIncome.aggregate({
+      where: { userId, retrievedAt: null, type: EFixedIncomeType.STOCK },
+      _sum: { currentValue: true }
+    })
+    const fixedIncomeSTOCKTotalBalance = Number(fixedIncomeSTOCKResult._sum.currentValue || 0)
+    variableIncomeTotalInvested += fixedIncomeSTOCKTotalBalance
+    variableIncomeTotalBalance += fixedIncomeSTOCKTotalBalance
+    shareTotalBalance += fixedIncomeSTOCKTotalBalance
+
+    // 4.3 Fixed Income -> INTERNATIONAL
+    const fixedIncomeINTERNATIONALResult = await this.prisma.fixedIncome.aggregate({
+      where: { userId, retrievedAt: null, type: EFixedIncomeType.INTERNATIONAL },
+      _sum: { currentValue: true }
+    })
+    const fixedIncomeINTERNATIONALTotalBalance = Number(fixedIncomeINTERNATIONALResult._sum.currentValue || 0)
+    variableIncomeTotalInvested += fixedIncomeINTERNATIONALTotalBalance
+    variableIncomeTotalBalance += fixedIncomeINTERNATIONALTotalBalance
+    internationalTotalBalance += fixedIncomeINTERNATIONALTotalBalance
+
+    // 4.4 Fixed Income -> GOLD
+    const fixedIncomeGOLDResult = await this.prisma.fixedIncome.aggregate({
+      where: { userId, retrievedAt: null, type: EFixedIncomeType.GOLD },
+      _sum: { currentValue: true }
+    })
+    const fixedIncomeGOLDTotalBalance = Number(fixedIncomeGOLDResult._sum.currentValue || 0)
+    variableIncomeTotalInvested += fixedIncomeGOLDTotalBalance
+    variableIncomeTotalBalance += fixedIncomeGOLDTotalBalance
+    goldTotalBalance += fixedIncomeGOLDTotalBalance
+
+    // 4.5 Fixed Income -> CRYPTO
+    const fixedIncomeCRYPTOResult = await this.prisma.fixedIncome.aggregate({
+      where: { userId, retrievedAt: null, type: EFixedIncomeType.CRYPTO },
+      _sum: { currentValue: true }
+    })
+    const fixedIncomeCRYPTOTotalBalance = Number(fixedIncomeCRYPTOResult._sum.currentValue || 0)
+    variableIncomeTotalInvested += fixedIncomeCRYPTOTotalBalance
+    variableIncomeTotalBalance += fixedIncomeCRYPTOTotalBalance
+    cryptoTotalBalance += fixedIncomeCRYPTOTotalBalance
+
+    // 4.6 Fixed Income -> ETF
+    const fixedIncomeETFResult = await this.prisma.fixedIncome.aggregate({
+      where: { userId, retrievedAt: null, type: EFixedIncomeType.ETF },
+      _sum: { currentValue: true }
+    })
+    const fixedIncomeETFTotalBalance = Number(fixedIncomeETFResult._sum.currentValue || 0)
+    variableIncomeTotalInvested += fixedIncomeETFTotalBalance
+    variableIncomeTotalBalance += fixedIncomeETFTotalBalance
+    genericVariableIncomeTotalBalance += fixedIncomeETFTotalBalance
+
+    // 4.7 Fixed Income -> CASH_BOX
+    const fixedIncomeCASHBOXResult = await this.prisma.fixedIncome.aggregate({
+      where: { userId, retrievedAt: null, type: EFixedIncomeType.CASH_BOX },
+      _sum: { currentValue: true }
+    })
+    const fixedIncomeCASHBOXTotalBalance = Number(fixedIncomeCASHBOXResult._sum.currentValue || 0)
+    cashTotalBalance += fixedIncomeCASHBOXTotalBalance
+
+    // 4.8 Fixed Income -> PENSION
+    const fixedIncomePENSIONResult = await this.prisma.fixedIncome.aggregate({
+      where: { userId, retrievedAt: null, type: EFixedIncomeType.PENSION },
+      _sum: { currentValue: true }
+    })
+    const fixedIncomePENSIONTotalBalance = Number(fixedIncomePENSIONResult._sum.currentValue || 0)
+    pensionTotalBalance += fixedIncomePENSIONTotalBalance
+
+    let propertyTotalBalance = 0
+    // 4.9 Fixed Income -> PROPERTY
+    const fixedIncomePROPERTYResult = await this.prisma.fixedIncome.aggregate({
+      where: { userId, retrievedAt: null, type: EFixedIncomeType.PROPERTY },
+      _sum: { currentValue: true }
+    })
+    const fixedIncomePROPERTYTotalBalance = Number(fixedIncomePROPERTYResult._sum.currentValue || 0)
+    propertyTotalBalance += fixedIncomePROPERTYTotalBalance
+
+
+    let otherTotalBalance = 0
+    // 4.10 Fixed Income -> OTHER
+    const fixedIncomeOTHERResult = await this.prisma.fixedIncome.aggregate({
+      where: { userId, retrievedAt: null, type: EFixedIncomeType.OTHER },
+      _sum: { currentValue: true }
+    })
+    const fixedIncomeOTHERTotalBalance = Number(fixedIncomeOTHERResult._sum.currentValue || 0)
+    otherTotalBalance += fixedIncomeOTHERTotalBalance
 
     // 5. Property
     const propertyResult = await this.prisma.otherAsset.aggregate({
       where: { userId, type: 'PROPERTY' },
       _sum: { value: true }
     })
-    const propertyTotalBalance = Number(propertyResult._sum.value || 0)
+    propertyTotalBalance += Number(propertyResult._sum.value || 0)
 
     // 6. Other Unknown Assets
     const otherResult = await this.prisma.otherAsset.aggregate({
       where: { userId, type: 'OTHER' },
       _sum: { value: true }
     })
-    const otherTotalBalance = Number(otherResult._sum.value || 0)
+    otherTotalBalance += Number(otherResult._sum.value || 0)
 
     // Balanço total do portfólio (soma de todos os tipos de ativos)
     const totalBalance = variableIncomeTotalBalance + cashTotalBalance + pensionTotalBalance + fixedIncomeTotalBalance + propertyTotalBalance + otherTotalBalance

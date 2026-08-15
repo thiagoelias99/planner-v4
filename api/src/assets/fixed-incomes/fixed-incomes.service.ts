@@ -5,6 +5,7 @@ import { CreateFixedIncomeInput } from "./dto/create-fixed-income.input"
 import { UpdateFixedIncomeInput } from "./dto/update-fixed-income.input"
 import { QueryFixedIncomeInput } from "./dto/query-fixed-income.input"
 import { CustomLogger } from "../../utils/logger"
+import { EFixedIncomeType } from "./dto/fixed-incomes.view"
 
 @Injectable()
 export class FixedIncomesService {
@@ -27,6 +28,7 @@ export class FixedIncomesService {
           fixedRate: data.fixedRate,
           posFixedIndex: data.posFixedIndex,
           retrievedAt: data.retrievedAt,
+          type: data.type || EFixedIncomeType.FIXED_INCOME
         }
       })
     } catch (error) {

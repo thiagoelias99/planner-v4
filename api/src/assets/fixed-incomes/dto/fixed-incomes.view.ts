@@ -10,6 +10,20 @@ export enum EPosFixedIndex {
   SELIC = 'SELIC'
 }
 
+export enum EFixedIncomeType {
+  CASH_BOX = 'CASH_BOX',
+  PENSION = 'PENSION',
+  PROPERTY = 'PROPERTY',
+  OTHER = 'OTHER',
+  STOCK = 'STOCK',
+  REITS = 'REITS',
+  INTERNATIONAL = 'INTERNATIONAL',
+  GOLD = 'GOLD',
+  CRYPTO = 'CRYPTO',
+  ETF = 'ETF',
+  FIXED_INCOME = 'FIXED_INCOME',
+}
+
 export interface IFixedIncomeView {
   id: string
   userId: string
@@ -24,6 +38,7 @@ export interface IFixedIncomeView {
   posFixedIndex: EPosFixedIndex
   retrievedAt: Date | null
   updatedAt: Date
+  type: EFixedIncomeType
 }
 
 export class FixedIncomeView implements IFixedIncomeView {
@@ -93,6 +108,9 @@ export class FixedIncomeView implements IFixedIncomeView {
 
   @ApiProperty({ example: new Date() })
   updatedAt: Date
+
+  @ApiProperty({ example: EFixedIncomeType.FIXED_INCOME, enum: EFixedIncomeType })
+  type: EFixedIncomeType
 }
 
 export class PaginatedFixedIncomeView {

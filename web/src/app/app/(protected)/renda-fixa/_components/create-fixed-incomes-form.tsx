@@ -1,57 +1,74 @@
-"use client"
+"use client";
 
-import { FormBody, FormCurrencyInput, FormDateInput, FormInput, FormPercentageInput, FormSelect, FormTextarea } from "@/components/form"
-import { Button } from "@/components/ui/button"
-import { useFixedIncomes } from "@/hooks/query/use-fixed-incomes"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { AxiosError } from "axios"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
-import { toast } from "sonner"
-import { EPosFixedIndex } from "@/models/fixed-income"
-import { addHours, format } from "date-fns"
+import {
+  FormBody,
+  FormCurrencyInput,
+  FormDateInput,
+  FormInput,
+  FormPercentageInput,
+  FormSelect,
+  FormTextarea,
+} from "@/components/form";
+import { Button } from "@/components/ui/button";
+import { useFixedIncomes } from "@/hooks/query/use-fixed-incomes";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosError } from "axios";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { toast } from "sonner";
+import {
+  EFixedIncomeType,
+  eFixedIncomeTypeMapper,
+  EPosFixedIndex,
+} from "@/models/fixed-income";
+import { addHours, format } from "date-fns";
 
 const formSchema = z.object({
-  description: z.string()
+  description: z
+    .string()
     .min(2, "A descrição deve conter pelo menos 2 caracteres.")
     .max(255, "A descrição deve conter no máximo 255 caracteres."),
-  agency: z.string()
+  agency: z
+    .string()
     .max(255, "A instituição deve conter no máximo 255 caracteres.")
     .optional(),
-  note: z.string()
+  note: z
+    .string()
     .max(500, "As observações devem conter no máximo 500 caracteres.")
     .optional(),
-  initialInvestment: z.string()
-    .refine((value) => {
-      const num = parseFloat(value.replace(",", "."))
-      return !isNaN(num) && num >= 0
-    }, "O preço deve ser um número positivo."),
-  currentValue: z.string()
-    .refine((value) => {
-      const num = parseFloat(value.replace(",", "."))
-      return !isNaN(num) && num >= 0
-    }, "O preço deve ser um número positivo."),
+  initialInvestment: z.string().refine((value) => {
+    const num = parseFloat(value.replace(",", "."));
+    return !isNaN(num) && num >= 0;
+  }, "O preço deve ser um número positivo."),
+  currentValue: z.string().refine((value) => {
+    const num = parseFloat(value.replace(",", "."));
+    return !isNaN(num) && num >= 0;
+  }, "O preço deve ser um número positivo."),
   date: z.string(),
   dueDate: z.string(),
-  fixedRate: z.string()
-    .refine((value) => {
-      const num = parseFloat(value.replace(",", "."))
-      return !isNaN(num) && num >= 0
-    }, "O preço deve ser um número positivo."),
+  fixedRate: z.string().refine((value) => {
+    const num = parseFloat(value.replace(",", "."));
+    return !isNaN(num) && num >= 0;
+  }, "O preço deve ser um número positivo."),
   posFixedIndex: z.enum(EPosFixedIndex, {
     message: "Selecione um índice válido.",
   }),
   retrievedAt: z.string().optional(),
-})
+  type: z.enum(EFixedIncomeType, {
+    message: "Selecione um tipo válido.",
+  }),
+});
 
-export type CreateFixedIncomeFormData = z.infer<typeof formSchema>
+export type CreateFixedIncomeFormData = z.infer<typeof formSchema>;
 
 interface CreateFixedIncomesFormProps {
-  onSuccess?: (fixedIncome: CreateFixedIncomeFormData) => void
+  onSuccess?: (fixedIncome: CreateFixedIncomeFormData) => void;
 }
 
-export default function CreateFixedIncomesForm({ onSuccess }: CreateFixedIncomesFormProps) {
-  const { createFixedIncome } = useFixedIncomes()
+export default function CreateFixedIncomesForm({
+  onSuccess,
+}: CreateFixedIncomesFormProps) {
+  const { createFixedIncome } = useFixedIncomes();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -66,8 +83,9 @@ export default function CreateFixedIncomesForm({ onSuccess }: CreateFixedIncomes
       fixedRate: "0",
       posFixedIndex: EPosFixedIndex.CDI,
       retrievedAt: undefined,
+      type: EFixedIncomeType.FIXED_INCOME,
     },
-  })
+  });
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
@@ -81,26 +99,34 @@ export default function CreateFixedIncomesForm({ onSuccess }: CreateFixedIncomes
         dueDate: addHours(new Date(data.dueDate), 12).toISOString(),
         fixedRate: parseFloat(data.fixedRate.replace(",", ".")),
         posFixedIndex: data.posFixedIndex,
-        retrievedAt: data.retrievedAt ? addHours(new Date(data.retrievedAt), 12).toISOString() : undefined,
-      }
+        retrievedAt: data.retrievedAt
+          ? addHours(new Date(data.retrievedAt), 12).toISOString()
+          : undefined,
+        type: data.type,
+      };
 
-      await createFixedIncome.mutateAsync(submitData)
-      form.reset()
-      toast.success("Renda fixa criada com sucesso!")
+      await createFixedIncome.mutateAsync(submitData);
+      form.reset();
+      toast.success("Renda fixa criada com sucesso!");
       if (onSuccess) {
-        onSuccess(data)
+        onSuccess(data);
       }
     } catch (error) {
       if (error instanceof AxiosError) {
-        const messages = error?.response?.data?.message
-        const errorMessages = Array.isArray(messages) ? messages : [messages].filter(Boolean)
-        const errorMessage = errorMessages.length > 0 ? errorMessages.join("\n") : error?.message || "Erro ao criar renda fixa"
-        toast.error(errorMessage)
-        return
+        const messages = error?.response?.data?.message;
+        const errorMessages = Array.isArray(messages)
+          ? messages
+          : [messages].filter(Boolean);
+        const errorMessage =
+          errorMessages.length > 0
+            ? errorMessages.join("\n")
+            : error?.message || "Erro ao criar renda fixa";
+        toast.error(errorMessage);
+        return;
       }
-      const err = error as Error
-      const errorMessage = err?.message || "Erro ao criar renda fixa"
-      toast.error(errorMessage)
+      const err = error as Error;
+      const errorMessage = err?.message || "Erro ao criar renda fixa";
+      toast.error(errorMessage);
     }
   }
 
@@ -111,6 +137,16 @@ export default function CreateFixedIncomesForm({ onSuccess }: CreateFixedIncomes
         name="description"
         label="Descrição"
         placeholder="Ex: CDB Banco XYZ 120% CDI"
+      />
+      <FormSelect
+        control={form.control}
+        name="type"
+        label="Tipo"
+        placeholder="Selecione o tipo"
+        options={Object.values(EFixedIncomeType).map((type) => ({
+          label: eFixedIncomeTypeMapper[type].label,
+          value: type,
+        }))}
       />
       <FormInput
         control={form.control}
@@ -175,7 +211,10 @@ export default function CreateFixedIncomesForm({ onSuccess }: CreateFixedIncomes
         name="retrievedAt"
         label="Data de Resgate"
       />
-      <Button type="submit" className="mt-4">Salvar</Button>
+      <Button type="submit" className="mt-4">
+        Salvar
+      </Button>
     </FormBody>
-  )
+  );
 }
+

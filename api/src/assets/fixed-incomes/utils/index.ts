@@ -1,5 +1,5 @@
 import { FixedIncome } from "../../../generated/prisma/client"
-import { EPosFixedIndex, FixedIncomeView } from "../dto/fixed-incomes.view"
+import { EFixedIncomeType, EPosFixedIndex, FixedIncomeView } from "../dto/fixed-incomes.view"
 
 export function prismaFixedIncomeToFixedIncomeView(fixedIncome: FixedIncome): FixedIncomeView {
   return new FixedIncomeView({
@@ -16,5 +16,6 @@ export function prismaFixedIncomeToFixedIncomeView(fixedIncome: FixedIncome): Fi
     posFixedIndex: fixedIncome.posFixedIndex as EPosFixedIndex,
     retrievedAt: fixedIncome.retrievedAt,
     updatedAt: fixedIncome.updatedAt,
+    type: fixedIncome.type as EFixedIncomeType,
   })
 }

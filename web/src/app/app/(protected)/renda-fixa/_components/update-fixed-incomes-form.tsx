@@ -1,61 +1,93 @@
-"use client"
+"use client";
 
-import { FormBody, FormCurrencyInput, FormDateInput, FormInput, FormPercentageInput, FormSelect, FormTextarea } from "@/components/form"
-import { Button } from "@/components/ui/button"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { AxiosError } from "axios"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
-import { toast } from "sonner"
-import { EPosFixedIndex, IFixedIncome } from "@/models/fixed-income"
-import { useFixedIncome } from "@/hooks/query/use-fixed-income"
-import { FormDatePicker } from "@/components/form/form-date-picker"
-import { addHours, format } from "date-fns"
-import { ptBR } from "date-fns/locale"
+import {
+  FormBody,
+  FormCurrencyInput,
+  FormDateInput,
+  FormInput,
+  FormPercentageInput,
+  FormSelect,
+  FormTextarea,
+} from "@/components/form";
+import { Button } from "@/components/ui/button";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosError } from "axios";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { toast } from "sonner";
+import {
+  EFixedIncomeType,
+  eFixedIncomeTypeMapper,
+  EPosFixedIndex,
+  IFixedIncome,
+} from "@/models/fixed-income";
+import { useFixedIncome } from "@/hooks/query/use-fixed-income";
+import { FormDatePicker } from "@/components/form/form-date-picker";
+import { addHours, format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 const formSchema = z.object({
-  description: z.string()
+  description: z
+    .string()
     .min(2, "A descrição deve conter pelo menos 2 caracteres.")
     .max(255, "A descrição deve conter no máximo 255 caracteres.")
     .optional(),
-  agency: z.string()
+  agency: z
+    .string()
     .max(255, "A instituição deve conter no máximo 255 caracteres.")
     .optional(),
-  note: z.string()
+  note: z
+    .string()
     .max(500, "As observações devem conter no máximo 500 caracteres.")
     .optional(),
-  initialInvestment: z.string()
+  initialInvestment: z
+    .string()
     .refine((value) => {
-      const num = parseFloat(value.replace(",", "."))
-      return !isNaN(num) && num >= 0
-    }, "O preço deve ser um número positivo.").optional(),
-  currentValue: z.string()
+      const num = parseFloat(value.replace(",", "."));
+      return !isNaN(num) && num >= 0;
+    }, "O preço deve ser um número positivo.")
+    .optional(),
+  currentValue: z
+    .string()
     .refine((value) => {
-      const num = parseFloat(value.replace(",", "."))
-      return !isNaN(num) && num >= 0
-    }, "O preço deve ser um número positivo.").optional(),
+      const num = parseFloat(value.replace(",", "."));
+      return !isNaN(num) && num >= 0;
+    }, "O preço deve ser um número positivo.")
+    .optional(),
   date: z.string().optional(),
   dueDate: z.string().optional(),
-  fixedRate: z.string()
+  fixedRate: z
+    .string()
     .refine((value) => {
-      const num = parseFloat(value.replace(",", "."))
-      return !isNaN(num) && num >= 0
-    }, "O preço deve ser um número positivo.").optional(),
-  posFixedIndex: z.enum(EPosFixedIndex, {
-    message: "Selecione um índice válido.",
-  }).optional(),
+      const num = parseFloat(value.replace(",", "."));
+      return !isNaN(num) && num >= 0;
+    }, "O preço deve ser um número positivo.")
+    .optional(),
+  posFixedIndex: z
+    .enum(EPosFixedIndex, {
+      message: "Selecione um índice válido.",
+    })
+    .optional(),
   retrievedAt: z.string().optional(),
-})
+  type: z
+    .enum(EFixedIncomeType, {
+      message: "Selecione um tipo válido.",
+    })
+    .optional(),
+});
 
-export type UpdateFixedIncomeFormData = z.infer<typeof formSchema>
+export type UpdateFixedIncomeFormData = z.infer<typeof formSchema>;
 
 interface UpdateFixedIncomesFormProps {
-  fixedIncome: IFixedIncome
-  onSuccess?: (fixedIncome: UpdateFixedIncomeFormData) => void
+  fixedIncome: IFixedIncome;
+  onSuccess?: (fixedIncome: UpdateFixedIncomeFormData) => void;
 }
 
-export default function UpdateFixedIncomesForm({ fixedIncome, onSuccess }: UpdateFixedIncomesFormProps) {
-  const { updateFixedIncome } = useFixedIncome(fixedIncome.id)
+export default function UpdateFixedIncomesForm({
+  fixedIncome,
+  onSuccess,
+}: UpdateFixedIncomesFormProps) {
+  const { updateFixedIncome } = useFixedIncome(fixedIncome.id);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -65,56 +97,85 @@ export default function UpdateFixedIncomesForm({ fixedIncome, onSuccess }: Updat
       note: fixedIncome.note || "",
       initialInvestment: fixedIncome.initialInvestment?.toString(),
       currentValue: fixedIncome.currentValue?.toString(),
-      date: fixedIncome.date ? format(new Date(fixedIncome.date), "yyyy-MM-dd", { locale: ptBR }) : undefined,
-      dueDate: fixedIncome.dueDate ? format(new Date(fixedIncome.dueDate), "yyyy-MM-dd", { locale: ptBR }) : undefined,
+      date: fixedIncome.date
+        ? format(new Date(fixedIncome.date), "yyyy-MM-dd", { locale: ptBR })
+        : undefined,
+      dueDate: fixedIncome.dueDate
+        ? format(new Date(fixedIncome.dueDate), "yyyy-MM-dd", { locale: ptBR })
+        : undefined,
       fixedRate: fixedIncome.fixedRate?.toString(),
       posFixedIndex: fixedIncome.posFixedIndex,
-      retrievedAt: fixedIncome.retrievedAt ? format(new Date(fixedIncome.retrievedAt), "yyyy-MM-dd", { locale: ptBR }) : undefined,
+      retrievedAt: fixedIncome.retrievedAt
+        ? format(new Date(fixedIncome.retrievedAt), "yyyy-MM-dd", {
+            locale: ptBR,
+          })
+        : undefined,
+      type: fixedIncome.type,
     },
-  })
+  });
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
       const submitData: {
-        description?: string
-        agency?: string
-        note?: string
-        initialInvestment?: number
-        currentValue?: number
-        date?: string
-        dueDate?: string
-        fixedRate?: number
-        posFixedIndex?: EPosFixedIndex
-        retrievedAt?: string
-      } = {}
+        description?: string;
+        agency?: string;
+        note?: string;
+        initialInvestment?: number;
+        currentValue?: number;
+        date?: string;
+        dueDate?: string;
+        fixedRate?: number;
+        posFixedIndex?: EPosFixedIndex;
+        retrievedAt?: string;
+        type?: EFixedIncomeType;
+      } = {};
 
-      if (data.description) submitData.description = data.description
-      if (data.agency) submitData.agency = data.agency
-      if (data.note) submitData.note = data.note
-      if (data.initialInvestment) submitData.initialInvestment = parseFloat(data.initialInvestment.replace(",", "."))
-      if (data.currentValue) submitData.currentValue = parseFloat(data.currentValue.replace(",", "."))
-      if (data.date) submitData.date = addHours(new Date(data.date), 12).toISOString()
-      if (data.dueDate) submitData.dueDate = addHours(new Date(data.dueDate), 12).toISOString()
-      if (data.fixedRate) submitData.fixedRate = parseFloat(data.fixedRate.replace(",", "."))
-      if (data.posFixedIndex) submitData.posFixedIndex = data.posFixedIndex
-      if (data.retrievedAt) submitData.retrievedAt = addHours(new Date(data.retrievedAt), 12).toISOString()
+      if (data.description) submitData.description = data.description;
+      if (data.agency) submitData.agency = data.agency;
+      if (data.note) submitData.note = data.note;
+      if (data.initialInvestment)
+        submitData.initialInvestment = parseFloat(
+          data.initialInvestment.replace(",", "."),
+        );
+      if (data.currentValue)
+        submitData.currentValue = parseFloat(
+          data.currentValue.replace(",", "."),
+        );
+      if (data.date)
+        submitData.date = addHours(new Date(data.date), 12).toISOString();
+      if (data.dueDate)
+        submitData.dueDate = addHours(new Date(data.dueDate), 12).toISOString();
+      if (data.fixedRate)
+        submitData.fixedRate = parseFloat(data.fixedRate.replace(",", "."));
+      if (data.posFixedIndex) submitData.posFixedIndex = data.posFixedIndex;
+      if (data.retrievedAt)
+        submitData.retrievedAt = addHours(
+          new Date(data.retrievedAt),
+          12,
+        ).toISOString();
+      if (data.type) submitData.type = data.type;
 
-      await updateFixedIncome.mutateAsync(submitData)
-      toast.success("Renda fixa atualizada com sucesso!")
+      await updateFixedIncome.mutateAsync(submitData);
+      toast.success("Renda fixa atualizada com sucesso!");
       if (onSuccess) {
-        onSuccess(data)
+        onSuccess(data);
       }
     } catch (error) {
       if (error instanceof AxiosError) {
-        const messages = error?.response?.data?.message
-        const errorMessages = Array.isArray(messages) ? messages : [messages].filter(Boolean)
-        const errorMessage = errorMessages.length > 0 ? errorMessages.join("\n") : error?.message || "Erro ao atualizar renda fixa"
-        toast.error(errorMessage)
-        return
+        const messages = error?.response?.data?.message;
+        const errorMessages = Array.isArray(messages)
+          ? messages
+          : [messages].filter(Boolean);
+        const errorMessage =
+          errorMessages.length > 0
+            ? errorMessages.join("\n")
+            : error?.message || "Erro ao atualizar renda fixa";
+        toast.error(errorMessage);
+        return;
       }
-      const err = error as Error
-      const errorMessage = err?.message || "Erro ao atualizar renda fixa"
-      toast.error(errorMessage)
+      const err = error as Error;
+      const errorMessage = err?.message || "Erro ao atualizar renda fixa";
+      toast.error(errorMessage);
     }
   }
 
@@ -125,6 +186,15 @@ export default function UpdateFixedIncomesForm({ fixedIncome, onSuccess }: Updat
         name="description"
         label="Descrição"
         placeholder="Ex: CDB Banco XYZ 120% CDI"
+      />
+      <FormSelect
+        control={form.control}
+        name="type"
+        label="Tipo"
+        options={Object.values(EFixedIncomeType).map((type) => ({
+          value: type,
+          label: eFixedIncomeTypeMapper[type].label,
+        }))}
       />
       <FormInput
         control={form.control}
@@ -192,7 +262,10 @@ export default function UpdateFixedIncomesForm({ fixedIncome, onSuccess }: Updat
         name="retrievedAt"
         label="Data de Resgate"
       />
-      <Button type="submit" className="mt-4 w-full">Salvar</Button>
+      <Button type="submit" className="mt-4 w-full">
+        Salvar
+      </Button>
     </FormBody>
-  )
+  );
 }
+

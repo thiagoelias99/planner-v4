@@ -21,6 +21,37 @@ export const ePosFixedIndexMapper: Record<EPosFixedIndex, EPosFixedIndexMapperTy
   [EPosFixedIndex.SELIC]: { label: "SELIC", variant: "default" },
 }
 
+export enum EFixedIncomeType {
+  CASH_BOX = "CASH_BOX",
+  PENSION = "PENSION",
+  PROPERTY = "PROPERTY",
+  OTHER = "OTHER",
+  REITS = 'REITS',
+  STOCK = 'STOCK',
+  CRYPTO = 'CRYPTO',
+  GOLD = 'GOLD',
+  INTERNATIONAL = 'INTERNATIONAL',
+  ETF = 'ETF',
+  FIXED_INCOME = 'FIXED_INCOME',
+}
+
+export const eFixedIncomeTypeMapper: Record<
+  EFixedIncomeType,
+  { label: string; variant: "default" | "secondary" | "destructive" | "outline" }
+> = {
+  [EFixedIncomeType.CASH_BOX]: { label: "Caixinha", variant: "default" },
+  [EFixedIncomeType.PENSION]: { label: "Previdência", variant: "secondary" },
+  [EFixedIncomeType.PROPERTY]: { label: "Imóvel", variant: "outline" },
+  [EFixedIncomeType.OTHER]: { label: "Outros", variant: "secondary" },
+  [EFixedIncomeType.REITS]: { label: "FII", variant: "secondary" },
+  [EFixedIncomeType.STOCK]: { label: "Ações", variant: "secondary" },
+  [EFixedIncomeType.CRYPTO]: { label: "Criptomoedas", variant: "secondary" },
+  [EFixedIncomeType.GOLD]: { label: "Ouro", variant: "secondary" },
+  [EFixedIncomeType.INTERNATIONAL]: { label: "Internacional", variant: "secondary" },
+  [EFixedIncomeType.ETF]: { label: "ETF", variant: "secondary" },
+  [EFixedIncomeType.FIXED_INCOME]: { label: "Renda Fixa", variant: "secondary" },
+}
+
 export interface IFixedIncome {
   id: string
   userId: string
@@ -38,5 +69,6 @@ export interface IFixedIncome {
   fixedRate: number
   posFixedIndex: EPosFixedIndex
   retrievedAt: Date | null
+  type: EFixedIncomeType
   updatedAt: Date
 }
