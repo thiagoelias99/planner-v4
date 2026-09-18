@@ -46,6 +46,12 @@ export class DashboardSummaryView {
   @ApiProperty({ example: 335000.00, description: 'Total portfolio balance' })
   totalBalance: number
 
+  @ApiProperty({ example: 2000.00, description: 'Total invested via INVESTMENT transactions in the current month' })
+  investmentTotal: number
+
+  @ApiProperty({ example: 1000.00, description: 'Total redeemed via REDEMPTION transactions in the current month' })
+  redemptionTotal: number
+
   @ApiProperty({ type: AssetBalanceStrategyView, description: 'Asset balance strategy', nullable: true })
   assetBalanceStrategy: AssetBalanceStrategyView | null
 

@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common'
 import { PrismaService } from '../prisma/prisma.service'
 import { CustomLogger } from '../utils/logger'
 import { EFixedIncomeType } from "../assets/fixed-incomes/dto/fixed-incomes.view"
+import { ETransactionCategoryType } from "../budgets/entities/transaction-category.entity"
+import { startOfMonth } from "date-fns"
 
 @Injectable()
 export class DashboardService {
@@ -39,6 +41,8 @@ export class DashboardService {
       propertyTotalBalance: Number(history.propertyTotalBalance),
       otherTotalBalance: Number(history.otherTotalBalance),
       totalBalance: Number(history.totalBalance),
+      investmentTotal: Number(history.investmentTotal),
+      redemptionTotal: Number(history.redemptionTotal),
       assetBalanceStrategySnapshot: history.assetBalanceStrategySnapshot,
       createdAt: history.createdAt,
       items: history.PortfolioHistoryItems.map(item => ({
@@ -57,6 +61,39 @@ export class DashboardService {
         createdAt: item.createdAt
       }))
     }))
+  }
+
+  // Sums active INVESTMENT/REDEMPTION transaction items within a date range
+  private async getPeriodInvestmentAndRedemptionTotals(userId: string, from: Date, to: Date) {
+    const items = await this.prisma.transactionItem.findMany({
+      where: {
+        userId,
+        active: true,
+        date: { gte: from, lte: to },
+        Transaction: {
+          TransactionCategory: {
+            type: { in: [ETransactionCategoryType.INVESTMENT, ETransactionCategoryType.REDEMPTION] }
+          }
+        }
+      },
+      include: {
+        Transaction: { include: { TransactionCategory: true } }
+      }
+    })
+
+    let investmentTotal = 0
+    let redemptionTotal = 0
+
+    for (const item of items) {
+      const type = item.Transaction.TransactionCategory.type
+      if (type === ETransactionCategoryType.INVESTMENT) {
+        investmentTotal += Number(item.value)
+      } else if (type === ETransactionCategoryType.REDEMPTION) {
+        redemptionTotal += Number(item.value)
+      }
+    }
+
+    return { investmentTotal, redemptionTotal }
   }
 
   async getSummary(userId: string) {
@@ -378,6 +415,11 @@ export class DashboardService {
     // 10. Get portfolio history (last 24 snapshots)
     const history = await this.getHistory(userId, 24)
 
+    // 11. Investment/redemption totals for the current month
+    const { investmentTotal, redemptionTotal } = await this.getPeriodInvestmentAndRedemptionTotals(
+      userId, startOfMonth(new Date()), new Date()
+    )
+
     return {
       variableIncomeTotalInvested,
       variableIncomeTotalBalance,
@@ -393,6 +435,8 @@ export class DashboardService {
       propertyTotalBalance,
       otherTotalBalance,
       totalBalance,
+      investmentTotal,
+      redemptionTotal,
       assetBalanceStrategy,
       assetCurrentBalance,
       tickersHoldings,
@@ -436,6 +480,8 @@ export class DashboardService {
           propertyTotalBalance: summary.propertyTotalBalance,
           otherTotalBalance: summary.otherTotalBalance,
           totalBalance: summary.totalBalance,
+          investmentTotal: summary.investmentTotal,
+          redemptionTotal: summary.redemptionTotal,
           assetBalanceStrategySnapshot: summary.assetBalanceStrategy
             ? JSON.stringify(summary.assetBalanceStrategy)
             : null

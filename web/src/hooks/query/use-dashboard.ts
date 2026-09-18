@@ -51,6 +51,8 @@ export interface IPortfolioHistory {
   propertyTotalBalance: number
   otherTotalBalance: number
   totalBalance: number
+  investmentTotal: number
+  redemptionTotal: number
   assetBalanceStrategySnapshot: string | null
   createdAt: Date
   items: IPortfolioHistoryItem[]
@@ -71,6 +73,8 @@ export interface IDashboardSummary {
   propertyTotalBalance: number
   otherTotalBalance: number
   totalBalance: number
+  investmentTotal: number
+  redemptionTotal: number
   assetBalanceStrategy: IAssetBalanceStrategy | null
   assetCurrentBalance: IAssetBalanceStrategy | null
   tickersHoldings: ITickerHolding[]

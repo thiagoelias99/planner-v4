@@ -53,6 +53,12 @@ export class PortfolioHistoryView {
   @ApiProperty({ example: 335000.00, description: 'Total portfolio balance' })
   totalBalance: number
 
+  @ApiProperty({ example: 2000.00, description: 'Total invested via INVESTMENT transactions in the snapshot month' })
+  investmentTotal: number
+
+  @ApiProperty({ example: 1000.00, description: 'Total redeemed via REDEMPTION transactions in the snapshot month' })
+  redemptionTotal: number
+
   @ApiProperty({ example: '{"cashBox":10,"fixedIncome":20,...}', description: 'Asset balance strategy snapshot as JSON', nullable: true })
   assetBalanceStrategySnapshot: string | null
 

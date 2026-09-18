@@ -235,6 +235,8 @@ model PortfolioHistory {
   propertyTotalBalance              Decimal  @default(0) @map("property_total_balance") @db.Decimal(12, 2)
   otherTotalBalance                 Decimal  @default(0) @map("other_total_balance") @db.Decimal(12, 2)
   totalBalance                      Decimal  @default(0) @map("total_balance") @db.Decimal(12, 2)
+  investmentTotal                   Decimal  @default(0) @map("investment_total") @db.Decimal(12, 2)
+  redemptionTotal                   Decimal  @default(0) @map("redemption_total") @db.Decimal(12, 2)
   assetBalanceStrategySnapshot      String?  @map("asset_balance_strategy_snapshot")
   createdAt                         DateTime @default(now()) @map("created_at")
 
