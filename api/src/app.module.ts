@@ -23,6 +23,7 @@ import { DashboardModule } from './dashboard/dashboard.module'
 import { BudgetsModule } from "./budgets/budgets.module"
 import { McpModule } from "@rekog/mcp-nest"
 import { McpGuard } from "./guards/mcp-auth.guard"
+import { VehiclesModule } from './vehicles/vehicles.module';
 
 @Module({
   imports: [
@@ -79,7 +80,8 @@ import { McpGuard } from "./guards/mcp-auth.guard"
     OtherAssetsModule,
     AssetBalanceStrategyModule,
     DashboardModule,
-    BudgetsModule
+    BudgetsModule,
+    VehiclesModule
   ],
   controllers: [AppController, AppApiKeyController],
   providers: [

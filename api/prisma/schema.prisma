@@ -32,6 +32,7 @@ model User {
   transactionCategories TransactionCategory[]
   transactions          Transaction[]
   transactionItems      TransactionItem[]
+  Vehicles              Vehicle[]
 
   @@unique([email])
   @@map("user")
@@ -307,6 +308,9 @@ model Transaction {
   TransactionCategory TransactionCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   TransactionItems    TransactionItem[]
 
+  FuellingVehicles    Vehicle[] @relation("FuellingTransaction")
+  MaintenanceVehicles Vehicle[] @relation("MaintenanceTransaction")
+
   @@map("transactions")
 }
 
@@ -323,4 +327,113 @@ model TransactionItem {
   Transaction Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("transaction_items")
+}
+
+model Vehicle {
+  id                       String    @id @default(cuid())
+  ownerId                  String    @map("owner_id")
+  brand                    String
+  model                    String
+  year                     Int
+  plate                    String?   @unique
+  color                    String?
+  fuelType                 String    @map("fuel_type")
+  purchaseDate             DateTime? @map("purchase_date")
+  purchasePrice            Decimal?  @map("purchase_price")
+  currentOdometer          Int       @default(0) @map("current_odometer")
+  notes                    String?
+  status                   String?   @map("status")
+  createdAt                DateTime  @default(now()) @map("created_at")
+  updatedAt                DateTime  @updatedAt @map("updated_at")
+  fuellingTransactionId    String?   @map("transaction_id")
+  maintenanceTransactionId String?   @map("maintenance_transaction_id")
+
+  Owner            User              @relation(fields: [ownerId], references: [id])
+  Fuelings         Fueling[]
+  Maintenances     Maintenance[]
+  Reminders        Reminder[]
+  FuelConsumptions FuelConsumption[]
+
+  FuellingTransaction    Transaction? @relation("FuellingTransaction", fields: [fuellingTransactionId], references: [id])
+  MaintenanceTransaction Transaction? @relation("MaintenanceTransaction", fields: [maintenanceTransactionId], references: [id])
+
+  @@index([ownerId])
+}
+
+model Fueling {
+  id            String   @id @default(cuid())
+  vehicleId     String   @map("vehicle_id")
+  date          DateTime
+  odometer      Int
+  fuelType      String   @map("fuel_type")
+  liters        Decimal
+  pricePerLiter Decimal  @map("price_per_liter")
+  totalAmount   Decimal  @map("total_amount")
+  station       String?
+  fullTank      Boolean  @default(true) @map("full_tank")
+  notes         String?
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  Vehicle               Vehicle           @relation(fields: [vehicleId], references: [id])
+  StartFuelConsumptions FuelConsumption[] @relation("StartFueling")
+  EndFuelConsumptions   FuelConsumption[] @relation("EndFueling")
+
+  @@index([vehicleId])
+  @@index([date])
+}
+
+model FuelConsumption {
+  id                String   @id @default(cuid())
+  vehicleId         String   @map("vehicle_id")
+  startFuelingId    String   @map("start_fueling_id")
+  endFuelingId      String   @map("end_fueling_id")
+  distanceKm        Decimal  @map("distance_km")
+  litersConsumed    Decimal  @map("liters_consumed")
+  averageKmPerLiter Decimal  @map("average_km_per_liter")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  Vehicle      Vehicle @relation(fields: [vehicleId], references: [id])
+  StartFueling Fueling @relation("StartFueling", fields: [startFuelingId], references: [id])
+  EndFueling   Fueling @relation("EndFueling", fields: [endFuelingId], references: [id])
+}
+
+model Maintenance {
+  id              String    @id @default(cuid())
+  vehicleId       String    @map("vehicle_id")
+  // category        String
+  title           String
+  description     String?
+  workshop        String?
+  maintenanceDate DateTime  @map("maintenance_date")
+  odometer        Int
+  cost            Decimal
+  warrantyUntil   DateTime? @map("warranty_until")
+  notes           String?
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  Vehicle Vehicle @relation(fields: [vehicleId], references: [id])
+
+  @@index([vehicleId])
+  @@index([maintenanceDate])
+}
+
+model Reminder {
+  id          String    @id @default(cuid())
+  vehicleId   String    @map("vehicle_id")
+  title       String
+  description String?
+  type        String
+  dueDate     DateTime? @map("due_date")
+  dueOdometer Int?      @map("due_odometer")
+  status      String    @default("PENDING")
+  completedAt DateTime? @map("completed_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  Vehicle Vehicle @relation(fields: [vehicleId], references: [id])
+
+  @@index([vehicleId])
+  @@index([status])
 }
