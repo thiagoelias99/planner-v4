@@ -4,6 +4,7 @@ import { Session, type UserSession } from "@thallesp/nestjs-better-auth"
 import { ApiCreatedResponse, ApiTags } from "@nestjs/swagger"
 import { VehicleView } from "./dto/vehicles.view"
 import { UpdateVehiclesInput } from "./dto/update-vehicles.input"
+import { CreateFuellingInput } from "./dto/create-fueling.input"
 
 @ApiTags('vehicles')
 @Controller('vehicles')
@@ -35,5 +36,10 @@ export class VehiclesController {
   @Put(':id')
   async update(@Session() session: UserSession, @Param('id') id: string, @Body() updateVehiclesInput: UpdateVehiclesInput) {
     return this.vehiclesService.update({ ownerId: session.user.id, id, updateVehiclesInput })
+  }
+
+  @Post("fueling/:id")
+  async fueling(@Session() session: UserSession, @Param('id') id: string, @Body() dto: CreateFuellingInput) {
+    return this.vehiclesService.createFueling({ ownerId: session.user.id, vehicleId: id, dto })
   }
 }

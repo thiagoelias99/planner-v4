@@ -2,6 +2,9 @@ import { BadRequestException, Injectable } from '@nestjs/common'
 import { PrismaService } from "../prisma/prisma.service"
 import { EVehicleFuelType, EVehicleStatus, VehicleView } from "./dto/vehicles.view"
 import { UpdateVehiclesInput } from "./dto/update-vehicles.input"
+import { CreateFuellingInput } from "./dto/create-fueling.input"
+import { cuid, uuid } from "better-auth"
+import { randomUUID } from "crypto"
 
 @Injectable()
 export class VehiclesService {
@@ -91,5 +94,53 @@ export class VehiclesService {
       }
     })
     return VehicleView.fromPrisma(vehicle)
+  }
+
+  async createFueling({ ownerId, vehicleId, dto }: { ownerId: string, vehicleId: string, dto: CreateFuellingInput }) {
+    const vehicle = await this.prisma.vehicle.findFirst({
+      where: {
+        ownerId,
+        id: vehicleId
+      }
+    })
+    if (!vehicle) {
+      throw new BadRequestException('Vehicle not found')
+    }
+
+    const pricePerLiter = dto.totalAmount / dto.liters
+    const transactionId = randomUUID()
+
+    // Fazer as operações a seguir utilizando transaction do banco de dados
+    const fueling = await this.prisma.$transaction(async (prismaTransaction) => {
+      const fueling = await prismaTransaction.fueling.create({
+        data: {
+          vehicleId,
+          date: new Date(dto.date),
+          odometer: dto.odometer,
+          fuelType: dto.fuelType,
+          liters: dto.liters,
+          pricePerLiter: pricePerLiter,
+          totalAmount: dto.totalAmount,
+          fullTank: dto.fullTank,
+        }
+      })
+
+      if (vehicle.fuellingTransactionId) {
+        await prismaTransaction.transactionItem.create({
+          data: {
+            id: transactionId,
+            userId: ownerId,
+            transactionId: vehicle.fuellingTransactionId,
+            paymentMethod: dto.paymentMethod,
+            date: new Date(dto.date),
+            value: dto.totalAmount,
+            active: true
+          }
+        })
+      }
+
+      return fueling
+    })
+    return fueling
   }
 }
