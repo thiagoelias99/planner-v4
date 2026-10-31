@@ -4,5 +4,6 @@ export enum EPaymentMethod {
   CASH = "CASH",
   PIX = "PIX",
   TRANSFER = "TRANSFER",
-  SLIP = "SLIP"
+  SLIP = "SLIP",
+  VA = "VA"
 }

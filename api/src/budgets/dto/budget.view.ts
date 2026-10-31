@@ -50,10 +50,16 @@ export class BudgetView {
   historicalBalance: number
 
   @ApiProperty()
+  historicalVaBalance: number
+
+  @ApiProperty()
   predictedBalance: number
 
   @ApiProperty({ type: BudgetIncomeView })
   incomes: BudgetIncomeView
+
+  @ApiProperty({ type: BudgetIncomeView })
+  incomesVa: BudgetIncomeView
 
   @ApiProperty({ type: BudgetIncomeView })
   predictedIncomes: BudgetIncomeView
@@ -66,6 +72,9 @@ export class BudgetView {
 
   @ApiProperty({ type: BudgetExpenseView })
   expenses: BudgetExpenseView
+
+  @ApiProperty({ type: BudgetExpenseView })
+  expensesVa: BudgetExpenseView
 
   @ApiProperty({ type: BudgetExpenseView })
   predictedExpenses: BudgetExpenseView
@@ -90,6 +99,7 @@ export class BudgetView {
 
   constructor(data: {
     historicalBalance: number,
+    historicalVaBalance: number,
     transactions: BudgetTransactionItem[],
     categories: TransactionCategory[],
     from: Date,
@@ -98,10 +108,12 @@ export class BudgetView {
     const activeTransactions = data.transactions.filter(t => t.active)
 
     const totalIncomesAmount = this.calculateTotalIncomeAmount(activeTransactions)
+    const totalIncomesVaAmount = this.calculateTotalIncomesVaAmount(activeTransactions)
     const totalPredictedIncomesAmount = this.calculateTotalIncomeAmount(data.transactions)
     const totalRedemptionsAmount = this.calculateTotalRedemptionAmount(activeTransactions)
     const totalPredictedRedemptionsAmount = this.calculateTotalRedemptionAmount(data.transactions)
     const totalExpensesAmount = this.calculateTotalExpensesAmount(activeTransactions)
+    const totalExpensesVaAmount = this.calculateTotalExpensesVaAmount(activeTransactions)
     const totalPredictedExpensesAmount = this.calculateTotalExpensesAmount(data.transactions)
     const totalInvestmentsAmount = this.calculateTotalInvestmentsAmount(activeTransactions)
     const totalPredictedInvestmentsAmount = this.calculateTotalInvestmentsAmount(data.transactions)
@@ -115,13 +127,16 @@ export class BudgetView {
     this.from = new Date(data.from)
     this.to = new Date(data.to)
     this.historicalBalance = data.historicalBalance
+    this.historicalVaBalance = data.historicalVaBalance
     this.balance = currentBalance
     this.predictedBalance = predictedBalance
+    this.incomesVa = { amount: totalIncomesVaAmount }
     this.incomes = { amount: totalIncomesAmount }
     this.predictedIncomes = { amount: totalPredictedIncomesAmount }
     this.redemptions = { amount: totalRedemptionsAmount }
     this.predictedRedemptions = { amount: totalPredictedRedemptionsAmount }
     this.expenses = { amount: totalExpensesAmount, percentage: this.calculatePercentage(totalExpensesAmount, totalIncomesAmount + totalRedemptionsAmount) }
+    this.expensesVa = { amount: totalExpensesVaAmount, percentage: 0 }
     this.predictedExpenses = { amount: totalPredictedExpensesAmount, percentage: this.calculatePercentage(totalPredictedExpensesAmount, totalPredictedIncomesAmount + totalPredictedRedemptionsAmount) }
     this.investments = { amount: totalInvestmentsAmount, percentage: this.calculatePercentage(totalInvestmentsAmount, totalIncomesAmount + totalRedemptionsAmount) }
     this.predictedInvestments = { amount: totalPredictedInvestmentsAmount, percentage: this.calculatePercentage(totalPredictedInvestmentsAmount, totalPredictedIncomesAmount + totalPredictedRedemptionsAmount) }
@@ -146,7 +161,13 @@ export class BudgetView {
 
   private calculateTotalIncomeAmount(transactions: BudgetTransactionItem[]): number {
     return transactions
-      .filter(t => t.type === ETransactionCategoryType.INCOME)
+      .filter(t => t.type === ETransactionCategoryType.INCOME && t.paymentMethod !== EPaymentMethod.VA)
+      .reduce((acc, t) => acc + t.value, 0)
+  }
+
+  private calculateTotalIncomesVaAmount(transactions: BudgetTransactionItem[]): number {
+    return transactions
+      .filter(t => t.type === ETransactionCategoryType.INCOME && t.paymentMethod === EPaymentMethod.VA)
       .reduce((acc, t) => acc + t.value, 0)
   }
 
@@ -158,9 +179,16 @@ export class BudgetView {
 
   private calculateTotalExpensesAmount(transactions: BudgetTransactionItem[]): number {
     return transactions
-      .filter(t => ((t.type === ETransactionCategoryType.EXPENSE || t.type === ETransactionCategoryType.CREDIT_CARD_BILL) && t.paymentMethod !== EPaymentMethod.CREDIT))
+      .filter(t => ((t.type === ETransactionCategoryType.EXPENSE || t.type === ETransactionCategoryType.CREDIT_CARD_BILL) && t.paymentMethod !== EPaymentMethod.CREDIT && t.paymentMethod !== EPaymentMethod.VA))
       .reduce((acc, t) => acc + t.value, 0)
   }
+  ''
+  private calculateTotalExpensesVaAmount(transactions: BudgetTransactionItem[]): number {
+    return transactions
+      .filter(t => (t.type === ETransactionCategoryType.EXPENSE && t.paymentMethod === EPaymentMethod.VA))
+      .reduce((acc, t) => acc + t.value, 0)
+  }
+
 
   private calculateTotalInvestmentsAmount(transactions: BudgetTransactionItem[]): number {
     return transactions

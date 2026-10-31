@@ -104,8 +104,9 @@ export class BudgetsService {
     const transactions = await this.getAllTransactionItems(data.userId, { startDate: data.from, endDate: data.to })
     const categories = await this.getCategories(data.userId)
     const historicalBalance = await this.calculateHistoricalBalance(data.userId)
+    const historicalVaBalance = await this.calculateHistoricalVaBalance(data.userId)
 
-    return new BudgetView({ transactions, categories, from: data.from, to: data.to, historicalBalance })
+    return new BudgetView({ transactions, categories, from: data.from, to: data.to, historicalBalance, historicalVaBalance })
   }
 
   async getPaginatedBudgetBetweenDates(data: {
@@ -142,6 +143,8 @@ export class BudgetsService {
     // Calculate historical balance
     const historicalBalance = await this.calculateHistoricalBalance(data.userId)
 
+    const historicalVaBalance = await this.calculateHistoricalVaBalance(data.userId)
+
     // Create BudgetView with ALL transactions for correct summary calculations
     // but replace the transactions array with paginated data
     const budgetView = new BudgetView({
@@ -149,7 +152,8 @@ export class BudgetsService {
       categories,
       from: data.startDate || new Date(0), // Epoch if no start date
       to: data.endDate || new Date(),
-      historicalBalance
+      historicalBalance,
+      historicalVaBalance
     })
 
     // Replace transactions array with paginated data
@@ -191,7 +195,7 @@ export class BudgetsService {
 
     // Calculate totals using the same logic as BudgetView
     const totalIncomes = activeTransactions
-      .filter(t => t.type === ETransactionCategoryType.INCOME)
+      .filter(t => t.type === ETransactionCategoryType.INCOME && t.paymentMethod !== EPaymentMethod.VA)
       .reduce((acc, t) => acc + t.value, 0)
 
     const totalRedemptions = activeTransactions
@@ -208,6 +212,21 @@ export class BudgetsService {
 
     // Historical balance = incomes + redemptions - expenses - investments
     return totalIncomes + totalRedemptions - totalExpenses - totalInvestments
+  }
+
+  async calculateHistoricalVaBalance(userId: string): Promise<number> {
+    const allTransactions = await this.getAllTransactionItems(userId)
+    const activeTransactions = allTransactions.filter(t => t.active)
+
+    const totalIncomesVa = activeTransactions
+      .filter(t => t.type === ETransactionCategoryType.INCOME && t.paymentMethod === EPaymentMethod.VA)
+      .reduce((acc, t) => acc + t.value, 0)
+
+    const totalExpensesVa = activeTransactions
+      .filter(t => t.type === ETransactionCategoryType.EXPENSE && t.paymentMethod === EPaymentMethod.VA)
+      .reduce((acc, t) => acc + t.value, 0)
+
+    return totalIncomesVa - totalExpensesVa
   }
 
   async createMissingMonthlyTransactionItemsForCurrentMonth(userId: string) {
