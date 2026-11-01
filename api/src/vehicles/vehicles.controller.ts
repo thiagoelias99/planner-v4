@@ -5,8 +5,9 @@ import { ApiCreatedResponse, ApiTags } from "@nestjs/swagger"
 import { VehicleView } from "./dto/vehicles.view"
 import { UpdateVehiclesInput } from "./dto/update-vehicles.input"
 import { CreateFuellingInput } from "./dto/create-fueling.input"
+import { UpdateFuellingInput } from "./dto/update-fueling.input"
 
-@ApiTags('vehicles')
+@ApiTags('Vehicles')
 @Controller('vehicles')
 export class VehiclesController {
   constructor(private readonly vehiclesService: VehiclesService) { }
@@ -38,8 +39,18 @@ export class VehiclesController {
     return this.vehiclesService.update({ ownerId: session.user.id, id, updateVehiclesInput })
   }
 
-  @Post("fueling/:id")
+  @Post(":id/fueling")
   async fueling(@Session() session: UserSession, @Param('id') id: string, @Body() dto: CreateFuellingInput) {
     return this.vehiclesService.createFueling({ ownerId: session.user.id, vehicleId: id, dto })
+  }
+
+  @Put(":id/fueling/:fuelingId")
+  async updateFueling(@Session() session: UserSession, @Param('id') id: string, @Param('fuelingId') fuelingId: string, @Body() dto: UpdateFuellingInput) {
+    return this.vehiclesService.updateFueling({ ownerId: session.user.id, vehicleId: id, fuelingId, dto })
+  }
+
+  @Delete(":id/fueling/:fuelingId")
+  async removeFueling(@Session() session: UserSession, @Param('id') id: string, @Param('fuelingId') fuelingId: string) {
+    return this.vehiclesService.removeFueling({ ownerId: session.user.id, vehicleId: id, fuelingId })
   }
 }

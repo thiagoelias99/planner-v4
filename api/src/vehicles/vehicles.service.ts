@@ -4,7 +4,8 @@ import { EVehicleFuelType, EVehicleStatus, VehicleView } from "./dto/vehicles.vi
 import { UpdateVehiclesInput } from "./dto/update-vehicles.input"
 import { CreateFuellingInput } from "./dto/create-fueling.input"
 import { cuid, uuid } from "better-auth"
-import { randomUUID } from "crypto"
+import { UpdateFuellingInput } from "./dto/update-fueling.input"
+import { Prisma } from "@prisma/client"
 
 @Injectable()
 export class VehiclesService {
@@ -108,7 +109,10 @@ export class VehiclesService {
     }
 
     const pricePerLiter = dto.totalAmount / dto.liters
-    const transactionId = randomUUID()
+
+    // const transaction = await this.prisma.transaction.findFirst({
+    //   where: { id: vehicle.fuellingTransactionId || "none" }
+    // })
 
     // Fazer as operações a seguir utilizando transaction do banco de dados
     const fueling = await this.prisma.$transaction(async (prismaTransaction) => {
@@ -128,19 +132,192 @@ export class VehiclesService {
       if (vehicle.fuellingTransactionId) {
         await prismaTransaction.transactionItem.create({
           data: {
-            id: transactionId,
+            id: fueling.id, // o item da transação compartilha o id do abastecimento
             userId: ownerId,
             transactionId: vehicle.fuellingTransactionId,
             paymentMethod: dto.paymentMethod,
             date: new Date(dto.date),
             value: dto.totalAmount,
-            active: true
+            active: true,
+            Fuelings: {
+              connect: { id: fueling.id }
+            }
           }
         })
+      }
+
+      // Caso seja um "fullTank", registrar consumo
+      if (dto.fullTank) {
+        const previousFullTank = await prismaTransaction.fueling.findFirst({
+          where: {
+            vehicleId,
+            fullTank: true,
+            id: { not: fueling.id },
+            odometer: { lt: dto.odometer }
+          },
+          orderBy: { odometer: 'desc' }
+        })
+
+        if (previousFullTank) {
+          // Localiza o último tanque cheio anterior se existir
+          // Litros abastecidos após o tanque cheio anterior até o atual (inclusive); o do tanque anterior não entra
+          const intermediate = await prismaTransaction.fueling.findMany({
+            where: {
+              vehicleId,
+              odometer: { gt: previousFullTank.odometer, lte: dto.odometer }
+            },
+            select: { liters: true }
+          })
+
+          // Soma todos os litros entre eles.
+          const litersConsumed = intermediate.reduce((sum, f) => sum + Number(f.liters), 0)
+
+          // Calcula a distância percorrida desde o último tanque cheio.
+          const distanceKm = dto.odometer - previousFullTank.odometer
+
+          // Calcula o consumo médio em km por litro.
+          const averageKmPerLiter = distanceKm / litersConsumed
+
+          if (litersConsumed > 0 && distanceKm > 0) {
+            await prismaTransaction.fuelConsumption.create({
+              data: {
+                vehicleId,
+                startFuelingId: previousFullTank.id,
+                endFuelingId: fueling.id,
+                distanceKm,
+                litersConsumed,
+                averageKmPerLiter
+              }
+            })
+          }
+        }
       }
 
       return fueling
     })
     return fueling
+  }
+
+  async updateFueling({ ownerId, vehicleId, fuelingId, dto }: { ownerId: string, vehicleId: string, fuelingId: string, dto: UpdateFuellingInput }) {
+    const vehicle = await this.prisma.vehicle.findFirst({
+      where: { ownerId, id: vehicleId }
+    })
+    if (!vehicle) {
+      throw new BadRequestException('Vehicle not found')
+    }
+
+    const current = await this.prisma.fueling.findFirst({
+      where: { id: fuelingId, vehicleId }
+    })
+    if (!current) {
+      throw new BadRequestException('Fueling not found')
+    }
+
+    const liters = dto.liters ?? Number(current.liters)
+    const totalAmount = dto.totalAmount ?? Number(current.totalAmount)
+    const date = dto.date ? new Date(dto.date) : current.date
+    // Mantém a transação já vinculada; abastecimentos sem vínculo usam a transação atual do veículo
+    const transactionId = current.transactionId
+
+    return this.prisma.$transaction(async (prismaTransaction) => {
+      const fueling = await prismaTransaction.fueling.update({
+        where: { id: fuelingId },
+        data: {
+          transactionId,
+          date,
+          odometer: dto.odometer,
+          fuelType: dto.fuelType,
+          liters,
+          totalAmount,
+          pricePerLiter: totalAmount / liters,
+          fullTank: dto.fullTank,
+        }
+      })
+
+      if (transactionId) {
+        const item = await prismaTransaction.transactionItem.findFirst({
+          where: { id: transactionId, userId: ownerId }
+        })
+
+        if (item) {
+          await prismaTransaction.transactionItem.update({
+            where: { id: transactionId },
+            data: {
+              paymentMethod: dto.paymentMethod,
+              date,
+              value: totalAmount
+            }
+          })
+        }
+      }
+
+      // Odômetro, litros ou fullTank podem alterar vários intervalos; recalcula todos os consumos do veículo
+      await this.recalculateFuelConsumption({ vehicleId, prisma: prismaTransaction })
+
+      return fueling
+    })
+  }
+
+  async removeFueling({ ownerId, vehicleId, fuelingId }: { ownerId: string, vehicleId: string, fuelingId: string }) {
+    return this.prisma.$transaction(async (prismaTransaction) => {
+      const fueling = await prismaTransaction.fueling.findFirst({
+        where: { id: fuelingId, vehicleId }
+      })
+
+      if (!fueling) {
+        throw new BadRequestException('Fueling not found')
+      }
+
+      await prismaTransaction.fuelConsumption.deleteMany({ where: { vehicleId } })
+
+      await prismaTransaction.fueling.delete({ where: { id: fuelingId } })
+
+      // Delete the associated transaction item if it exists
+      if (fueling.transactionId) {
+        await prismaTransaction.transactionItem.deleteMany({ where: { id: fueling.transactionId } })
+      }
+
+      // Recalculate fuel consumption after deletion
+      await this.recalculateFuelConsumption({ vehicleId, prisma: prismaTransaction })
+
+      return fueling
+    })
+  }
+
+  async recalculateFuelConsumption({ vehicleId, prisma }: { vehicleId: string, prisma: Prisma.TransactionClient }) {
+    // return prisma.$transaction(async (prismaTransaction) => {
+    const all = await prisma.fueling.findMany({
+      where: { vehicleId },
+      orderBy: { odometer: 'asc' }
+    })
+
+    await prisma.fuelConsumption.deleteMany({ where: { vehicleId } })
+
+    let lastFullTank: (typeof all)[number] | null = null
+    let litersSince = 0
+
+    for (const f of all) {
+      litersSince += Number(f.liters)
+      if (!f.fullTank) continue
+
+      if (lastFullTank) {
+        const distanceKm = f.odometer - lastFullTank.odometer
+        if (distanceKm > 0 && litersSince > 0) {
+          await prisma.fuelConsumption.create({
+            data: {
+              vehicleId,
+              startFuelingId: lastFullTank.id,
+              endFuelingId: f.id,
+              distanceKm,
+              litersConsumed: litersSince,
+              averageKmPerLiter: distanceKm / litersSince
+            }
+          })
+        }
+      }
+      lastFullTank = f
+      litersSince = 0
+    }
+    // })
   }
 }

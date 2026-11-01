@@ -3,19 +3,19 @@ import { IsDateString, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsS
 import { EVehicleFuelType, EVehicleStatus } from "./vehicles.view"
 
 export class UpdateVehiclesInput {
-  @ApiPropertyOptional({ example: 'Toyota', description: 'Brand of the vehicle' })
+  @ApiPropertyOptional({ example: 'Honda', description: 'Brand of the vehicle' })
   @IsOptional()
   @IsString()
   @MaxLength(255)
   brand?: string
 
-  @ApiPropertyOptional({ example: 'Corolla', description: 'Model of the vehicle' })
+  @ApiPropertyOptional({ example: 'Fit', description: 'Model of the vehicle' })
   @IsOptional()
   @IsString()
   @MaxLength(255)
   model?: string
 
-  @ApiPropertyOptional({ example: 2020, description: 'Year of the vehicle' })
+  @ApiPropertyOptional({ example: 2008, description: 'Year of the vehicle' })
   @IsOptional()
   @IsNumber()
   @IsPositive()
@@ -27,7 +27,7 @@ export class UpdateVehiclesInput {
   @MaxLength(10)
   plate?: string
 
-  @ApiPropertyOptional({ example: 'Red', description: 'Color of the vehicle' })
+  @ApiPropertyOptional({ example: 'Prata', description: 'Color of the vehicle' })
   @IsOptional()
   @IsString()
   @MaxLength(50)
@@ -38,7 +38,7 @@ export class UpdateVehiclesInput {
   @IsEnum(EVehicleFuelType)
   fuelType?: EVehicleFuelType
 
-  @ApiPropertyOptional({ example: '2023-01-01', description: 'Purchase date of the vehicle' })
+  @ApiPropertyOptional({ example: '2015-02-02', description: 'Purchase date of the vehicle' })
   @IsDateString()
   @IsOptional()
   purchaseDate?: Date
@@ -66,13 +66,13 @@ export class UpdateVehiclesInput {
   @IsEnum(EVehicleStatus)
   status?: EVehicleStatus
 
-  @ApiPropertyOptional({ example: '123e4567-e89b-12d3-a456-426614174000', description: 'ID of the fuelling transaction associated with the vehicle' })
+  @ApiPropertyOptional({ example: 'j0xyblx0b3cybjkefk3ezru6', description: 'ID of the fuelling transaction associated with the vehicle' })
   @IsOptional()
   @IsString()
   @MaxLength(36)
   fuellingTransactionId?: string
 
-  @ApiPropertyOptional({ example: '123e4567-e89b-12d3-a456-426614174000', description: 'ID of the maintenance transaction associated with the vehicle' })
+  @ApiPropertyOptional({ example: 'j0xyblx0b3cybjkefk3ezru6', description: 'ID of the maintenance transaction associated with the vehicle' })
   @IsOptional()
   @IsString()
   @MaxLength(36)

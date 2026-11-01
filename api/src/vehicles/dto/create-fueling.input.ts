@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger"
+import { ApiProperty } from "@nestjs/swagger"
 import { IsDateString, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, MaxLength } from "class-validator"
 import { EVehicleFuelType } from "./vehicles.view"
 import { EPaymentMethod } from "../../budgets/entities/payment-method.enum"
