@@ -9,7 +9,7 @@ export class UpdateVehiclesInput {
   @MaxLength(255)
   brand?: string
 
-  @ApiPropertyOptional({ example: 'Fit', description: 'Model of the vehicle' })
+  @ApiPropertyOptional({ example: 'Fit EX/S 1.5 Flex/Flexone 16V 5p Aut.', description: 'Model of the vehicle' })
   @IsOptional()
   @IsString()
   @MaxLength(255)
@@ -77,4 +77,22 @@ export class UpdateVehiclesInput {
   @IsString()
   @MaxLength(36)
   maintenanceTransactionId?: string
+
+  @ApiPropertyOptional({ example: 50000.00, description: 'Current price of the vehicle' })
+  @IsOptional()
+  @IsNumber()
+  @IsPositive()
+  currentPrice?: number
+
+  @ApiPropertyOptional({ example: 'ABC123456789', description: 'Chassis number of the vehicle' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(50)
+  chassis?: string
+
+  @ApiPropertyOptional({ example: '014045-7', description: 'FIPE code of the vehicle' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(50)
+  fipeCode?: string
 }

@@ -1,11 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put } from '@nestjs/common'
 import { VehiclesService } from './vehicles.service'
 import { Session, type UserSession } from "@thallesp/nestjs-better-auth"
-import { ApiCreatedResponse, ApiTags } from "@nestjs/swagger"
-import { VehicleView } from "./dto/vehicles.view"
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger"
+import { VehicleDetailedView, VehicleView } from "./dto/vehicles.view"
 import { UpdateVehiclesInput } from "./dto/update-vehicles.input"
 import { CreateFuellingInput } from "./dto/create-fueling.input"
 import { UpdateFuellingInput } from "./dto/update-fueling.input"
+import { FipePlateView } from "./dto/fipe-plate.view"
 
 @ApiTags('Vehicles')
 @Controller('vehicles')
@@ -25,6 +26,7 @@ export class VehiclesController {
   }
 
   @Get(':id')
+  @ApiOkResponse({ description: 'Vehicle retrieved successfully', type: VehicleDetailedView })
   async findOne(@Session() session: UserSession, @Param('id') id: string) {
     return this.vehiclesService.findOne({ ownerId: session.user.id, id })
   }
@@ -52,5 +54,12 @@ export class VehiclesController {
   @Delete(":id/fueling/:fuelingId")
   async removeFueling(@Session() session: UserSession, @Param('id') id: string, @Param('fuelingId') fuelingId: string) {
     return this.vehiclesService.removeFueling({ ownerId: session.user.id, vehicleId: id, fuelingId })
+  }
+
+  // Endpoints de consulta da fipe API
+  @Get("fipe/plate/:plate")
+  @ApiOkResponse({ description: 'FIPE data retrieved successfully', type: FipePlateView })
+  async getFipeByPlate(@Param('plate') plate: string) {
+    return this.vehiclesService.getFipeByPlate(plate)
   }
 }

@@ -348,6 +348,9 @@ model Vehicle {
   updatedAt                DateTime  @updatedAt @map("updated_at")
   fuellingTransactionId    String?   @map("transaction_id")
   maintenanceTransactionId String?   @map("maintenance_transaction_id")
+  fipeCode                 String?   @map("fipe_code")
+  currentPrice             Decimal?  @map("current_price")
+  chassis                  String?   @map("chassis")
 
   Owner            User              @relation(fields: [ownerId], references: [id])
   Fuelings         Fueling[]

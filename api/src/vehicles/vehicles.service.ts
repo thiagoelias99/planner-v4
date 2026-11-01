@@ -1,11 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { PrismaService } from "../prisma/prisma.service"
-import { EVehicleFuelType, EVehicleStatus, VehicleView } from "./dto/vehicles.view"
+import { EVehicleFuelType, EVehicleStatus, VehicleDetailedView, VehicleView } from "./dto/vehicles.view"
 import { UpdateVehiclesInput } from "./dto/update-vehicles.input"
 import { CreateFuellingInput } from "./dto/create-fueling.input"
 import { cuid, uuid } from "better-auth"
 import { UpdateFuellingInput } from "./dto/update-fueling.input"
 import { Prisma } from "@prisma/client"
+import { FipePlateView } from "./dto/fipe-plate.view"
 
 @Injectable()
 export class VehiclesService {
@@ -35,17 +36,21 @@ export class VehiclesService {
     return vehicles.map(vehicle => VehicleView.fromPrisma(vehicle))
   }
 
-  async findOne({ ownerId, id }: { ownerId: string, id: string }): Promise<VehicleView> {
+  async findOne({ ownerId, id }: { ownerId: string, id: string }): Promise<VehicleDetailedView> {
     const vehicle = await this.prisma.vehicle.findFirst({
       where: {
         ownerId,
         id
+      },
+      include: {
+        Fuelings: true,
+        FuelConsumptions: true
       }
     })
     if (!vehicle) {
       throw new BadRequestException('Vehicle not found')
     }
-    return VehicleView.fromPrisma(vehicle)
+    return VehicleDetailedView.fromPrisma(vehicle)
   }
 
   async remove({ ownerId, id }: { ownerId: string, id: string }): Promise<VehicleView> {
@@ -91,7 +96,8 @@ export class VehiclesService {
       },
       data: {
         ...updateVehiclesInput,
-        purchaseDate: updateVehiclesInput.purchaseDate ? new Date(updateVehiclesInput.purchaseDate) : undefined
+        purchaseDate: updateVehiclesInput.purchaseDate ? new Date(updateVehiclesInput.purchaseDate) : undefined,
+        plate: updateVehiclesInput.plate?.replaceAll('-', ''),
       }
     })
     return VehicleView.fromPrisma(vehicle)
@@ -285,7 +291,6 @@ export class VehiclesService {
   }
 
   async recalculateFuelConsumption({ vehicleId, prisma }: { vehicleId: string, prisma: Prisma.TransactionClient }) {
-    // return prisma.$transaction(async (prismaTransaction) => {
     const all = await prisma.fueling.findMany({
       where: { vehicleId },
       orderBy: { odometer: 'asc' }
@@ -318,6 +323,15 @@ export class VehiclesService {
       lastFullTank = f
       litersSince = 0
     }
-    // })
+  }
+
+  async getFipeByPlate(plate: string): Promise<FipePlateView> {
+    const endpoint = `https://fipe.parallelum.com.br/api/v2/plates/${plate}`
+    const response = await fetch(endpoint, {
+      headers: {
+        'Authorization': `Bearer ${process.env.FIPE_API_KEY}`
+      }
+    })
+    return response.json()
   }
 }
