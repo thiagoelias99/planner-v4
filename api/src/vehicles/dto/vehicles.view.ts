@@ -264,9 +264,9 @@ export class VehicleDetailedView extends VehicleView {
     })
   }
 
-  @ApiProperty({ example: [], type: [VehicleFuelingView] })
+  @ApiProperty({ type: [VehicleFuelingView] })
   Fuelings: VehicleFuelingView[]
 
-  @ApiProperty({ example: [], type: [VehicleFuelConsumptionView] })
+  @ApiProperty({ type: [VehicleFuelConsumptionView] })
   FuelConsumptions: VehicleFuelConsumptionView[]
 }
