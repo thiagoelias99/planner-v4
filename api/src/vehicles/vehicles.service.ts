@@ -1,9 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common'
 import { PrismaService } from "../prisma/prisma.service"
 import { EVehicleFuelType, EVehicleStatus, VehicleDetailedView, VehicleView } from "./dto/vehicles.view"
 import { UpdateVehiclesInput } from "./dto/update-vehicles.input"
 import { CreateFuellingInput } from "./dto/create-fueling.input"
-import { cuid, uuid } from "better-auth"
 import { UpdateFuellingInput } from "./dto/update-fueling.input"
 import { Prisma } from "@prisma/client"
 import { FipePlateView } from "./dto/fipe-plate.view"
@@ -43,7 +42,11 @@ export class VehiclesService {
         id
       },
       include: {
-        Fuelings: true,
+        Fuelings: {
+          orderBy: {
+            odometer: 'desc'
+          }
+        },
         FuelConsumptions: true
       }
     })
@@ -97,13 +100,13 @@ export class VehiclesService {
       data: {
         ...updateVehiclesInput,
         purchaseDate: updateVehiclesInput.purchaseDate ? new Date(updateVehiclesInput.purchaseDate) : undefined,
-        plate: updateVehiclesInput.plate?.replaceAll('-', ''),
+        plate: updateVehiclesInput.plate?.replaceAll('-', '').toUpperCase(),
       }
     })
     return VehicleView.fromPrisma(vehicle)
   }
 
-  async createFueling({ ownerId, vehicleId, dto }: { ownerId: string, vehicleId: string, dto: CreateFuellingInput }) {
+  async createFueling({ ownerId, vehicleId, dto }: { ownerId: string, vehicleId: string, dto: CreateFuellingInput }): Promise<VehicleDetailedView> {
     const vehicle = await this.prisma.vehicle.findFirst({
       where: {
         ownerId,
@@ -133,6 +136,11 @@ export class VehiclesService {
           totalAmount: dto.totalAmount,
           fullTank: dto.fullTank,
         }
+      })
+
+      await prismaTransaction.vehicle.update({
+        where: { id: vehicleId },
+        data: { currentOdometer: dto.odometer }
       })
 
       if (vehicle.fuellingTransactionId) {
@@ -199,12 +207,12 @@ export class VehiclesService {
         }
       }
 
-      return fueling
+      return this.findOne({ ownerId, id: vehicleId })
     })
-    return fueling
+    return this.findOne({ ownerId, id: vehicleId })
   }
 
-  async updateFueling({ ownerId, vehicleId, fuelingId, dto }: { ownerId: string, vehicleId: string, fuelingId: string, dto: UpdateFuellingInput }) {
+  async updateFueling({ ownerId, vehicleId, fuelingId, dto }: { ownerId: string, vehicleId: string, fuelingId: string, dto: UpdateFuellingInput }): Promise<VehicleDetailedView> {
     const vehicle = await this.prisma.vehicle.findFirst({
       where: { ownerId, id: vehicleId }
     })
@@ -240,6 +248,11 @@ export class VehiclesService {
         }
       })
 
+      await prismaTransaction.vehicle.update({
+        where: { id: vehicleId },
+        data: { currentOdometer: fueling.odometer }
+      })
+
       if (transactionId) {
         const item = await prismaTransaction.transactionItem.findFirst({
           where: { id: transactionId, userId: ownerId }
@@ -260,7 +273,7 @@ export class VehiclesService {
       // Odômetro, litros ou fullTank podem alterar vários intervalos; recalcula todos os consumos do veículo
       await this.recalculateFuelConsumption({ vehicleId, prisma: prismaTransaction })
 
-      return fueling
+      return this.findOne({ ownerId, id: vehicleId })
     })
   }
 
@@ -326,10 +339,16 @@ export class VehiclesService {
   }
 
   async getFipeByPlate(plate: string): Promise<FipePlateView> {
+    const apiKey = process.env.FIPE_API_KEY
+
+    if (!apiKey) {
+      throw new InternalServerErrorException('FIPE API key is not configured')
+    }
+
     const endpoint = `https://fipe.parallelum.com.br/api/v2/plates/${plate}`
     const response = await fetch(endpoint, {
       headers: {
-        'Authorization': `Bearer ${process.env.FIPE_API_KEY}`
+        'X-Subscription-Token': `${apiKey}`
       }
     })
     return response.json()

@@ -37,18 +37,22 @@ export class VehiclesController {
   }
 
   @Put(':id')
+  @ApiOkResponse({ description: 'Vehicle updated successfully', type: VehicleDetailedView })
   async update(@Session() session: UserSession, @Param('id') id: string, @Body() updateVehiclesInput: UpdateVehiclesInput) {
     return this.vehiclesService.update({ ownerId: session.user.id, id, updateVehiclesInput })
   }
 
   @Post(":id/fueling")
+  @ApiOkResponse({ description: 'Fueling created successfully', type: VehicleDetailedView })
   async fueling(@Session() session: UserSession, @Param('id') id: string, @Body() dto: CreateFuellingInput) {
     return this.vehiclesService.createFueling({ ownerId: session.user.id, vehicleId: id, dto })
   }
 
   @Put(":id/fueling/:fuelingId")
+  @ApiOkResponse({ description: 'Fueling updated successfully', type: VehicleDetailedView })
   async updateFueling(@Session() session: UserSession, @Param('id') id: string, @Param('fuelingId') fuelingId: string, @Body() dto: UpdateFuellingInput) {
-    return this.vehiclesService.updateFueling({ ownerId: session.user.id, vehicleId: id, fuelingId, dto })
+    await this.vehiclesService.updateFueling({ ownerId: session.user.id, vehicleId: id, fuelingId, dto })
+    return this.findOne(session, id)
   }
 
   @Delete(":id/fueling/:fuelingId")
