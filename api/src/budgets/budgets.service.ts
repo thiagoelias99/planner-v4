@@ -203,7 +203,7 @@ export class BudgetsService {
       .reduce((acc, t) => acc + t.value, 0)
 
     const totalExpenses = activeTransactions
-      .filter(t => ((t.type === ETransactionCategoryType.EXPENSE || t.type === ETransactionCategoryType.CREDIT_CARD_BILL) && t.paymentMethod !== EPaymentMethod.CREDIT))
+      .filter(t => ((t.type === ETransactionCategoryType.EXPENSE || t.type === ETransactionCategoryType.CREDIT_CARD_BILL) && t.paymentMethod !== EPaymentMethod.CREDIT && t.paymentMethod !== EPaymentMethod.VA))
       .reduce((acc, t) => acc + t.value, 0)
 
     const totalInvestments = activeTransactions
