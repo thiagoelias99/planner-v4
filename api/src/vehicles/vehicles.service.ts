@@ -57,15 +57,24 @@ export class VehiclesService {
   }
 
   async remove({ ownerId, id }: { ownerId: string, id: string }): Promise<VehicleView> {
-    const vehicle = await this.prisma.vehicle.delete({
-      where: {
-        ownerId,
-        id
+    const vehicle = await this.prisma.$transaction(async (prismaTransaction) => {
+      const existingVehicle = await prismaTransaction.vehicle.findFirst({
+        where: { ownerId, id }
+      })
+      if (!existingVehicle) {
+        throw new BadRequestException('Vehicle not found')
       }
+
+      await prismaTransaction.fuelConsumption.deleteMany({ where: { vehicleId: id } })
+      await prismaTransaction.fueling.deleteMany({ where: { vehicleId: id } })
+      await prismaTransaction.maintenance.deleteMany({ where: { vehicleId: id } })
+      await prismaTransaction.reminder.deleteMany({ where: { vehicleId: id } })
+
+      return prismaTransaction.vehicle.delete({
+        where: { ownerId, id }
+      })
     })
-    if (!vehicle) {
-      throw new BadRequestException('Vehicle not found')
-    }
+
     return VehicleView.fromPrisma(vehicle)
   }
 
